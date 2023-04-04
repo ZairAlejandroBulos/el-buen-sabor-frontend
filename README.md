@@ -13,7 +13,7 @@ Su público objetivo son personas mayores de 16 años de la provincia de Mendoza
 
 ## Wireframe
 
-[Link al Wireframe en Figma](https://www.figma.com/files/project/85722719/El-Buen-Sabor?fuid=1217820590323465730)
+[Link al Wireframe en Figma](https://www.figma.com/file/6gBnQOcOlFE3g8Oi4NUAZA/Wireframe?node-id=0%3A1&t=Skhf7fbHs0hmd38j-1)
 
 ## Tecnologías
 
