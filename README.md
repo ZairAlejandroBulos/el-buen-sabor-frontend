@@ -18,8 +18,11 @@ Su público objetivo son personas mayores de 16 años de la provincia de Mendoza
 ## Tecnologías
 
 <p style="text-align: left;"> 
-  <a href="https://angular.io/" target="_blank"> 
-    <img src="https://github.com/devicons/devicon/blob/master/icons/angularjs/angularjs-original.svg" alt="angular" width="65" height="65" />
+  <a href="https://es.reactjs.org/" target="_blank"> 
+    <img src="https://github.com/devicons/devicon/blob/master/icons/react/react-original.svg" alt="react" width="65" height="65" />
+  </a>
+  <a href="https://www.typescriptlang.org/" target="_blank">
+    <img src="https://github.com/devicons/devicon/blob/master/icons/typescript/typescript-original.svg" alt="typescript" width="65" height="65" />
   </a>
   <a href="https://developer.mozilla.org/es/docs/Web/HTML" target="_blank">
     <img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" alt="html5" width="65" height="65" />
