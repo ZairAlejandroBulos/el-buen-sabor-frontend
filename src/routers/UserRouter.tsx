@@ -1,7 +1,6 @@
-import React from "react";
-import Home from "../components/Home/Home";
+import Home from "../components/Layout/Home/Home";
+import NavBar from "../components/Layout/NavBar/NavBar";
 import { Route, Routes } from "react-router-dom";
-import NavBar from "../components/NavBar/NavBar";
 
 function UserRouter(): JSX.Element {
     return(
