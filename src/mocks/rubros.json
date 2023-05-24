@@ -1,0 +1,32 @@
+{
+    "rubros": [
+        {
+            "id": 1,
+            "denominacion": "Bebidas"
+        },
+        {
+            "id": 2,
+            "denominacion": "Bebidas Alcoholicas",
+            "rubroPadre": {
+                "id": 1,
+                "denominacion": "Bebidas"
+            }
+        },
+        {
+            "id": 3,
+            "denominacion": "Bebidas Gaseosas",
+            "rubroPadre": {
+                "id": 1,
+                "denominacion": "Bebidas"
+            }
+        },
+        {
+            "id": 4,
+            "denominacion": "Verduras"
+        },
+        {
+            "id": 5,
+            "denominacion": "Hamburguesas"
+        }
+    ]
+}
