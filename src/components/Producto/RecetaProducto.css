@@ -1,0 +1,55 @@
+.container{
+    width: 1200px;
+
+    border-width:2px;
+    border-radius:22px;
+    border-style:solid;
+    border-color:black;
+    margin-top: 5%;
+}
+
+#grid{
+    display :grid;
+    grid-template-columns: repeat(4, 25%);
+    
+}
+
+#boton-item-receta-ingrediente{
+    background-color: transparent;
+    border:0;
+    color: #000;
+ 
+}
+
+#buttonAgregar{
+    margin-top: 60px;
+    background: #2DC653;
+    color: #FFFFFF;
+    width: 150px;
+    height: 38px;
+    margin-left: 25%;
+}
+
+#button{
+    width: 150px;
+    height: 60px;
+    margin-bottom: 25px;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.titulos{
+    margin-top: 25px;
+    font-weight: bold;
+    font-size: 18px; 
+}
+
+#input{
+    width: 198px;
+}
+
+#procedimiento{
+    background: #E1E1E1;
+    border-radius: 10px;
+}
