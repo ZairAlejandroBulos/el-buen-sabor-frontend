@@ -1,0 +1,17 @@
+.nav-menu {
+    background-color: #FF9E00;
+    min-width: 770px;
+}
+
+#boton-pizzas, #boton-lomos, #boton-burgers, #boton-papas, #boton-bebidas{
+    background-color: #FF9E00;
+    border: 0px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #000;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+#basic-navbar-nav{
+    justify-content: center;
+}
