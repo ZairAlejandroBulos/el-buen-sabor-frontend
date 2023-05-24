@@ -1,6 +1,7 @@
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CategoriasMenu.css';
+import { Link } from 'react-router-dom';
 
 function CategoriasMenu() {
   return (
@@ -8,11 +9,21 @@ function CategoriasMenu() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-            <Button id='boton-pizzas'>Pizzas</Button>
-            <Button id='boton-lomos'>Lomos</Button>
-            <Button id='boton-burgers'>Burgers</Button>
-            <Button id='boton-papas'>Papas</Button>
-            <Button id='boton-bebidas'>Bebidas</Button>
+            <Nav.Item>
+                <Nav.Link id='boton-pizzas' as={Link} to="/productos/pizzas">Pizzas</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link id='boton-lomos' as={Link} to="/productos/lomos">Lomos</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link id='boton-burgers' as={Link} to="/productos/burgers">Burgers</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link id='boton-papas' as={Link} to="/productos/papas">Papas</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link id='boton-bebidas' as={Link} to="/productos/bebidas">Bebibas</Nav.Link>
+            </Nav.Item>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
