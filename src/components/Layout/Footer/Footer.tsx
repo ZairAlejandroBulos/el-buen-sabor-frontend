@@ -1,9 +1,9 @@
 import React from "react";
 
 import "./Footer.css";
-import whatsapp from "../../assets/whatsapp.svg";
-import facebook from "../../assets/facebook.svg";
-import instagram from "../../assets/instagram.svg";
+import whatsapp from "../../../assets/whatsapp.svg";
+import facebook from "../../../assets/facebook.svg";
+import instagram from "../../../assets/instagram.svg";
 import { Container } from "react-bootstrap";
 
 function Footer(): JSX.Element {
