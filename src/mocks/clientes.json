@@ -1,0 +1,52 @@
+{
+    "clientes": [
+        {
+           "id": 1,
+           "nombre": "Zair",
+           "apellido": "Bulos",
+           "telefono": 2612055766,
+           "usuario": {
+                "id": 1,
+                "usuario": "buloszair@gmail.com",
+                "clave": "1234",
+                "rol": {
+                    "id": 1,
+                    "nombre": "Usuario"
+                }
+           },
+           "domicilio": {
+                "id": 1,
+                "calle": "Coronel Rodriguez",
+                "numero": 247,
+                "localidad": {
+                    "id": 1,
+                    "nombre": "Mendoza" 
+                }
+           } 
+        },
+        {
+            "id": 2,
+            "nombre": "Santiago",
+            "apellido": "Castillo",
+            "telefono": 2612055766,
+            "usuario": {
+                 "id": 1,
+                 "usuario": "santycastillo@gmail.com",
+                 "clave": "1234",
+                 "rol": {
+                     "id": 1,
+                     "nombre": "Usuario"
+                 }
+            },
+            "domicilio": {
+                 "id": 1,
+                 "calle": "Coronel Rodriguez",
+                 "numero": 247,
+                 "localidad": {
+                     "id": 1,
+                     "nombre": "Mendoza" 
+                 }
+            } 
+         }
+    ]
+}
