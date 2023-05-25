@@ -1,5 +1,5 @@
-export default class Rubro {
+export class Rubro {
     id: number = 0;
     denominacion: string;
-    rubroPadre?: Rubro;
+    rubroPadre?: Rubro | null;
 }

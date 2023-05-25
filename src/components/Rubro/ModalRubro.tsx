@@ -1,7 +1,8 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { useAuth0 } from "@auth0/auth0-react";
 
-import Rubro from "../../types/Rubro";
+import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
 import { findAllParents, findRubroById, saveRubro, updateRubro } from "../../services/RubroService";
 
@@ -15,6 +16,7 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
     const [values, setValues] = useState<Rubro>(new Rubro());
     const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
     const { showAlert, handleAlert } = useAlert();
+    const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         if (rubro) {
@@ -24,11 +26,12 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
     }, []);
 
     const getRubrosPadres = async () => {
-        const newRubrosPadres: Rubro[] = await findAllParents();
+        const token = await getAccessTokenSilently();
+        const newRubrosPadres: Rubro[] = await findAllParents(token);
         setRubrosPadres(newRubrosPadres);
     };
 
-    const handleChangeDenominacion = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDenominacion = event.target.value;
         setValues((prevState) => ({
             ...prevState,
@@ -36,13 +39,15 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
         }));
     };
 
-    const handleChangeRubroPadre = (event: ChangeEvent<HTMLSelectElement>) => {
-        getRubroArticuloById(parseInt(event.currentTarget.value));
+    const handleChangeRubroPadre = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedId = parseInt(event.currentTarget.value);
+        getRubroById(selectedId);
     };
 
-    const getRubroArticuloById = async (id: number) => {
+    const getRubroById = async (id: number) => {
         if (id) {
-            let newRubroPadre: Rubro = await findRubroById(id);
+            const token = await getAccessTokenSilently();
+            let newRubroPadre: Rubro = await findRubroById(id, token);
             setValues((prevState) => ({
                 ...prevState,
                 rubroPadre: newRubroPadre
@@ -54,10 +59,11 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
         if (!values.denominacion) {
             handleAlert();
         } else {
+            const token = await getAccessTokenSilently();
             if (values.id === 0) {
-                await saveRubro(values);
+                await saveRubro(values, token);
             } else {
-                await updateRubro(values.id, values);
+                await updateRubro(values.id, values, token);
             }
             handleClose();
         }
@@ -88,7 +94,7 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
                         />
                     </Form.Group>
 
-                    {/*TODO: Select Rubro Articulo Padre */}
+                    {/*TODO: Si es update, seleccionar automaticamente el rubroPadre */}
                     <Form.Group className="mb-3">
                         <Form.Label>Rubro Artículo Padre</Form.Label>
                         <Form.Select id="rubroPadre" onChange={handleChangeRubroPadre}>

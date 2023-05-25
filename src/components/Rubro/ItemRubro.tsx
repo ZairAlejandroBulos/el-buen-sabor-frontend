@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 
-import Rubro from "../../types/Rubro";
+import { Rubro } from "../../types/Rubro";
 import ModalRubro from "./ModalRubro";
 import { useModal } from "../../hooks/useModal";
 
@@ -15,7 +15,8 @@ function ItemRubro(props: Rubro): JSX.Element {
                 </td>
 
                 <td>
-                    { props.rubroPadre?.denominacion }
+                    {/* TODO: Mostrar rubroPadre */}
+                    { props.rubroPadre?.denominacion || "-" }
                 </td>
 
                 <td>
@@ -25,7 +26,7 @@ function ItemRubro(props: Rubro): JSX.Element {
                 </td>
             </tr>
 
-            <ModalRubro
+            <ModalRubro 
                 showModal={showModal}
                 handleClose={handleClose}
                 rubro={props}

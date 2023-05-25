@@ -1,9 +1,14 @@
 import { URL_API_BASE } from "../constants";
-import Rubro from "../types/Rubro";
+import { Rubro } from "../types/Rubro";
 
-export async function findAllRubro(): Promise<Rubro[]> {
+export async function findAllRubro(token: string): Promise<Rubro[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros`);
+        const response = await fetch(`${URL_API_BASE}/rubros`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -17,9 +22,13 @@ export async function findAllRubro(): Promise<Rubro[]> {
     }
 }
 
-export async function findAllParents(): Promise<Rubro[]> {
+export async function findAllParents(token: string): Promise<Rubro[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros/parents`);
+        const response = await fetch(`${URL_API_BASE}/rubros/parents`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -33,9 +42,13 @@ export async function findAllParents(): Promise<Rubro[]> {
     }
 }
 
-export async function findRubroById(id: number): Promise<Rubro> {
+export async function findRubroById(id: number, token: string): Promise<Rubro> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros/${id}`);
+        const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,12 +62,13 @@ export async function findRubroById(id: number): Promise<Rubro> {
     }
 }
 
-export async function saveRubro(entity: Rubro): Promise<Rubro> {
+export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros`, {
             method: "POST",
             body: JSON.stringify(entity),
             headers: {
+                Authorization: `Bearer ${token}`,
                 "Content-Type": 'application/json'
             }
         });
@@ -72,13 +86,14 @@ export async function saveRubro(entity: Rubro): Promise<Rubro> {
     }
 }
 
-export async function updateRubro(id: number, entity: Rubro): Promise<Rubro> {
+export async function updateRubro(id: number, entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
             method: "PUT",
             body: JSON.stringify(entity),
             headers: {
-                "Content-Type": 'application/json'
+                "Content-Type": 'application/json',
+                Authorization: `Bearer ${token}`,
             }
         });
 

@@ -1,28 +1,29 @@
 import "./Rubro.css";
 import React, { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Table } from "react-bootstrap";
 
 import ModalRubro from "./ModalRubro";
-import Rubro from "../../types/Rubro";
+import { Rubro } from "../../types/Rubro";
 import ItemRubro from "./ItemRubro";
 import { useModal } from "../../hooks/useModal";
 
-import { rubros as rubrosJson } from "../../mocks/rubros.json";
+import { findAllRubro } from "../../services/RubroService";
 
 function TableRubro(): JSX.Element {
-    const [rubrosArticulos, setRubrosArticulos] = useState<Rubro[]>(rubrosJson);
+    const [rubrosArticulos, setRubrosArticulos] = useState<Rubro[]>([]);
     const { showModal, handleClose } = useModal();
+    const { getAccessTokenSilently } = useAuth0();
 
-    // TODO: Probar llamada al backend
-    /*
     useEffect(() => {
         getRubrosArticulos();
     }, []);
 
     const getRubrosArticulos = async () => {
-        const newRubrosArticulos = await findAllRubroArticulo();
+        const token = await getAccessTokenSilently();
+        const newRubrosArticulos = await findAllRubro(token);
         setRubrosArticulos(newRubrosArticulos);
-    };*/
+    };
 
     return(
         <>
@@ -54,7 +55,7 @@ function TableRubro(): JSX.Element {
                 </Table>
             </Container>
 
-            <ModalRubro
+            <ModalRubro 
                 showModal={showModal}
                 handleClose={handleClose}
             />
