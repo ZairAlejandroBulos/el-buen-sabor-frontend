@@ -1,5 +1,5 @@
 import { Button } from "react-bootstrap";
-import Cliente from "../../../types/Cliente";
+import { Cliente } from "../../../types/Cliente";
 
 function ItemUsuario(props: Cliente): JSX.Element {
     return(

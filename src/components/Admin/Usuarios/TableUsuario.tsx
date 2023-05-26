@@ -1,25 +1,34 @@
 import "./TableUsuario.css";
 import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Form, InputGroup, Table, Tabs, Tab } from "react-bootstrap";
 
 import ItemUsuario from "./ItemUsuario";
-import Cliente from "../../../types/Cliente";
-
-import { clientes as clientesJson } from "../../../mocks/clientes.json";
-import { empleados as empleadosJson } from "../../../mocks/empleados.json";
+import { Cliente } from "../../../types/Cliente";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
     const [tipo, setTipo] = useState("Usuario");
     const [clientes, setClientes] = useState<Cliente[]>([]);
+    const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
-        if (tipo === "Usuario") {
-            setClientes(clientesJson);
-        } else {
-            setClientes(empleadosJson);
-        }
+        getClientes();
     }, [tipo]);
+
+    const getClientes = async () => {
+        const token = await getAccessTokenSilently();
+        let roles: string[] = [];
+
+        if (tipo === "Usuario") {
+            roles = ["Usuario"];
+        } else {
+            roles = ["Admin, Cajero, Cocinero, Delivery"];
+        }
+        /*
+        const newClientes = await findAllClientesByRoles(roles, token);
+        setClientes(newClientes);*/
+    };
 
     const handleChangeFiltro = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newFiltro = event.target.value;
@@ -40,12 +49,11 @@ function TableUsuario(): JSX.Element {
 
     return (
         <>
-            <Container>
-                <Button onClick={() => setTipo("Usuario")} variant="link">
+            <Container className="text-center">
+                <Button onClick={() => setTipo("Usuario")} variant="dark">
                     Usuarios
                 </Button>
-                |
-                <Button onClick={() => setTipo("Empleado")} variant="link">
+                <Button onClick={() => setTipo("Empleado")} variant="dark">
                     Empleados
                 </Button>
             </Container>

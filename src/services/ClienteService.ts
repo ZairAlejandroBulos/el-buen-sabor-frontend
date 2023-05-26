@@ -1,25 +1,16 @@
-import Cliente from "../types/Cliente";
+import { Cliente } from "../types/Cliente";
 
-export async function findAllClientes() {
-    // Busqueda rol = cliente
+export async function findAllClientesByRoles(roles: string[], token: string) {
 }
 
-export async function findAllEmpleados() {
-   // Busqueda rol = empleado 
+export async function findAllClientesById(id: number, token: string) {
 }
 
-export async function findAllClientesById(id: number) {
-    // Busqueda id = ?. El rol no importa
+export async function saveCliente(entity: Cliente, token: string) {
 }
 
-export async function saveCliente(entity: Cliente) {
-
+export async function updateCliente(id: number, entity: Cliente, token: string) {
 }
 
-export async function updateCliente(id: number, entity: Cliente) {
-    
-}
-
-export async function deleteCliente(id: number) {
-    
+export async function deleteCliente(id: number, token: string) {
 }

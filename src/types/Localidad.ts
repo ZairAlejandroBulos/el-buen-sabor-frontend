@@ -1,4 +1,4 @@
-export default class Localidad {
+export class Localidad {
     id: number = 0;
     nombre: string;   
 }

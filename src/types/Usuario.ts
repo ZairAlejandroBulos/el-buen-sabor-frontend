@@ -1,6 +1,6 @@
-import Rol from "./Rol";
+import { Rol } from "./Rol";
 
-export default class Usuario {
+export class Usuario {
     id: number = 0;
     usuario: string;
     clave: string;

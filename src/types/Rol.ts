@@ -1,4 +1,4 @@
-export default class Rol {
+export class Rol {
     id: number;
     nombre: string;
 }

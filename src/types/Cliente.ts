@@ -1,7 +1,7 @@
-import Domicilio from "./Domicilio";
-import Usuario from "./Usuario";
+import { Usuario } from "./Usuario";
+import { Domicilio } from "./Domicilio";
 
-export default class Cliente {
+export class Cliente {
     id: number = 0;
     nombre: string;
     apellido: string;
