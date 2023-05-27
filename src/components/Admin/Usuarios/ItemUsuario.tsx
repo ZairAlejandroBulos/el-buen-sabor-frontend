@@ -1,7 +1,16 @@
 import { Button } from "react-bootstrap";
 import Cliente from "../../../types/Cliente";
+import ModalRegistro from "./ModalRegistro";
+import { useModal } from "../../../hooks/useModal";
 
 function ItemUsuario(props: Cliente): JSX.Element {
+    const { showModal, handleClose } = useModal();
+
+    /*
+    const handleDelete = (id: number) => {
+
+    };*/
+
     return(
         <>
             <tr>
@@ -26,12 +35,18 @@ function ItemUsuario(props: Cliente): JSX.Element {
                     { props.domicilio.localidad.nombre }
                 </td>
                 <td>
-                    <Button>Modificar</Button>
+                    <Button onClick={() => handleClose()}>Modificar</Button>
                 </td>
                 <td>
                     <Button variant="danger">Eliminar</Button>
                 </td>
             </tr>
+
+            <ModalRegistro
+                showModal={showModal}
+                handleClose={handleClose}
+                cliente={props}
+            />
         </>
     );
 }

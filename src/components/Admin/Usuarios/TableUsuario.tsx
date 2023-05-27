@@ -1,17 +1,20 @@
 import "./TableUsuario.css";
 import { useEffect, useState } from "react";
-import { Button, Container, Form, InputGroup, Table, Tabs, Tab } from "react-bootstrap";
+import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
 
 import ItemUsuario from "./ItemUsuario";
 import Cliente from "../../../types/Cliente";
 
 import { clientes as clientesJson } from "../../../mocks/clientes.json";
 import { empleados as empleadosJson } from "../../../mocks/empleados.json";
+import ModalRegistro from "./ModalRegistro";
+import { useModal } from "../../../hooks/useModal";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
     const [tipo, setTipo] = useState("Usuario");
     const [clientes, setClientes] = useState<Cliente[]>([]);
+    const { showModal, handleClose } = useModal();
 
     useEffect(() => {
         if (tipo === "Usuario") {
@@ -32,11 +35,6 @@ function TableUsuario(): JSX.Element {
         setClientes(newClientes);
         */
     };
-
-    /*
-    const handleDelete = (id: number) => {
-
-    };*/
 
     return (
         <>
@@ -64,7 +62,7 @@ function TableUsuario(): JSX.Element {
                         <i className="bi bi-search"></i>
                     </Button>
                 </InputGroup>
-                <Button variant="success">Nuevo</Button>
+                <Button onClick={handleClose} variant="success">Nuevo</Button>
             </Container>
 
             <Table responsive bordered hover>
@@ -89,6 +87,11 @@ function TableUsuario(): JSX.Element {
                     }
                 </tbody>
             </Table>
+            
+            <ModalRegistro
+                showModal={showModal}
+                handleClose={handleClose}
+            />
         </>
     );
 }
