@@ -1,17 +1,17 @@
 import { URL_API_BASE } from "../constants";
-import Cliente from "../types/Cliente";
+import { Cliente } from "../types/Cliente";
 
-export async function findAllClientes() {
-    // Busqueda rol = cliente
+export async function findAllClientesByRoles(roles: string[], token: string) {
 }
 
 export async function findAllEmpleados() {
     // Busqueda rol = empleado 
 }
 
-export async function findAllClientesById(id: number) {
-    // Busqueda id = ?. El rol no importa
+export async function findAllClientesById(id: number, token: string) {
+
 }
+
 export async function saveCliente(entity: Cliente, token: string): Promise<Cliente> {
     try {
         const response = await fetch(`${URL_API_BASE} / clientes`, {

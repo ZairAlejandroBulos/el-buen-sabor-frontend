@@ -1,9 +1,9 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import Cliente from "../../../types/Cliente";
-import Usuario from "../../../types/Usuario";
-import Domicilio from "../../../types/Domicilio";
-import Localidad from "../../../types/Localidad";
-import Rol from "../../../types/Rol";
+import { Cliente } from "../../../types/Cliente";
+import { Usuario } from "../../../types/Usuario";
+import { Domicilio } from "../../../types/Domicilio";
+import { Localidad } from "../../../types/Localidad";
+import { Rol } from "../../../types/Rol";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 

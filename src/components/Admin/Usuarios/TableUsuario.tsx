@@ -1,14 +1,13 @@
 import "./TableUsuario.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
-
 import ItemUsuario from "./ItemUsuario";
-import Cliente from "../../../types/Cliente";
-
-import { clientes as clientesJson } from "../../../mocks/clientes.json";
-import { empleados as empleadosJson } from "../../../mocks/empleados.json";
 import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
+import { Cliente } from "../../../types/Cliente";
+
+import { clientes as clientesJson } from "../../../mocks/clientes.json"
+import { empleados as empleadosJson } from "../../../mocks/empleados.json"
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
@@ -16,13 +15,25 @@ function TableUsuario(): JSX.Element {
     const [clientes, setClientes] = useState<Cliente[]>([]);
     const { showModal, handleClose } = useModal();
 
+
     useEffect(() => {
+        getClientes();
+    }, [tipo]);
+
+    const getClientes = async () => {
+        let roles: string[] = [];
+
         if (tipo === "Usuario") {
+            roles = ["Usuario"];
             setClientes(clientesJson);
         } else {
+            roles = ["Admin, Cajero, Cocinero, Delivery"];
             setClientes(empleadosJson);
         }
-    }, [tipo]);
+        /*
+        const newClientes = await findAllClientesByRoles(roles, token);
+        setClientes(newClientes);*/
+    };
 
     const handleChangeFiltro = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newFiltro = event.target.value;
@@ -38,12 +49,11 @@ function TableUsuario(): JSX.Element {
 
     return (
         <>
-            <Container>
-                <Button onClick={() => setTipo("Usuario")} variant="link">
+            <Container className="text-center">
+                <Button onClick={() => setTipo("Usuario")} variant="dark">
                     Usuarios
                 </Button>
-                |
-                <Button onClick={() => setTipo("Empleado")} variant="link">
+                <Button onClick={() => setTipo("Empleado")} variant="dark">
                     Empleados
                 </Button>
             </Container>

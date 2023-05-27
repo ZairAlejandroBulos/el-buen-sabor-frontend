@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
-import Cliente from "../../../types/Cliente";
-import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
+import ModalRegistro from "./ModalRegistro";
+import { Cliente } from "../../../types/Cliente";
 
 function ItemUsuario(props: Cliente): JSX.Element {
     const { showModal, handleClose } = useModal();
