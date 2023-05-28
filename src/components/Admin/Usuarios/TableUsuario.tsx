@@ -1,12 +1,13 @@
 import "./TableUsuario.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
+import { useAuth0 } from "@auth0/auth0-react";
+
 import ItemUsuario from "./ItemUsuario";
 import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
 import { Cliente } from "../../../types/Cliente";
-import { findAllClientes } from "../../../services/ClienteService";
-import { useAuth0 } from "@auth0/auth0-react";
+import { findAllClientesByRoles } from "../../../services/ClienteService";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
@@ -15,14 +16,21 @@ function TableUsuario(): JSX.Element {
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
 
-
     useEffect(() => {
-        getClientes();
-    }, []);
+        getClientesByRoles();
+    }, [tipo]);
 
-    const getClientes = async () => {
+    const getClientesByRoles = async () => {
         const token = await getAccessTokenSilently();
-        const newClientes = await findAllClientes(token);
+        let roles: string[] = [];
+
+        if(tipo === "Usuario") {
+            roles = ["Usuario"];
+        } else {
+            roles = ["Admin", "Cocinero", "Delivery", "Cajero"];
+        }
+
+        const newClientes = await findAllClientesByRoles(roles, token);
         setClientes(newClientes);
     }
 

@@ -1,9 +1,9 @@
 import { URL_API_BASE } from "../constants";
 import { Cliente } from "../types/Cliente";
 
-export async function findAllClientes(token: string): Promise<Cliente[]> {
+export async function findAllClientesByRoles(roles: string[], token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/byRol/1`, {
+        const response = await fetch(`${URL_API_BASE}/clientes/byRoles/${roles.join(",")}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
