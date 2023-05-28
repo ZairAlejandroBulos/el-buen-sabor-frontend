@@ -1,15 +1,24 @@
 import { URL_API_BASE } from "../constants";
 import { Cliente } from "../types/Cliente";
 
-export async function findAllClientesByRoles(roles: string[], token: string) {
-}
+export async function findAllClientes(token: string): Promise<Cliente[]> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/clientes/byRol/1`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-export async function findAllEmpleados() {
-    // Busqueda rol = empleado 
-}
-
-export async function findAllClientesById(id: number, token: string) {
-
+        const data = await response.json() as Cliente[];
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
 }
 
 export async function saveCliente(entity: Cliente, token: string): Promise<Cliente> {

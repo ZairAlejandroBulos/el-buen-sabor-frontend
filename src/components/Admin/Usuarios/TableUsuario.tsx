@@ -5,35 +5,26 @@ import ItemUsuario from "./ItemUsuario";
 import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
 import { Cliente } from "../../../types/Cliente";
-
-import { clientes as clientesJson } from "../../../mocks/clientes.json"
-import { empleados as empleadosJson } from "../../../mocks/empleados.json"
+import { findAllClientes } from "../../../services/ClienteService";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
     const [tipo, setTipo] = useState("Usuario");
     const [clientes, setClientes] = useState<Cliente[]>([]);
     const { showModal, handleClose } = useModal();
+    const { getAccessTokenSilently } = useAuth0();
 
 
     useEffect(() => {
         getClientes();
-    }, [tipo]);
+    }, []);
 
     const getClientes = async () => {
-        let roles: string[] = [];
-
-        if (tipo === "Usuario") {
-            roles = ["Usuario"];
-            setClientes(clientesJson);
-        } else {
-            roles = ["Admin, Cajero, Cocinero, Delivery"];
-            setClientes(empleadosJson);
-        }
-        /*
-        const newClientes = await findAllClientesByRoles(roles, token);
-        setClientes(newClientes);*/
-    };
+        const token = await getAccessTokenSilently();
+        const newClientes = await findAllClientes(token);
+        setClientes(newClientes);
+    }
 
     const handleChangeFiltro = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newFiltro = event.target.value;
