@@ -66,6 +66,7 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
                 await updateRubro(values.id, values, token);
             }
             handleClose();
+            window.location.reload();
         }
     };
 

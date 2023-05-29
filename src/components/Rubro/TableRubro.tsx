@@ -16,10 +16,10 @@ function TableRubro(): JSX.Element {
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
-        getRubrosArticulos();
+        getAllRubros();
     }, []);
 
-    const getRubrosArticulos = async () => {
+    const getAllRubros = async () => {
         const token = await getAccessTokenSilently();
         const newRubrosArticulos = await findAllRubro(token);
         setRubrosArticulos(newRubrosArticulos);
@@ -43,11 +43,9 @@ function TableRubro(): JSX.Element {
                     </thead>
                     <tbody>
                         {
-                            rubrosArticulos?.map((item: Rubro) =>
-                                <ItemRubro key={item.id} 
-                                    id={item.id}
-                                    denominacion={item.denominacion}
-                                    rubroPadre={item.rubroPadre}
+                            rubrosArticulos?.map((item: Rubro, index: number) =>
+                                <ItemRubro key={index} 
+                                    {...item}
                                 />
                             )
                         }
