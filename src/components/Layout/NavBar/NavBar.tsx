@@ -11,7 +11,7 @@ import { Navbar, Nav, Container, Form, Button, InputGroup } from "react-bootstra
 
 function NavBar(): JSX.Element {
   const { isAuthenticated } = useAuth0();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,8 +22,9 @@ function NavBar(): JSX.Element {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSearch(event.currentTarget.search.value);
     handleNavigate();
-  }; 
+  };
 
   const handleNavigate = () => {
     navigate(`/productos/${search}`);
@@ -39,27 +40,27 @@ function NavBar(): JSX.Element {
         <Navbar.Toggle aria-controls="navbarScroll" />
 
         <Navbar.Collapse id="navbarScroll">
-          <Form className="d-flex mx-auto">
+          <Form onSubmit={handleSubmit} className="d-flex mx-auto">
             <InputGroup>
               <Form.Control
                 name="search"
-                type="search" 
+                type="text"
                 placeholder="Buscar productos..."
                 onChange={handleChange}
               />
-              <Button variant="btn btn-light">
+              <Button type="submit" variant="btn btn-light">
                 <i className="bi-search"></i>
               </Button>
             </InputGroup>
           </Form>
 
           <Nav navbarScroll className="my-2 my-lg-0">
-            { 
-              isAuthenticated 
-              ? 
-              <UserButton /> 
-              : 
-              <LoginButton /> 
+            {
+              isAuthenticated
+                ?
+                <UserButton />
+                :
+                <LoginButton />
             }
             <Nav.Link href="#">
               <img src={cart3} alt="cart3" width="32px" className="link-cart3" />
