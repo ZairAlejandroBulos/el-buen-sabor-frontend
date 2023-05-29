@@ -7,7 +7,7 @@ import ItemUsuario from "./ItemUsuario";
 import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
 import { Cliente } from "../../../types/Cliente";
-import { findAllClientesByRoles } from "../../../services/ClienteService";
+import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/UsuarioService";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
@@ -24,7 +24,7 @@ function TableUsuario(): JSX.Element {
         const token = await getAccessTokenSilently();
         let roles: string[] = [];
 
-        if(tipo === "Usuario") {
+        if (tipo === "Usuario") {
             roles = ["Usuario"];
         } else {
             roles = ["Admin", "Cocinero", "Delivery", "Cajero"];
@@ -40,10 +40,26 @@ function TableUsuario(): JSX.Element {
     };
 
     const handleFiltro = async () => {
-        /*
-        const newClientes = await findClienteByName(filtro);
-        setClientes(newClientes);
-        */
+        const token = await getAccessTokenSilently();
+
+        if (filtro.trim() !== "") {
+            const filtroArray = filtro.trim().split(" ");
+
+            if (filtroArray.length === 1) {
+                const nombre = filtroArray[0];
+                const newClientes = await findAllClientesByNombre(nombre, token);
+                setClientes(newClientes);
+            } else {
+                const nombre = filtroArray[0];
+                const apellido = filtroArray.slice(1).join(" ");
+                const newClientes = await findAllClientesByNombreAndApellido(nombre, apellido, token);
+                setClientes(newClientes);
+            }
+        } else {
+            getClientesByRoles();
+        }
+
+        setFiltro("");
     };
 
     return (
@@ -61,12 +77,12 @@ function TableUsuario(): JSX.Element {
                 <InputGroup>
                     <Form.Label htmlFor="search" style={{ marginRight: '10px' }}>Nombre</Form.Label>
 
-                    <Form.Control 
+                    <Form.Control
                         id="search"
                         name="search"
-                        type="text"
+                        type="search"
                         onChange={handleChangeFiltro}
-                        />
+                    />
                     <Button onClick={handleFiltro} variant="light">
                         <i className="bi bi-search"></i>
                     </Button>
@@ -96,7 +112,7 @@ function TableUsuario(): JSX.Element {
                     }
                 </tbody>
             </Table>
-            
+
             <ModalRegistro
                 showModal={showModal}
                 handleClose={handleClose}
