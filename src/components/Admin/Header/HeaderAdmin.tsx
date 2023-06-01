@@ -9,7 +9,7 @@ function HeaderAdmin(): JSX.Element {
                 <Nav.Link as={Link} to="/admin/usuarios">Usuarios</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={Link} to="/admin/">Stock</Nav.Link>
+                <Nav.Link as={Link} to="/admin/stock">Stock</Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link as={Link} to="/admin/rubros">Rubros</Nav.Link>

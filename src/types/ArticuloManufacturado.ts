@@ -5,7 +5,7 @@ export class ArticuloManufacturado {
     id: number;
     denominacion: string;
     descripcion: string;
-    timpoEstimadoCocina: Date;
+    tiempoEstimadoCocina: string; // TODO: Manejar tiempoEstimadoCocina como Date
     imagenes: Imagen[];
     articuloManufacturadoPrecioVenta: ArticuloManufacturadoPrecioVenta;
 }
