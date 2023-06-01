@@ -6,6 +6,7 @@ import { Cliente } from "../../../types/Cliente";
 function ItemUsuario(props: Cliente): JSX.Element {
     const { showModal, handleClose } = useModal();
 
+    // TODO: Implementar delete
     /*
     const handleDelete = (id: number) => {
 
@@ -35,10 +36,15 @@ function ItemUsuario(props: Cliente): JSX.Element {
                     { props.domicilio.localidad.nombre }
                 </td>
                 <td>
-                    <Button onClick={() => handleClose()}>Modificar</Button>
+                    <Button onClick={() => handleClose()} variant="warning">
+                        Modificar
+                    </Button>
                 </td>
                 <td>
-                    <Button variant="danger">Eliminar</Button>
+                    {/* TODO: Implementar delete */}
+                    <Button variant="danger">
+                        Eliminar
+                    </Button>
                 </td>
             </tr>
 

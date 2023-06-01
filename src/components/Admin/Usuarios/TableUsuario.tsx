@@ -64,7 +64,7 @@ function TableUsuario(): JSX.Element {
 
     return (
         <>
-            <Container className="text-center">
+            <Container className="text-center mt-3">
                 <Button onClick={() => setTipo("Usuario")} variant="dark">
                     Usuarios
                 </Button>
@@ -90,28 +90,30 @@ function TableUsuario(): JSX.Element {
                 <Button onClick={handleClose} variant="success">Nuevo</Button>
             </Container>
 
-            <Table responsive bordered hover>
-                <thead className="thead-cliente">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Dirección</th>
-                        <th>Departamento</th>
-                        <th colSpan={2}>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        clientes.map((item: Cliente, index: number) =>
-                            <ItemUsuario key={index}
-                                {...item}
-                            />
-                        )
-                    }
-                </tbody>
-            </Table>
+            <Container>
+                <Table responsive bordered hover>
+                    <thead className="thead-cliente">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Dirección</th>
+                            <th>Departamento</th>
+                            <th colSpan={2}>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            clientes.map((item: Cliente, index: number) =>
+                                <ItemUsuario key={index}
+                                    {...item}
+                                />
+                            )
+                        }
+                    </tbody>
+                </Table>
+            </Container>
 
             <ModalRegistro
                 showModal={showModal}
