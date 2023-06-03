@@ -4,7 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
-import { findAllParents, findRubroById, saveRubro, updateRubro } from "../../services/RubroService";
+import { findAllParents, saveRubro, updateRubro } from "../../services/RubroService";
 
 type Props = {
     showModal: boolean,
@@ -12,15 +12,30 @@ type Props = {
     rubro?: Rubro
 }
 
-function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
-    const [values, setValues] = useState<Rubro>(new Rubro());
+function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
+    const [values, setValues] = useState<Rubro>({
+        id: 0,
+        denominacion: ""
+    });
+
     const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         if (rubro) {
-            setValues(rubro);
+            if (rubro.rubroPadreId === null) {
+                setValues({
+                    id: rubro.id,
+                    denominacion: rubro.denominacion
+                });
+            } else {
+                setValues({
+                    id: rubro.id,
+                    denominacion: rubro.denominacion,
+                    rubroPadreId: rubro.rubroPadreId
+                });
+            }
         }
         getRubrosPadres();
     }, []);
@@ -28,11 +43,13 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
     const getRubrosPadres = async () => {
         const token = await getAccessTokenSilently();
         const newRubrosPadres: Rubro[] = await findAllParents(token);
+
         setRubrosPadres(newRubrosPadres);
     };
 
     const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDenominacion = event.target.value;
+
         setValues((prevState) => ({
             ...prevState,
             denominacion: newDenominacion
@@ -40,20 +57,20 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
     };
 
     const handleChangeRubroPadre = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedId = parseInt(event.currentTarget.value);
-        getRubroById(selectedId);
-    };
+        const rubroPadreId = Number(event.currentTarget.value);
 
-    const getRubroById = async (id: number) => {
-        if (id) {
-            const token = await getAccessTokenSilently();
-            let newRubroPadre: Rubro = await findRubroById(id, token);
+        if (rubroPadreId === -1) {
             setValues((prevState) => ({
                 ...prevState,
-                rubroPadre: newRubroPadre
+                rubroPadreId: NaN,
+            }));
+        } else {
+            setValues((prevState) => ({
+                ...prevState,
+                rubroPadreId: rubroPadreId,
             }));
         }
-    }; 
+    };
 
     const handleSubmit = async () => {
         if (!values.denominacion) {
@@ -70,11 +87,11 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
         }
     };
 
-    return(
+    return (
         <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
-                { rubro
-                    ? 
+                {rubro
+                    ?
                     <Modal.Title className="text-center">Editar Rubro</Modal.Title>
                     :
                     <Modal.Title className="text-center">Nuevo Rubro</Modal.Title>
@@ -95,20 +112,19 @@ function ModalRubro({ showModal, handleClose, rubro}: Props): JSX.Element {
                         />
                     </Form.Group>
 
-                    {/*TODO: Si es update, seleccionar automaticamente el rubroPadre */}
                     <Form.Group className="mb-3">
                         <Form.Label>Rubro Artículo Padre</Form.Label>
-                        <Form.Select id="rubroPadre" onChange={handleChangeRubroPadre}>
-                            <option>--Seleccione--</option>
+                        <Form.Select id="rubroPadre" value={values?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
+                            <option value="-1">--Seleccione--</option>
                             {
                                 rubrosPadres.map((item: Rubro, index: number) =>
                                     <option value={item.id} key={index}>
-                                        { item.denominacion }
+                                        {item.denominacion}
                                     </option>
                                 )
                             }
                         </Form.Select>
-                    </Form.Group> 
+                    </Form.Group>
                 </Form>
                 <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
                     <Alert.Heading>Error!</Alert.Heading>

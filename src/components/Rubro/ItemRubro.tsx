@@ -7,16 +7,16 @@ import { useModal } from "../../hooks/useModal";
 function ItemRubro(props: Rubro): JSX.Element {
     const { showModal, handleClose } = useModal();
 
-    return(
+    return (
         <>
             <tr>
                 <td>
-                    { props.denominacion }
+                    {props.denominacion}
                 </td>
 
                 <td>
                     {/* TODO: Mostrar rubroPadre */}
-                    { props.rubroPadre?.denominacion || "-" }
+                    {props.rubroPadre?.denominacion || "-"}
                 </td>
 
                 <td>
@@ -26,7 +26,7 @@ function ItemRubro(props: Rubro): JSX.Element {
                 </td>
             </tr>
 
-            <ModalRubro 
+            <ModalRubro
                 showModal={showModal}
                 handleClose={handleClose}
                 rubro={props}

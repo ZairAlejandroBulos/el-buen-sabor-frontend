@@ -15,6 +15,7 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
         }
 
         const data = await response.json() as Rubro[];
+        console.log(data);
         return data;
     } catch (error) {
         console.log(error);

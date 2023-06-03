@@ -1,17 +1,17 @@
 import "./Rubro.css";
 import React, { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Table } from "react-bootstrap";
+import { useAuth0 } from "@auth0/auth0-react";
 
-import ModalRubro from "./ModalRubro";
-import { Rubro } from "../../types/Rubro";
 import ItemRubro from "./ItemRubro";
-import { useModal } from "../../hooks/useModal";
+import ModalRubro from "./ModalRubro";
 
-import { findAllRubro } from "../../services/RubroService";
+import { Rubro } from "../../types/Rubro";
+import { useModal } from "../../hooks/useModal";
+import { findAllRubro, findRubroById } from "../../services/RubroService";
 
 function TableRubro(): JSX.Element {
-    const [rubrosArticulos, setRubrosArticulos] = useState<Rubro[]>([]);
+    const [rubros, setRubros] = useState<Rubro[]>([]);
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
 
@@ -21,11 +21,26 @@ function TableRubro(): JSX.Element {
 
     const getAllRubros = async () => {
         const token = await getAccessTokenSilently();
-        const newRubrosArticulos = await findAllRubro(token);
-        setRubrosArticulos(newRubrosArticulos);
+        const newRubros = await findAllRubro(token);
+
+        for (const item of newRubros) {
+            if (item.rubroPadreId) {
+                const rubroPadre = await getRubroPadreById(item.rubroPadreId);
+                item.rubroPadre = rubroPadre;
+            }
+        }
+
+        setRubros(newRubros);
     };
 
-    return(
+    const getRubroPadreById = async (id: number) => {
+        const token = await getAccessTokenSilently();
+        const newRubro = await findRubroById(id, token);
+
+        return newRubro;
+    };
+
+    return (
         <>
             <Container className="container-header">
                 <h1>Rubro</h1>
@@ -43,8 +58,8 @@ function TableRubro(): JSX.Element {
                     </thead>
                     <tbody>
                         {
-                            rubrosArticulos?.map((item: Rubro, index: number) =>
-                                <ItemRubro key={index} 
+                            rubros?.map((item: Rubro, index: number) =>
+                                <ItemRubro key={index}
                                     {...item}
                                 />
                             )
@@ -53,10 +68,11 @@ function TableRubro(): JSX.Element {
                 </Table>
             </Container>
 
-            <ModalRubro 
+            <ModalRubro
                 showModal={showModal}
                 handleClose={handleClose}
             />
+
         </>
     );
 }

@@ -1,6 +1,6 @@
-export class Rubro {
-    id: number = 0;
+export interface Rubro {
+    id: number;
     denominacion: string;
-    rubroPadre?: Rubro | null;
-    subRubros?: Rubro[];
+    rubroPadreId?: number;
+    rubroPadre?: Rubro;
 }
