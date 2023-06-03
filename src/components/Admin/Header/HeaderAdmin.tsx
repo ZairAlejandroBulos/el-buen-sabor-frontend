@@ -1,6 +1,6 @@
 import "./HeaderAdmin.css";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
+import { Nav, NavDropdown } from 'react-bootstrap';
 
 function HeaderAdmin(): JSX.Element {
     return (
@@ -9,16 +9,23 @@ function HeaderAdmin(): JSX.Element {
                 <Nav.Link as={Link} to="/admin/usuarios">Usuarios</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={Link} to="/admin/stock">Stock</Nav.Link>
+                <NavDropdown title="Stock" id="stock-dropdown">
+                    <Nav.Link as={Link} to="/admin/">Articulo Insumo</Nav.Link>
+                    <Nav.Link as={Link} to="/admin/">Artículo Manufacutrado</Nav.Link>
+                </NavDropdown>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link as={Link} to="/admin/rubros">Rubros</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={Link} to="/admin/">Facturación</Nav.Link>
+                <NavDropdown title="Estadísticas" id="estadisticas-dropdown">
+                    <Nav.Link as={Link} to="/admin/">Clientes</Nav.Link>
+                    <Nav.Link as={Link} to="/admin/">Productos</Nav.Link>
+                    <Nav.Link as={Link} to="/admin/">Monetarios</Nav.Link>
+                </NavDropdown>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={Link} to="/admin/">Estadísticas</Nav.Link>
+                <Nav.Link as={Link} to="/admin/">Facturación</Nav.Link>
             </Nav.Item>
         </Nav>
     );
