@@ -1,4 +1,4 @@
-export class Localidad {
-    id: number = 0;
+export interface Localidad {
+    id: number;
     nombre: string;   
 }

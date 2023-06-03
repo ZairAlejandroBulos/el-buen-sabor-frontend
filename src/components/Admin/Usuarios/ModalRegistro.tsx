@@ -1,11 +1,12 @@
+import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Form, Modal } from "react-bootstrap";
 import { ChangeEvent, useEffect, useState } from "react";
+
+import { Rol } from "../../../types/Rol";
 import { Cliente } from "../../../types/Cliente";
 import { Usuario } from "../../../types/Usuario";
 import { Domicilio } from "../../../types/Domicilio";
 import { Localidad } from "../../../types/Localidad";
-import { Rol } from "../../../types/Rol";
-import { Button, Form, Modal } from "react-bootstrap";
-import { useAuth0 } from "@auth0/auth0-react";
 
 type Props = {
     showModal: boolean,
@@ -14,11 +15,35 @@ type Props = {
 }
 
 function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element {
-    const [valuesCliente, setValuesCliente] = useState<Cliente>(new Cliente());
-    const [valuesUsuario, setValuesUsuario] = useState<Usuario>(new Usuario());
-    const [valuesDomicilio, setValuesDomicilio] = useState<Domicilio>(new Domicilio());
-    const [valuesLocalidad, setValuesLocalidad] = useState<Localidad>(new Localidad());
-    const [valuesRol, setValuesRol] = useState<Rol>(new Rol());
+    const [valuesRol, setValuesRol] = useState<Rol>({
+        "id": 0,
+        "nombre": "",
+        "auth0RolId": ""
+    });
+    const [valuesUsuario, setValuesUsuario] = useState<Usuario>({
+        "id": 0,
+        "auth0Id": "",
+        "usuario": "",
+        "rol": valuesRol
+    });
+    const [valuesLocalidad, setValuesLocalidad] = useState<Localidad>({
+        "id": 0,
+        "nombre": ""
+    });
+    const [valuesDomicilio, setValuesDomicilio] = useState<Domicilio>({
+        "id": 0,
+        "calle": "",
+        "numero": 0,
+        "localidad": valuesLocalidad
+    });
+    const [valuesCliente, setValuesCliente] = useState<Cliente>({
+        "id": 0,
+        "nombre": "",
+        "apellido": "",
+        "telefono": 0,
+        "usuario": valuesUsuario,
+        "domicilio": valuesDomicilio
+    });
     const [validated, setValidated] = useState(false);
     const { getAccessTokenSilently } = useAuth0();
 
@@ -32,13 +57,14 @@ function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element 
         }
     }, [cliente]);
 
+    /*
     const resetValues = () => {
-        setValuesCliente(new Cliente());
-        setValuesUsuario(new Usuario());
-        setValuesDomicilio(new Domicilio());
-        setValuesLocalidad(new Localidad());
-        setValuesRol(new Rol());
-    };
+        setValuesCliente({});
+        setValuesUsuario({});
+        setValuesDomicilio({});
+        setValuesLocalidad({});
+        setValuesRol({});
+    };*/
 
     const handleChangeNombre = (event: ChangeEvent<HTMLInputElement>) => {
         const newNombre = event.target.value;
@@ -131,7 +157,6 @@ function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element 
 
     const handleChangeConfirmarContrasenia = (event: ChangeEvent<HTMLInputElement>) => {
         const newConfirmarContrasenia = event.target.value;
-
     };
 
     const handleChangeRol = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -157,14 +182,13 @@ function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element 
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             setValidated(true);
-            
         } else {
             const token = await getAccessTokenSilently();
 
             if (valuesCliente.id === 0) {
                 // TODO: Peticion crear nuevo cliente
                 // await saveCliente(valuesCliente, token);
-                resetValues();
+                // resetValues();
             } else {
                 // TODO: Peticion actualizar cliente
                 // await updateCliente(valuesCliente.id, valuesCliente, token);
@@ -286,7 +310,7 @@ function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element 
                             name="clave"
                             placeholder="Ingrese contra"
                             minLength={8}
-                            value={valuesUsuario?.clave || ""}
+                            //value={valuesUsuario?.clave || ""}
                             onChange={handleChangeContrasenia}
                         />
                         <Form.Control.Feedback type="invalid">La contraseña debe contener al menos 8 caracteres</Form.Control.Feedback>
@@ -300,11 +324,12 @@ function ModalRegistro({ showModal, handleClose, cliente }: Props): JSX.Element 
                             id="confirmarClave"
                             name="confirmarClave"
                             placeholder="Ingrese contra"
-                            value={valuesUsuario?.clave || ""}
+                            //value={valuesUsuario?.clave || ""}
                             onChange={handleChangeConfirmarContrasenia}
                         />
                     </Form.Group>
 
+                    {/* TODO: Implementar Rol petición al backend */}
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="confirmarClave">Rol</Form.Label>
                         <Form.Select onChange={handleChangeRol}>
