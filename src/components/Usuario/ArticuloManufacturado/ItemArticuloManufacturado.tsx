@@ -4,9 +4,9 @@ import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado"
 
 export const ItemArticuloManufacturado = (props: ArticuloManufacturado) => {
     return (
-        <Card style={{ width: '18rem' }} className="margenesTarjeta">
+        <Card style={{ width: '18rem' }}>
             <Link to={`/detalle/${props.id}`}>
-                <Card.Img variant="top" className="maxAltoImg" src={"http://localhost:5173/images/hamburguesa.jpg"} />
+                <Card.Img src={props.imagen.imagenUrl} alt={props.denominacion} className="maxAltoImg" variant="top" />
             </Link>
             <Card.Body>
                 <Card.Title>{props.denominacion}</Card.Title>

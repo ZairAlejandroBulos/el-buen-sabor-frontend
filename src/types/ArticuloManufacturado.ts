@@ -6,6 +6,6 @@ export interface ArticuloManufacturado {
     denominacion: string;
     descripcion: string;
     tiempoEstimadoCocina: string; // TODO: Manejar tiempoEstimadoCocina como Date
-    imagenes: Imagen[];
+    imagen: Imagen;
     articuloManufacturadoPrecioVenta: ArticuloManufacturadoPrecioVenta;
 }

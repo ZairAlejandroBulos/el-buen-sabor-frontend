@@ -43,14 +43,14 @@ export const DetalleArticuloManufacturado = () => {
         setArticuloManufacturado(newArticuloManufacturado);
         setArticulosManufacturadosInsumos(newArticulosManufacturadosInsumos);
         setArticulosInsumos(articulosInsumosArray);
-    }
+    };
 
     return (
         <Container className='container-detalle'>
             <Row>
                 <Col>
                     <img
-                        src={`http://localhost:5173/images/hamburguesa.jpg`}
+                        src={articuloManufacturado?.imagen.imagenUrl}
                         alt={articuloManufacturado?.denominacion}
                         className="mx-auto d-block img-detalle"
                     />
@@ -65,7 +65,9 @@ export const DetalleArticuloManufacturado = () => {
 
                         <Col>
                             <h2>
-                                <strong> ${articuloManufacturado?.articuloManufacturadoPrecioVenta.precioVenta} </strong>
+                                <strong>
+                                    ${articuloManufacturado?.articuloManufacturadoPrecioVenta.precioVenta} 
+                                </strong>
                             </h2>
                         </Col>
                     </Row>
