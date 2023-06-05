@@ -1,7 +1,7 @@
 import { ArticuloManufacturadoPrecioVenta } from "./ArticuloManufacturadoPrecioVenta";
 import { Imagen } from "./Imagen";
 
-export class ArticuloManufacturado {
+export interface ArticuloManufacturado {
     id: number;
     denominacion: string;
     descripcion: string;

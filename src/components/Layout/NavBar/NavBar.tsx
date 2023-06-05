@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import UserButton from "../../Auth0/UserButton";
@@ -11,8 +11,12 @@ import { Navbar, Nav, Container, Form, Button, InputGroup } from "react-bootstra
 
 function NavBar(): JSX.Element {
   const { isAuthenticated } = useAuth0();
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>("all");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    handleNavigate();
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearch = event.target.value;
@@ -20,9 +24,13 @@ function NavBar(): JSX.Element {
     setTimeout(handleNavigate, 1000);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSearch(event.currentTarget.search.value);
+
+    if (event.currentTarget.search.value) {
+      setSearch(event.currentTarget.search.value);
+    }
+
     handleNavigate();
   };
 
@@ -40,7 +48,7 @@ function NavBar(): JSX.Element {
         <Navbar.Toggle aria-controls="navbarScroll" />
 
         <Navbar.Collapse id="navbarScroll">
-          <Form onSubmit={handleSubmit} className="d-flex mx-auto">
+          <Form onSubmit={handleSearch} className="d-flex mx-auto">
             <InputGroup>
               <Form.Control
                 name="search"

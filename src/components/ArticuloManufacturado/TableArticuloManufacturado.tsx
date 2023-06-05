@@ -21,7 +21,7 @@ function TableArticuloManufacturado(): JSX.Element {
         setArticulosManufacturados(newArticulosManufactuados);
     };
 
-    return(
+    return (
         <>
             <Container className="d-flex mt-3">
                 <h1>Articulos Manufacturados</h1>

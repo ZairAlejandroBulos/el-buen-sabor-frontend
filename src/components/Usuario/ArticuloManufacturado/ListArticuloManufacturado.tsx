@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Container, Row } from "react-bootstrap";
+
 import Home from "../../Layout/Home/Home";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
 import { ItemArticuloManufacturado } from "./ItemArticuloManufacturado";
 import { useArticulosManufacturados } from "../../../hooks/useArticulosManufacturados";
 
 export function ListArticuloManufacturado() {
-    const { termino } = useParams();
+    const { termino } = useParams<string>();
     const { articulosManufacturados } = useArticulosManufacturados(termino);
 
     return (
@@ -26,7 +27,9 @@ export function ListArticuloManufacturado() {
                                 )
                             )
                             : (
-                                <p>No se encontraron productos para la búsqueda "{termino}"</p>
+                                <p>
+                                    No se encontraron productos para la búsqueda "{termino}"
+                                </p>
                             )}
                 </Row>
             </Container>

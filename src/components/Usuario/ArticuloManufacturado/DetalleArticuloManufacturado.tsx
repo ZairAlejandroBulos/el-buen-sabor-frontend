@@ -1,31 +1,49 @@
-/*
-//TODO: Mostrar Ingredientes del Producto
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
-import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
+
 import "./ArticuloManufacturado.css";
 import { ArticuloInsumo } from "../../../types/ArticuloInsumo";
+import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
+import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturadoInsumo";
+import { findArticuloInsumoById } from "../../../services/ArticuloInsumoService";
+import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
+import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
 
 export const DetalleArticuloManufacturado = () => {
     const { id } = useParams();
     const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>();
+    const [articulosInsumos, setArticulosInsumos] = useState<ArticuloInsumo[]>([]);
+    const [articulosManufacturadosInsumos, setArticulosManufacturadosInsumos] = useState<ArticuloManufacturadoInsumo[]>([]);
     const { getAccessTokenSilently } = useAuth0();
-    const [ingredientes, setIngredientes] = useState<ArticuloInsumo[]>([]);
 
     useEffect(() => {
-        getArticuloManufacturadoById();
+        getArticuloManufacturado();
     }, []);
 
-    const getArticuloManufacturadoById = async () => {
+    const getArticuloManufacturado = async () => {
         const token = await getAccessTokenSilently();
-        const newArticuloManufacturado = await findArticuloManufacturadoById(Number(id), token);
-        setArticuloManufacturado(newArticuloManufacturado);
-        setIngredientes(newArticuloManufacturado.articulosInsumo);
-    }
 
+        // Articulo Manufacturado
+        const newArticuloManufacturado = await findArticuloManufacturadoById(Number(id), token);
+
+        // Articulo Manufacturado Insumo
+        const newArticulosManufacturadosInsumos = await findByArticuloManufacturado(newArticuloManufacturado.id, token);
+
+        // Articulo Insumo
+        let articulosInsumosArray = [];
+        for (const item of newArticulosManufacturadosInsumos) {
+            const id = item.articuloInsumoId;
+            const newArticuloInsumo = await findArticuloInsumoById(id, token);
+
+            articulosInsumosArray.push(newArticuloInsumo);
+        };
+
+        setArticuloManufacturado(newArticuloManufacturado);
+        setArticulosManufacturadosInsumos(newArticulosManufacturadosInsumos);
+        setArticulosInsumos(articulosInsumosArray);
+    }
 
     return (
         <Container className='container-detalle'>
@@ -40,22 +58,40 @@ export const DetalleArticuloManufacturado = () => {
                 <Col>
                     <Row>
                         <Col>
-                            <h1>{articuloManufacturado?.denominacion}</h1>
+                            <h1>
+                                {articuloManufacturado?.denominacion}
+                            </h1>
                         </Col>
+
                         <Col>
+                            <h2>
+                                <strong> ${articuloManufacturado?.articuloManufacturadoPrecioVenta.precioVenta} </strong>
+                            </h2>
                         </Col>
                     </Row>
                     <Row>
-                        <h3>Ingredientes</h3>
-                        <ul className='lista-ingrediente'>
-                            {ingredientes.map((item: ArticuloInsumo, index: number) => (
-                                <li key={index}>{item.denominacion}</li>
-                            ))}
-                        </ul>
+                        <h3>
+                            {articuloManufacturado?.descripcion}
+                        </h3>
+                    </Row>
+                    <Row>
+                        {
+                            articulosInsumos.length !== 0 &&
+                            <>
+                                <h4>Ingredientes</h4>
+                                <ul className='lista-ingrediente'>
+                                    {
+                                        articulosInsumos?.map((item: ArticuloInsumo, index: number) =>
+                                            <li key={index}>{item.denominacion}</li>
+                                        )
+                                    }
+                                </ul>
+                            </>
+                        }
                     </Row>
                     <Row>
                         <Col>
-                            <Link to={`/`}>
+                            <Link to={`/productos/all`}>
                                 <Button variant='success'>
                                     Seguir Comprando
                                 </Button>
@@ -71,4 +107,4 @@ export const DetalleArticuloManufacturado = () => {
             </Row>
         </Container>
     )
-}*/
+}

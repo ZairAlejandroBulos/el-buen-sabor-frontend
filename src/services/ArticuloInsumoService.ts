@@ -1,9 +1,9 @@
 import { URL_API_BASE } from "../constants";
-import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
+import { ArticuloInsumo } from "../types/ArticuloInsumo";
 
-export async function findAllArticuloManufacturados(token: string) {
+export async function findAllArticuloInsumo(token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -14,7 +14,7 @@ export async function findAllArticuloManufacturados(token: string) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json() as ArticuloManufacturado[];
+        const data = await response.json() as ArticuloInsumo[];
         return data;
     } catch (error) {
         console.log(error);
@@ -22,9 +22,9 @@ export async function findAllArticuloManufacturados(token: string) {
     }
 }
 
-export async function findAllArticuloManufacturadosByTermino(termino: string, token: string) {
+export async function findBebidas(token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/byTermino/${termino}`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/bebidas`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json() as ArticuloManufacturado[];
+        const data = await response.json() as ArticuloInsumo[];
         return data;
     } catch (error) {
         console.log(error);
@@ -43,9 +43,10 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
     }
 }
 
-export async function findArticuloManufacturadoById(id: number, token: string) {
+
+export async function findArticuloInsumoById(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -55,7 +56,7 @@ export async function findArticuloManufacturadoById(id: number, token: string) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json() as ArticuloManufacturado;
+        const data = await response.json() as ArticuloInsumo;
         return data;
     } catch (error) {
         console.log(error);
@@ -63,9 +64,9 @@ export async function findArticuloManufacturadoById(id: number, token: string) {
     }
 }
 
-export async function saveArticuloManufacturado(articuloManufacturado: ArticuloManufacturado, token: string) {
+export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -74,7 +75,10 @@ export async function saveArticuloManufacturado(articuloManufacturado: ArticuloM
             body: JSON.stringify(articuloManufacturado),
         });
 
-        if (!response.ok) {
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloInsumo;
+            return data;
+        } else {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
     } catch (error) {
@@ -83,18 +87,21 @@ export async function saveArticuloManufacturado(articuloManufacturado: ArticuloM
     }
 }
 
-export async function updateArticuloManufacturado(id: number, articuloManufacturado: ArticuloManufacturado, token: string) {
+export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloInsumo, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(articuloManufacturado),
+            body: JSON.stringify(articuloInsumo),
         });
 
-        if (!response.ok) {
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloInsumo;
+            return data;
+        } else {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
     } catch (error) {
@@ -103,9 +110,9 @@ export async function updateArticuloManufacturado(id: number, articuloManufactur
     }
 }
 
-export async function deleteArticuloManufacturado(id: number, token: string) {
+export async function deleteArticuloInsumo(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
             method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${token}`,
