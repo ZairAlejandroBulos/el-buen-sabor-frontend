@@ -7,9 +7,14 @@ import { ItemArticuloManufacturado } from "./ItemArticuloManufacturado";
 import { useArticulosManufacturados } from "../../../hooks/useArticulosManufacturados";
 
 export function ListArticuloManufacturado() {
+    // Obtener el parámetro de la URL
     const { termino } = useParams<string>();
+    // Obtener los artículos manufacturados mediante el hook personalizado
     const { articulosManufacturados } = useArticulosManufacturados(termino);
 
+    // Renderizar la lista de artículos manufacturados
+    // Si hay artículos manufacturados, mostrarlos
+    // Si no hay artículos manufacturados, mostrar un mensaje de búsqueda vacía
     return (
         <>
             <Home />

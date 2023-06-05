@@ -1,5 +1,6 @@
 import { URL_API_BASE } from "../constants";
 
+// Función para buscar una imagen por su nombre
 export async function findImagenByName(nombre: string, token: string) {
     if (!nombre) return;
 
@@ -25,6 +26,7 @@ export async function findImagenByName(nombre: string, token: string) {
     }
 }
 
+// Función para guardar una imagen
 export async function saveImagen(file: File, nombre: string, token: string) {
     const formData = new FormData();
     formData.append("file", file);

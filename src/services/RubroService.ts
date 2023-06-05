@@ -1,6 +1,8 @@
 import { URL_API_BASE } from "../constants";
 import { Rubro } from "../types/Rubro";
 
+
+// Función para obtener todos los rubros
 export async function findAllRubro(token: string): Promise<Rubro[]> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros`, {
@@ -23,6 +25,7 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
     }
 }
 
+// Función para obtener todos los rubros padres
 export async function findAllParents(token: string): Promise<Rubro[]> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/parents`, {
@@ -43,6 +46,7 @@ export async function findAllParents(token: string): Promise<Rubro[]> {
     }
 }
 
+// Función para obtener un rubro por su ID
 export async function findRubroById(id: number, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
@@ -63,6 +67,7 @@ export async function findRubroById(id: number, token: string): Promise<Rubro> {
     }
 }
 
+// Función para guardar un nuevo rubro
 export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros`, {
@@ -87,6 +92,7 @@ export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
     }
 }
 
+// Función para actualizar un rubro existente
 export async function updateRubro(id: number, entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {

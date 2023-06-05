@@ -4,6 +4,7 @@ import HeaderCocinero from "../components/Cocinero/Header/HeaderCocinero";
 import TableRubro from "../components/Rubro/TableRubro";
 import TableArticuloManufacturado from "../components/ArticuloManufacturado/TableArticuloManufacturado";
 
+// Componente para el enrutamiento del cocinero
 function CocineroRouter(): JSX.Element {
     return(
         <>

@@ -5,6 +5,7 @@ import TableUsuario from "../components/Admin/Usuarios/TableUsuario";
 import TableRubro from "../components/Rubro/TableRubro";
 import TableArticuloManufacturado from "../components/ArticuloManufacturado/TableArticuloManufacturado";
 
+// Componente para el enrutamiento del administrador
 function AdminRouter(): JSX.Element {
     return(
         <>

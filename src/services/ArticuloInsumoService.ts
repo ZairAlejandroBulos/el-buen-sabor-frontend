@@ -1,6 +1,7 @@
 import { URL_API_BASE } from "../constants";
 import { ArticuloInsumo } from "../types/ArticuloInsumo";
 
+// Obtener todos los artículos de insumo
 export async function findAllArticuloInsumo(token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
@@ -22,6 +23,7 @@ export async function findAllArticuloInsumo(token: string) {
     }
 }
 
+// Obtener todas las bebidas
 export async function findBebidas(token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/bebidas`, {
@@ -43,7 +45,7 @@ export async function findBebidas(token: string) {
     }
 }
 
-
+// Obtener un artículo de insumo por su ID
 export async function findArticuloInsumoById(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
@@ -64,6 +66,7 @@ export async function findArticuloInsumoById(id: number, token: string) {
     }
 }
 
+// Guardar un nuevo artículo de insumo
 export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
@@ -87,6 +90,7 @@ export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, 
     }
 }
 
+// Actualizar un artículo de insumo existente
 export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloInsumo, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
@@ -110,6 +114,8 @@ export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloI
     }
 }
 
+
+// Eliminar un artículo de insumo por su ID
 export async function deleteArticuloInsumo(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
