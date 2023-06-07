@@ -1,8 +1,12 @@
 import { URL_API_BASE } from "../constants";
 import { Rubro } from "../types/Rubro";
 
-
-// Función para obtener todos los rubros
+/**
+ * Obtiene todos los Rubros.
+ * 
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en una lista de Rubros.
+ */
 export async function findAllRubro(token: string): Promise<Rubro[]> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros`, {
@@ -17,7 +21,6 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
         }
 
         const data = await response.json() as Rubro[];
-        console.log(data);
         return data;
     } catch (error) {
         console.log(error);
@@ -25,7 +28,12 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
     }
 }
 
-// Función para obtener todos los rubros padres
+/**
+ * Obtiene todos los Rubros padres.
+ * 
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en una lista de Rubros.
+ */
 export async function findAllParents(token: string): Promise<Rubro[]> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/parents`, {
@@ -46,7 +54,13 @@ export async function findAllParents(token: string): Promise<Rubro[]> {
     }
 }
 
-// Función para obtener un rubro por su ID
+/**
+ * Obtiene un Rubro por su ID.
+ * 
+ * @param id ID del Rubro a buscar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en un Rubro.
+ */
 export async function findRubroById(id: number, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
@@ -67,7 +81,13 @@ export async function findRubroById(id: number, token: string): Promise<Rubro> {
     }
 }
 
-// Función para guardar un nuevo rubro
+/**
+ * Guarda un nuevo Rubro.
+ * 
+ * @param entity Rubro a guardar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Rubro guardado.
+ */
 export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros`, {
@@ -92,15 +112,22 @@ export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
     }
 }
 
-// Función para actualizar un rubro existente
+/**
+ * Actualiza un Rubro existente por su ID.
+ * 
+ * @param id ID del Rubro a actualizar.
+ * @param entity Rubro con los datos actualizados.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Rubro actualizado.
+ */
 export async function updateRubro(id: number, entity: Rubro, token: string): Promise<Rubro> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
             method: "PUT",
             body: JSON.stringify(entity),
             headers: {
-                "Content-Type": 'application/json',
                 Authorization: `Bearer ${token}`,
+                "Content-Type": 'application/json',
             }
         });
 

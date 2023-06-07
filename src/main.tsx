@@ -15,7 +15,6 @@ const initialAuthState = {
   idToken: storedAuthState.idToken || "",
 };
 
-// Renderizar la aplicación en el elemento con el id 'root'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <AuthProvider initialState={initialAuthState}>

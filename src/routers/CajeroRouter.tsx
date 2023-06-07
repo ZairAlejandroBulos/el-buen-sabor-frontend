@@ -1,7 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import NavBarEmpleado from "../components/Layout/NavBar/NavBarEmpleado";
 
-// Componente para el enrutamiento del cajero
+/**
+ * Componente de enrutamiento para la sección de Cajero.
+ * @returns Un elemento JSX que representa el enrutamiento de la sección de Cajero.
+ */
 function CajeroRouter(): JSX.Element {
     return(
         <>

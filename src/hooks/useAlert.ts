@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-export function useAlert() {
-    // Estado para controlar la visibilidad de la alerta
+/**
+ * Hook personalizado para manejar el estado de una alerta en validaciones.
+ * @returns Un objeto con el estado de la alerta y una función para invertir el estado.
+ */
+export const useAlert = () => {
     const [ showAlert, setAlert ] = useState(false);
 
-    // Función para alternar la visibilidad de la alerta
     const handleAlert = () => {
         setAlert(!showAlert);
     };
 
-    // Devolver el estado de la alerta y la función para controlarla
     return { showAlert, handleAlert };
 }

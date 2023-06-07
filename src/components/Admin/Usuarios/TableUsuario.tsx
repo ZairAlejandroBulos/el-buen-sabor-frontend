@@ -7,7 +7,7 @@ import ItemUsuario from "./ItemUsuario";
 import ModalRegistro from "./ModalRegistro";
 import { useModal } from "../../../hooks/useModal";
 import { Cliente } from "../../../types/Cliente";
-import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/UsuarioService";
+import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/ClienteService";
 
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
