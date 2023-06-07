@@ -7,6 +7,11 @@ import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
 import { findAllArticuloManufacturados } from "../../services/ArticuloManufacturadoService";
 
+/**
+ * Componente que muestra una tabla de Artículos Manufacturados.
+ * Vista de Admin/Cocinero.
+ * @returns 
+ */
 function TableArticuloManufacturado(): JSX.Element {
     const [articulosManufactuados, setArticulosManufacturados] = useState<ArticuloManufacturado[]>([]);
     const { getAccessTokenSilently } = useAuth0();

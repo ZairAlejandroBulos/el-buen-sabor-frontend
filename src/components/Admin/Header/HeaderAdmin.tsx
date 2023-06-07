@@ -2,6 +2,11 @@ import "./HeaderAdmin.css";
 import { Link } from "react-router-dom";
 import { Nav, NavDropdown } from 'react-bootstrap';
 
+/**
+ * Componente que muestra el encabezado de la sección del Admin.
+ * Vista de Admin.
+ * @author Bulos 
+ */
 function HeaderAdmin(): JSX.Element {
     return (
         <Nav justify variant="tabs" className="header-admin">

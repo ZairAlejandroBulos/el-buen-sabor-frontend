@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 
 interface Props {
@@ -9,6 +9,10 @@ interface Props {
   };
 }
 
+/**
+ * Componente que proporciona el contexto de autenticación.
+ * @author Bulos
+ */
 function AuthProvider({ children, initialState }: Props): JSX.Element {
   const { isAuthenticated, getIdTokenClaims } = useAuth0();
 

@@ -6,6 +6,11 @@ import "./NavBar.css";
 import logo from "../../../assets/logo.png";
 import { Container, Nav, Navbar } from "react-bootstrap";
 
+/**
+ * Componente que muestra la barra de navegación para los empleados.
+ * Vista de Admin/Cajero/Cocinero/Delivery.
+ * @author Bulos
+ */
 function NavBarEmpleado(): JSX.Element {
   const { isAuthenticated } = useAuth0();
 

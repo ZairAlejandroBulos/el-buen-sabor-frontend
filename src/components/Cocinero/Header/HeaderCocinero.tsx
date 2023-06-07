@@ -2,6 +2,11 @@ import "./HeaderCocinero.css";
 import { Nav, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+/**
+ * Componente que muestra el encabezado de la sección del Cocinero.
+ * Vista de Cocinero.
+ * @author Bulos 
+ */
 function HeaderCocinero(): JSX.Element {
     return(
         <Nav justify variant="tabs" className="header-cocinero">

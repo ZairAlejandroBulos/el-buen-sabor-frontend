@@ -1,8 +1,13 @@
 import { Button } from "react-bootstrap";
 import { useModal } from "../../../hooks/useModal";
+
 import ModalRegistro from "./ModalRegistro";
 import { Cliente } from "../../../types/Cliente";
 
+/**
+ * Componente que representa un elemento de Cliente en la tabla.
+ * @author Bulos 
+ */
 function ItemUsuario(props: Cliente): JSX.Element {
     const { showModal, handleClose } = useModal();
 

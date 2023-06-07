@@ -1,9 +1,12 @@
-import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import "./Button.css";
 import { Button } from "react-bootstrap";
 
+/**
+ * Componente que representa un botón de inicio para la barra de navegación.
+ * @author Bulos
+ */
 function LoginButton(): JSX.Element {
   const { loginWithRedirect } = useAuth0();
 

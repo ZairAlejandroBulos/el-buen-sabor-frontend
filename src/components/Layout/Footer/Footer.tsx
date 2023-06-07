@@ -1,11 +1,13 @@
-import React from "react";
-
 import "./Footer.css";
 import whatsapp from "../../../assets/whatsapp.svg";
 import facebook from "../../../assets/facebook.svg";
 import instagram from "../../../assets/instagram.svg";
 import { Container } from "react-bootstrap";
 
+/**
+ * Componente que muestra el pied de página de la aplicación.
+ * @author Bulos 
+ */
 function Footer(): JSX.Element {
   return (
     <Container className="container-footer fixed-bottom">

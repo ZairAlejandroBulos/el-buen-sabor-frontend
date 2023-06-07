@@ -1,9 +1,13 @@
-import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import "./Button.css";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 
+/**
+ * Componente que representa un botón de usuario.
+ * Se muestra cuando el usuario ha iniciado sesión.
+ * @author Bulos
+ */
 function UserButton(): JSX.Element {
   const { user, logout } = useAuth0();
 

@@ -12,6 +12,10 @@ type Props = {
     rubro?: Rubro
 }
 
+/**
+ * Componente para crear/actualizar un Rubro.
+ * @author Bulos
+ */
 function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
     const [values, setValues] = useState<Rubro>({
         id: 0,

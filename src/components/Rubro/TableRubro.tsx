@@ -1,15 +1,19 @@
 import "./Rubro.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Container, Table } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import ItemRubro from "./ItemRubro";
 import ModalRubro from "./ModalRubro";
-
 import { Rubro } from "../../types/Rubro";
 import { useModal } from "../../hooks/useModal";
 import { findAllRubro, findRubroById } from "../../services/RubroService";
 
+/**
+ * Componente que muestra una tabla de Rubros.
+ * Vista de Admin/Cocinero.
+ * @author Bulos
+ */
 function TableRubro(): JSX.Element {
     const [rubros, setRubros] = useState<Rubro[]>([]);
     const { showModal, handleClose } = useModal();

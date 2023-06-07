@@ -1,6 +1,10 @@
 import { Button } from "react-bootstrap";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 
+/**
+ * Componente que representa un elemento de ArticuloManufacturado en la tabla.
+ * @author 
+ */
 function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
     return(
         <>

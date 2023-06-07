@@ -1,7 +1,10 @@
 import "./Slider.css";
-import React from "react";
 import { Carousel } from "react-bootstrap";
 
+/**
+ * Componente que muestra una galería de imágenes en forma de carrusel.
+ * @author Bulos
+ */
 function Slider(): JSX.Element {
   return (
     <Carousel>

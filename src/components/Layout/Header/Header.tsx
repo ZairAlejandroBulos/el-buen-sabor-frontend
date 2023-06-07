@@ -2,6 +2,10 @@ import "./Header.css";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+/**
+ * Componente que muestra el encabezado de la sección de inicio (Home).
+ * @author Bulos
+ */
 function HeaderHome(): JSX.Element {
     return (
         <Nav justify variant="tabs" className="header-home">

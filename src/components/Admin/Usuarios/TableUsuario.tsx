@@ -9,6 +9,11 @@ import { useModal } from "../../../hooks/useModal";
 import { Cliente } from "../../../types/Cliente";
 import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/ClienteService";
 
+/**
+ * Componente que muestra una tabla de Usuarios.
+ * Vista de Admin.
+ * @author Bulos
+ */
 function TableUsuario(): JSX.Element {
     const [filtro, setFiltro] = useState("");
     const [tipo, setTipo] = useState("Usuario");

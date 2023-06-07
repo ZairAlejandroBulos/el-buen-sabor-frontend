@@ -9,6 +9,10 @@ import logo from "../../../assets/logo.png";
 import cart3 from "../../../assets/cart3.svg";
 import { Navbar, Nav, Container, Form, Button, InputGroup } from "react-bootstrap";
 
+/**
+ * Componente que muestra la barra de navegación principal.
+ * @author Bulos, Castillo
+ */
 function NavBar(): JSX.Element {
   const { isAuthenticated } = useAuth0();
   const [search, setSearch] = useState<string>("all");

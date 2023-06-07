@@ -4,6 +4,10 @@ import { Rubro } from "../../types/Rubro";
 import ModalRubro from "./ModalRubro";
 import { useModal } from "../../hooks/useModal";
 
+/**
+ * Componente que representa un elemento de Rubro en la tabla.
+ * @author Bulos
+ */
 function ItemRubro(props: Rubro): JSX.Element {
     const { showModal, handleClose } = useModal();
 
@@ -15,7 +19,6 @@ function ItemRubro(props: Rubro): JSX.Element {
                 </td>
 
                 <td>
-                    {/* TODO: Mostrar rubroPadre */}
                     {props.rubroPadre?.denominacion || "-"}
                 </td>
 
