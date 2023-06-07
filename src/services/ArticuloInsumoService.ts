@@ -1,7 +1,12 @@
 import { URL_API_BASE } from "../constants";
 import { ArticuloInsumo } from "../types/ArticuloInsumo";
 
-// Obtener todos los artículos de insumo
+/** 
+* Obtiene todos los Artículos Insumos.
+*
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en una lista de Artículos Insumos.
+*/
 export async function findAllArticuloInsumo(token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
@@ -23,7 +28,12 @@ export async function findAllArticuloInsumo(token: string) {
     }
 }
 
-// Obtener todas las bebidas
+/** 
+* Obtiene una lista de Artículos Insumos que sean bebidas.
+*
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en una lista de Artículos Insumos que sean bebidas.
+*/
 export async function findBebidas(token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/bebidas`, {
@@ -45,7 +55,13 @@ export async function findBebidas(token: string) {
     }
 }
 
-// Obtener un artículo de insumo por su ID
+/** 
+* Obtiene un Articulo Insumo por su ID.
+*
+* @param id ID del Articulo Insumo a buscar.
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en un Artículo Insumo.
+*/
 export async function findArticuloInsumoById(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
@@ -66,8 +82,14 @@ export async function findArticuloInsumoById(id: number, token: string) {
     }
 }
 
-// Guardar un nuevo artículo de insumo
-export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, token: string) {
+/**
+ * Guarda un nuevo Artículo Insumo.
+ * 
+ * @param entity Artículo Insumo a guardar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Insumo guardado.
+ */
+export async function saveArticuloInsumo(entity: ArticuloInsumo, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos`, {
             method: 'POST',
@@ -75,7 +97,7 @@ export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, 
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(articuloManufacturado),
+            body: JSON.stringify(entity),
         });
 
         if (response.status === 201) {
@@ -90,8 +112,15 @@ export async function saveArticuloInsumo(articuloManufacturado: ArticuloInsumo, 
     }
 }
 
-// Actualizar un artículo de insumo existente
-export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloInsumo, token: string) {
+/**
+ * Actualiza un Artículo Insumo existente por su ID.
+ * 
+ * @param id ID del Artículo Insumo a actualizar.
+ * @param entity Artículo Insumo con los datos actualizados.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Insumo actualizado.
+ */
+export async function updateArticuloInsumo(id: number, entity: ArticuloInsumo, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
             method: 'PUT',
@@ -99,7 +128,7 @@ export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloI
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(articuloInsumo),
+            body: JSON.stringify(entity),
         });
 
         if (response.status === 201) {
@@ -115,8 +144,12 @@ export async function updateArticuloInsumo(id: number, articuloInsumo: ArticuloI
 }
 
 
-// Eliminar un artículo de insumo por su ID
-export async function deleteArticuloInsumo(id: number, token: string) {
+/**
+ * Elimina un Artículo Insumo por su ID.
+ * 
+ * @param id ID del Artículo Insumo a eliminar.
+ * @param token Token de autenticación.
+ */export async function deleteArticuloInsumo(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
             method: 'DELETE',

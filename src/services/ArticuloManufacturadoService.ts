@@ -2,7 +2,12 @@ import { URL_API_BASE } from "../constants";
 import { findImagenByName } from "./ImagenService";
 import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 
-// Función para obtener todos los artículos manufacturados
+/** 
+* Obtiene todos los Artículos Manufacturados.
+*
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en una lista de Artículos Manufacturados.
+*/
 export async function findAllArticuloManufacturados(token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
@@ -30,7 +35,13 @@ export async function findAllArticuloManufacturados(token: string) {
     }
 }
 
-// Función para obtener un artículo manufacturado por su ID
+/** 
+* Obtiene un Artículo Manufacturado por su ID.
+*
+* @param id ID del Artículo Manufacturado a buscar.
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en un Artículo Manufacturado.
+*/
 export async function findArticuloManufacturadoById(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
@@ -54,7 +65,13 @@ export async function findArticuloManufacturadoById(id: number, token: string) {
     }
 }
 
-// Función para obtener todos los artículos manufacturados que coinciden con un término de búsqueda
+/** 
+* Obtiene Artículos Manufacturados, buscados por su término.
+*
+* @param termino Termino de los Artículos Manufacturados a buscar.
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en una lista de Artículos Manufacturados que coincidan con el término.
+*/
 export async function findAllArticuloManufacturadosByTermino(termino: string, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/byTermino/${termino}`, {
@@ -70,7 +87,6 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
 
         const data = await response.json() as ArticuloManufacturado[];
 
-        // Obtener y asignar la URL de la imagen a cada artículo manufacturado
         for (const item of data) {
             const newImagenUrl = await findImagenByName(item.imagen.nombre, token);
             item.imagen.imagenUrl = newImagenUrl || "";
@@ -83,8 +99,14 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
     }
 }
 
-// Función para guardar un artículo manufacturado
-export async function saveArticuloManufacturado(articuloManufacturado: ArticuloManufacturado, token: string) {
+/**
+ * Guarda un nuevo Artículo Manufacturado.
+ * 
+ * @param entity Artículo Manufacturado a guardar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Manufacturado guardado.
+ */
+export async function saveArticuloManufacturado(entity: ArticuloManufacturado, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
             method: 'POST',
@@ -92,7 +114,7 @@ export async function saveArticuloManufacturado(articuloManufacturado: ArticuloM
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(articuloManufacturado),
+            body: JSON.stringify(entity),
         });
 
         if (!response.ok) {
@@ -104,8 +126,15 @@ export async function saveArticuloManufacturado(articuloManufacturado: ArticuloM
     }
 }
 
-// Función para actualizar un artículo manufacturado por su ID
-export async function updateArticuloManufacturado(id: number, articuloManufacturado: ArticuloManufacturado, token: string) {
+/**
+ * Actualiza un Artículo Manufacturado existente por su ID.
+ * 
+ * @param id ID del Artículo Manufacturado a actualizar.
+ * @param entity Artículo Manufacturado con los datos actualizados.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Manufacturado actualizado.
+ */
+export async function updateArticuloManufacturado(id: number, entity: ArticuloManufacturado, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
             method: 'PUT',
@@ -113,7 +142,7 @@ export async function updateArticuloManufacturado(id: number, articuloManufactur
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(articuloManufacturado),
+            body: JSON.stringify(entity),
         });
 
         if (!response.ok) {
@@ -125,7 +154,12 @@ export async function updateArticuloManufacturado(id: number, articuloManufactur
     }
 }
 
-// Función para eliminar un artículo manufacturado por su ID
+/**
+ * Elimina un Artículo Manufacturado por su ID.
+ * 
+ * @param id ID del Artículo Manufacturado a eliminar.
+ * @param token Token de autenticación.
+ */
 export async function deleteArticuloManufacturado(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {

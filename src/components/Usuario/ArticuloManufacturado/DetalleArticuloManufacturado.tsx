@@ -11,6 +11,10 @@ import { findArticuloInsumoById } from "../../../services/ArticuloInsumoService"
 import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
 
+/**
+ * Componente que muestra los detalles de un Artículo Manufacturado .
+ * @author Castillo
+ */
 export const DetalleArticuloManufacturado = () => {
     const { id } = useParams();
     const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>();
@@ -25,13 +29,10 @@ export const DetalleArticuloManufacturado = () => {
     const getArticuloManufacturado = async () => {
         const token = await getAccessTokenSilently();
 
-        // Articulo Manufacturado
         const newArticuloManufacturado = await findArticuloManufacturadoById(Number(id), token);
 
-        // Articulo Manufacturado Insumo
         const newArticulosManufacturadosInsumos = await findByArticuloManufacturado(newArticuloManufacturado.id, token);
 
-        // Articulo Insumo
         let articulosInsumosArray = [];
         for (const item of newArticulosManufacturadosInsumos) {
             const id = item.articuloInsumoId;
@@ -47,23 +48,23 @@ export const DetalleArticuloManufacturado = () => {
 
     return (
         <Container className='container-detalle'>
-            <Row>
+            <Row className="row-detalle">
                 <Col>
                     <img
-                        src={articuloManufacturado?.imagen.imagenUrl}
+                        src={""}
                         alt={articuloManufacturado?.denominacion}
                         className="mx-auto d-block img-detalle"
                     />
                 </Col>
-                <Col>
+                <Col className="col-detalle">
                     <Row>
-                        <Col>
+                        <Col className="col-nombre">
                             <h1>
                                 {articuloManufacturado?.denominacion}
                             </h1>
                         </Col>
 
-                        <Col>
+                        <Col className="col-precio">
                             <h2>
                                 <strong>
                                     ${articuloManufacturado?.articuloManufacturadoPrecioVenta.precioVenta} 
@@ -71,16 +72,16 @@ export const DetalleArticuloManufacturado = () => {
                             </h2>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className="row-descripcion">
                         <h3>
                             {articuloManufacturado?.descripcion}
                         </h3>
                     </Row>
-                    <Row>
+                    <Row className="row-ingredientes">
                         {
                             articulosInsumos.length !== 0 &&
                             <>
-                                <h4>Ingredientes</h4>
+                                <h4 className="titulo-ingredientes">Ingredientes</h4>
                                 <ul className='lista-ingrediente'>
                                     {
                                         articulosInsumos?.map((item: ArticuloInsumo, index: number) =>
@@ -91,7 +92,7 @@ export const DetalleArticuloManufacturado = () => {
                             </>
                         }
                     </Row>
-                    <Row>
+                    <Row className="botones">
                         <Col>
                             <Link to={`/productos/all`}>
                                 <Button variant='success'>
