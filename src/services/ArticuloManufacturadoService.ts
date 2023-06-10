@@ -10,7 +10,7 @@ import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 */
 export async function findAllArticuloManufacturados(token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/findAll`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -24,10 +24,9 @@ export async function findAllArticuloManufacturados(token: string) {
         const data = await response.json() as ArticuloManufacturado[];
 
         for (const item of data) {
-            const newImagenUrl = await findImagenByName(item.imagen.nombre, token);
-            item.imagen.imagenUrl = newImagenUrl || "";
+            const newImagenUrl = await findImagenByName(item.imagen, token);
+            item.imagen = newImagenUrl || "";
         }
-
         return data;
     } catch (error) {
         console.log(error);
@@ -55,8 +54,8 @@ export async function findArticuloManufacturadoById(id: number, token: string) {
         }
 
         const data = await response.json() as ArticuloManufacturado;
-        const newImagenUrl = await findImagenByName(data.imagen.nombre, token);
-        data.imagen.imagenUrl = newImagenUrl || "";
+        const newImagenUrl = await findImagenByName(data.imagen, token);
+        data.imagen = newImagenUrl || "";
 
         return data;
     } catch (error) {
@@ -88,8 +87,8 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
         const data = await response.json() as ArticuloManufacturado[];
 
         for (const item of data) {
-            const newImagenUrl = await findImagenByName(item.imagen.nombre, token);
-            item.imagen.imagenUrl = newImagenUrl || "";
+            const newImagenUrl = await findImagenByName(item.imagen, token);
+            item.imagen = newImagenUrl || "";
         }
 
         return data;

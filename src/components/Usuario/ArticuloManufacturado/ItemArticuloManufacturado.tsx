@@ -10,12 +10,12 @@ export const ItemArticuloManufacturado = (props: ArticuloManufacturado) => {
     return (
         <Card style={{ width: '18rem' }}>
             <Link to={`/detalle/${props.id}`}>
-                <Card.Img src={""} alt={props.denominacion} className="maxAltoImg" variant="top" />
+                <Card.Img src={props.imagen} alt={props.denominacion} className="maxAltoImg" variant="top" />
             </Link>
             <Card.Body>
                 <Card.Title>{props.denominacion}</Card.Title>
                 <Card.Text>
-                    ${props.articuloManufacturadoPrecioVenta.precioVenta}
+                    ${props.precioVenta}
                 </Card.Text>
             </Card.Body>
         </Card>
