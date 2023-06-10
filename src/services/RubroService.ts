@@ -29,32 +29,6 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
 }
 
 /**
- * Obtiene todos los Rubros padres.
- * 
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en una lista de Rubros.
- */
-export async function findAllParents(token: string): Promise<Rubro[]> {
-    try {
-        const response = await fetch(`${URL_API_BASE}/rubros/parents`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as Rubro[];
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
  * Obtiene un Rubro por su ID.
  * 
  * @param id ID del Rubro a buscar.
@@ -122,6 +96,7 @@ export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
  */
 export async function updateRubro(id: number, entity: Rubro, token: string): Promise<Rubro> {
     try {
+        console.log(`update ${id}, values ${entity}`)
         const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
             method: "PUT",
             body: JSON.stringify(entity),
@@ -135,6 +110,7 @@ export async function updateRubro(id: number, entity: Rubro, token: string): Pro
             const data = await response.json() as Rubro;
             return data;
         } else {
+            console.log("ERROR UPDATE RESPONSE")
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 

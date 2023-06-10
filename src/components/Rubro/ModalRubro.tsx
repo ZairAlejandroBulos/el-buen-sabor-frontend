@@ -4,7 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
-import { findAllParents, saveRubro, updateRubro } from "../../services/RubroService";
+import { findAllRubro, saveRubro, updateRubro } from "../../services/RubroService";
 
 type Props = {
     showModal: boolean,
@@ -21,7 +21,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
         id: 0,
         denominacion: ""
     });
-
+    const [selectedRubroPadreId, setSelectedRubroPadreId] = useState<number | null>(null);
     const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
@@ -42,18 +42,17 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
             }
         }
         getRubrosPadres();
-    }, []);
+    }, [rubro]);
 
     const getRubrosPadres = async () => {
         const token = await getAccessTokenSilently();
-        const newRubrosPadres: Rubro[] = await findAllParents(token);
-
+        
+        const newRubrosPadres: Rubro[] = await findAllRubro(token);
         setRubrosPadres(newRubrosPadres);
     };
 
     const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDenominacion = event.target.value;
-
         setValues((prevState) => ({
             ...prevState,
             denominacion: newDenominacion
@@ -64,28 +63,34 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
         const rubroPadreId = Number(event.currentTarget.value);
 
         if (rubroPadreId === -1) {
+            setSelectedRubroPadreId(null);
             setValues((prevState) => ({
                 ...prevState,
-                rubroPadreId: NaN,
+                rubroPadreId: NaN
             }));
         } else {
+            setSelectedRubroPadreId(rubroPadreId);
             setValues((prevState) => ({
                 ...prevState,
-                rubroPadreId: rubroPadreId,
+                rubroPadreId: rubroPadreId
             }));
         }
     };
 
-    const handleSubmit = async () => {
-        if (!values.denominacion) {
+    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (!values.denominacion || selectedRubroPadreId === values.id) {
             handleAlert();
         } else {
             const token = await getAccessTokenSilently();
+            
             if (values.id === 0) {
                 await saveRubro(values, token);
             } else {
                 await updateRubro(values.id, values, token);
             }
+
             handleClose();
             window.location.reload();
         }
@@ -103,7 +108,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
             </Modal.Header>
 
             <Modal.Body>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="denominacion">Denominación</Form.Label>
                         <Form.Control
@@ -129,21 +134,20 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                             }
                         </Form.Select>
                     </Form.Group>
+
+                    <Button onClick={handleClose} variant="danger buttons-modal-form">
+                        Cerrar
+                    </Button>
+
+                    <Button type="submit" variant="success">
+                        Guardar
+                    </Button>
                 </Form>
                 <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
                     <Alert.Heading>Error!</Alert.Heading>
                     <p>Debe llenar todos los campos</p>
                 </Alert>
             </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={handleClose} variant="danger buttons-modal-form">
-                    Cerrar
-                </Button>
-
-                <Button onClick={handleSubmit} variant="success">
-                    Guardar
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 }
