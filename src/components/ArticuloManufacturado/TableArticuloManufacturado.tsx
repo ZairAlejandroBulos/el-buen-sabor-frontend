@@ -5,12 +5,12 @@ import { Button, Container, Table } from "react-bootstrap";
 
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
-import { findAllArticuloManufacturados } from "../../services/ArticuloManufacturadoService";
+import { findAllArticuloManufacturadosFull } from "../../services/ArticuloManufacturadoService";
 
 /**
  * Componente que muestra una tabla de Artículos Manufacturados.
  * Vista de Admin/Cocinero.
- * @returns 
+ * @author Bulos 
  */
 function TableArticuloManufacturado(): JSX.Element {
     const [articulosManufactuados, setArticulosManufacturados] = useState<ArticuloManufacturado[]>([]);
@@ -22,14 +22,14 @@ function TableArticuloManufacturado(): JSX.Element {
 
     const getAllArticuloManufacturados = async () => {
         const token = await getAccessTokenSilently();
-        const newArticulosManufactuados = await findAllArticuloManufacturados(token);
+        const newArticulosManufactuados = await findAllArticuloManufacturadosFull(token);
         setArticulosManufacturados(newArticulosManufactuados);
     };
 
     return (
         <>
             <Container className="d-flex mt-3">
-                <h1>Articulos Manufacturados</h1>
+                <h1>Artículos Manufacturados</h1>
                 <Button variant="success">
                     Nuevo
                 </Button>

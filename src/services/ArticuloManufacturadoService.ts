@@ -43,7 +43,7 @@ export async function findAllArticuloManufacturados(token: string) {
 */
 export async function findArticuloManufacturadoById(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
+        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/byId/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -98,79 +98,54 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
     }
 }
 
-/**
- * Guarda un nuevo Artículo Manufacturado.
- * 
- * @param entity Artículo Manufacturado a guardar.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Artículo Manufacturado guardado.
- */
-export async function saveArticuloManufacturado(entity: ArticuloManufacturado, token: string) {
+/** 
+* Obtiene todos los Artículos Manufacturados (ArticuloManufacturadoFullDTO).
+*
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en una lista de Artículos Manufacturados.
+*/
+export async function findAllArticuloManufacturadosFull(token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
-            method: 'POST',
+        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/findAllFull`, {
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(entity),
+            }
         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json() as ArticuloManufacturado[];
+        return data;
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);
     }
 }
 
-/**
- * Actualiza un Artículo Manufacturado existente por su ID.
- * 
- * @param id ID del Artículo Manufacturado a actualizar.
- * @param entity Artículo Manufacturado con los datos actualizados.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Artículo Manufacturado actualizado.
- */
-export async function updateArticuloManufacturado(id: number, entity: ArticuloManufacturado, token: string) {
+/** 
+* Obtiene un Artículo Manufacturado por su ID.
+*
+* @param id ID del Artículo Manufacturado a buscar.
+* @param token Token de autenticación.
+* @returns Una promesa que se resuelve en un Artículo Manufacturado.
+*/
+export async function findArticuloManufacturadoFullById(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
-            method: 'PUT',
+        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/full/byId/${id}`, {
             headers: {
-                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(entity),
+            }
         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
 
-/**
- * Elimina un Artículo Manufacturado por su ID.
- * 
- * @param id ID del Artículo Manufacturado a eliminar.
- * @param token Token de autenticación.
- */
-export async function deleteArticuloManufacturado(id: number, token: string) {
-    try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
-            method: 'DELETE',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const data = await response.json() as ArticuloManufacturado;
+        return data;
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);

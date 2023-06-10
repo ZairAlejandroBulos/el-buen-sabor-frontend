@@ -1,5 +1,4 @@
-import { ArticuloManufacturadoPrecioVenta } from "./ArticuloManufacturadoPrecioVenta";
-import { Imagen } from "./Imagen";
+import { Rubro } from "./Rubro";
 
 export interface ArticuloManufacturado {
     id: number;
@@ -7,4 +6,6 @@ export interface ArticuloManufacturado {
     descripcion: string;
     imagen: string;
     precioVenta: number;
+    tiempoEstimadoCocina?: string;
+    rubro?: Rubro;
 }

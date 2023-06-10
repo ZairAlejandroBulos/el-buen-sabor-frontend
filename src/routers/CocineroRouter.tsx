@@ -15,7 +15,7 @@ function CocineroRouter(): JSX.Element {
             <HeaderCocinero />
             <Routes>
                 <Route path="/rubros" element={<TableRubro />} />
-                <Route path="/stock" element={<TableArticuloManufacturado />} />
+                <Route path="/stock/articulos-manufacturados" element={<TableArticuloManufacturado />} />
             </Routes>
         </>
     );

@@ -17,7 +17,7 @@ function AdminRouter(): JSX.Element {
             <Routes>
                 <Route path="/usuarios" element={<TableUsuario />} />
                 <Route path="/rubros" element={<TableRubro />} />
-                <Route path="/stock" element={<TableArticuloManufacturado />} />
+                <Route path="/stock/articulos-manufacturados" element={<TableArticuloManufacturado />} />
             </Routes>
         </>
     );
