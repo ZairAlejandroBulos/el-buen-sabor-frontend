@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import UserButton from "../../Auth0/UserButton";
@@ -16,30 +16,37 @@ import { Navbar, Nav, Container, Form, Button, InputGroup } from "react-bootstra
 function NavBar(): JSX.Element {
   const { isAuthenticated } = useAuth0();
   const [search, setSearch] = useState<string>("all");
+  let searchTimeout = useRef<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    handleNavigate();
+    handleSearch();
   }, []);
+
+  const handleSearch = () => {
+    if (search.trim() !== "") {
+      navigate(`/productos/${search}`);
+    } else {
+      navigate('/productos/all');
+    }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearch = event.target.value;
     setSearch(newSearch);
-    setTimeout(handleNavigate, 1000);
-  };
-
-  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (event.currentTarget.search.value) {
-      setSearch(event.currentTarget.search.value);
+    
+    if (searchTimeout.current !== null) {
+      clearTimeout(searchTimeout.current);
     }
 
-    handleNavigate();
+    searchTimeout.current = setTimeout(() => {
+      handleSearch();
+    }, 1000) as any;
   };
 
-  const handleNavigate = () => {
-    navigate(`/productos/${search}`);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleSearch();
   };
 
   return (
@@ -52,14 +59,21 @@ function NavBar(): JSX.Element {
         <Navbar.Toggle aria-controls="navbarScroll" />
 
         <Navbar.Collapse id="navbarScroll">
-          <Form onSubmit={handleSearch} className="d-flex mx-auto">
+          <Form onSubmit={handleSubmit} className="d-flex mx-auto">
             <InputGroup>
               <Form.Control
                 name="search"
-                type="text"
+                type="search"
+                list="opciones"
                 placeholder="Buscar productos..."
                 onChange={handleChange}
               />
+               <datalist id="opciones">
+                <option value="hamburguesa" />
+                <option value="bebida" />
+                <option value="pizza" />
+                <option value="lomo" />
+              </datalist>
               <Button type="submit" variant="btn btn-light">
                 <i className="bi-search"></i>
               </Button>

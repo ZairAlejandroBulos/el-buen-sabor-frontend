@@ -23,11 +23,13 @@ export const useArticulosManufacturados = (termino: string = "all") => {
     const getAllArticuloManufacturados = async () => {
         const token = await getAccessTokenSilently();
 
+        let newArticulosManufacturados: ArticuloManufacturado[];
+
         if (termino === "all") {
-            const newArticulosManufacturados = await findAllArticuloManufacturados(token);
+            newArticulosManufacturados = await findAllArticuloManufacturados(token);
             setArticulosManufacturados(newArticulosManufacturados);
         } else {
-            const newArticulosManufacturados = await findAllArticuloManufacturadosByTermino(termino, token);
+            newArticulosManufacturados = await findAllArticuloManufacturadosByTermino(termino, token);
             setArticulosManufacturados(newArticulosManufacturados);
         }
     };
