@@ -4,3 +4,8 @@ body {
   font-family: "Roboto", sans-serif;
   background-color: #DEE2E6;
 }
+
+.table-scrollable {
+  max-height: 400px; 
+  overflow-y: auto;
+}

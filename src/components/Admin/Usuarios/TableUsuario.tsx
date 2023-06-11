@@ -95,7 +95,7 @@ function TableUsuario(): JSX.Element {
                 <Button onClick={handleClose} variant="success">Nuevo</Button>
             </Container>
 
-            <Container>
+            <Container className="table-scrollable">
                 <Table responsive bordered hover>
                     <thead className="thead-cliente">
                         <tr>

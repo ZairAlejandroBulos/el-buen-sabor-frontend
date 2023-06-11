@@ -35,7 +35,7 @@ function TableArticuloManufacturado(): JSX.Element {
                 </Button>
             </Container>
 
-            <Container className="mt-3">
+            <Container className="table-scrollable mt-3">
                 <Table responsive bordered hover>
                     <thead className="thead-articulo-manufacturado">
                         <tr>
