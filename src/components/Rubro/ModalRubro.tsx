@@ -4,7 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
-import { findAllRubro, saveRubro, updateRubro } from "../../services/RubroService";
+import { existsByDenominacion, findAllRubro, saveRubro, updateRubro } from "../../services/RubroService";
 
 type Props = {
     showModal: boolean,
@@ -23,6 +23,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
     });
     const [selectedRubroPadreId, setSelectedRubroPadreId] = useState<number | null>(null);
     const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
+    const [messageError, setMessageError] = useState<string>("");
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
 
@@ -79,12 +80,18 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
 
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const token = await getAccessTokenSilently();
 
-        if (!values.denominacion || selectedRubroPadreId === values.id) {
+        if (!values.denominacion || values.denominacion.trim() === "") {
+            setMessageError("El Rubro debe tener una denominación");
+            handleAlert();
+        } else if (values.id === 0 && await existsByDenominacion(values.denominacion, token)) {
+            setMessageError(`Ya existe un Rubro denominado ${values.denominacion}`);
+            handleAlert();
+        } else if (values.id === selectedRubroPadreId) {
+            setMessageError("No se puede seleccionar como rubro padre al mismo Rubro.");
             handleAlert();
         } else {
-            const token = await getAccessTokenSilently();
-            
             if (values.id === 0) {
                 await saveRubro(values, token);
             } else {
@@ -92,6 +99,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
             }
 
             handleClose();
+            setMessageError("");
             window.location.reload();
         }
     };
@@ -99,11 +107,10 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
     return (
         <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
-                {rubro
-                    ?
-                    <Modal.Title className="text-center">Editar Rubro</Modal.Title>
-                    :
-                    <Modal.Title className="text-center">Nuevo Rubro</Modal.Title>
+                {
+                    <Modal.Title className="text-center">
+                        { rubro ? "Editar" : "Nuevo" } Rubro
+                    </Modal.Title>
                 }
             </Modal.Header>
 
@@ -123,12 +130,12 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
 
                     <Form.Group className="mb-3">
                         <Form.Label>Rubro Artículo Padre</Form.Label>
-                        <Form.Select id="rubroPadre" value={values?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
+                        <Form.Select id="rubroPadreId" value={values?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
                             <option value="-1">--Seleccione--</option>
                             {
                                 rubrosPadres.map((item: Rubro, index: number) =>
-                                    <option value={item.id} key={index}>
-                                        {item.denominacion}
+                                    <option key={index} value={item.id}>
+                                        { item.denominacion }
                                     </option>
                                 )
                             }
@@ -143,9 +150,9 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                         Guardar
                     </Button>
                 </Form>
-                <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
+                <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
                     <Alert.Heading>Error!</Alert.Heading>
-                    <p>Debe llenar todos los campos</p>
+                    <p>{ messageError }</p>
                 </Alert>
             </Modal.Body>
         </Modal>

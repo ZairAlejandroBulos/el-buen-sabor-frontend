@@ -23,8 +23,8 @@ function ItemRubro(props: Rubro): JSX.Element {
                 </td>
 
                 <td>
-                    <Button onClick={() => handleClose()}>
-                        <i className="bi bi-pencil-square"></i>
+                    <Button onClick={() => handleClose()} variant="warning">
+                        Editar
                     </Button>
                 </td>
             </tr>

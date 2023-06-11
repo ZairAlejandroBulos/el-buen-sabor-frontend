@@ -56,6 +56,33 @@ export async function findRubroById(id: number, token: string): Promise<Rubro> {
 }
 
 /**
+ * Verifica si existe un Rubro por denominación.
+ * 
+ * @param denominacion Denominación a verificar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en un boolean.
+ */
+export async function existsByDenominacion(denominacion: string, token: string): Promise<boolean> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/rubros/exists/${denominacion}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
  * Guarda un nuevo Rubro.
  * 
  * @param entity Rubro a guardar.
