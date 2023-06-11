@@ -151,3 +151,68 @@ export async function findArticuloManufacturadoFullById(id: number, token: strin
         throw new Error(`Error! ${error}`);
     }
 }
+
+/**
+ * Guarda un nuevo ArticuloManufacturado.
+ * 
+ * @param entity ArticuloManufacturado a guardar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el ArticuloManufacturado guardado.
+ */
+
+export async function saveArticuloManufacturado(entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
+            method: "POST",
+            body: JSON.stringify(entity),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": 'application/json'
+            }
+        });
+
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloManufacturado;
+            return data;
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * Actualiza un ArticuloManufacturado existente por su ID.
+ * 
+ * @param id ID del ArticuloManufacturado a actualizar.
+ * @param entity ArticuloManufacturado con los datos actualizados.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el ArticuloManufacturado actualizado.
+ */
+export async function updateArticuloManufacturado(id: number, entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/articulosManufacturados/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(entity),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": 'application/json',
+            }
+        });
+
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloManufacturado;
+            return data;
+        } else {
+            console.log("ERROR UPDATE RESPONSE")
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
