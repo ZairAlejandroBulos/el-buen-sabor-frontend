@@ -1,170 +1,203 @@
-import { Alert, Button, Container, Form } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
+import { useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { findAllRubro } from "../../services/RubroService";
+import { Alert, Button, Container, Form } from "react-bootstrap";
+
+import { Rubro } from "../../types/Rubro";
+import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 import { useAlert } from "../../hooks/useAlert";
+import { findAllRubro, findRubroById } from "../../services/RubroService";
+import { findArticuloManufacturadoFullById, saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
+import { generateImageName } from "../../util/ImagenUtil";
+import { isArticuloManufacturado } from "../../util/ArticuloManufacturadoUtil";
+import { isImagen } from "../../util/ImagenUtil";
 
-interface Rubro {
-    id: number;
-    denominacion: string;
-}
-
-interface ArticuloManufacturado {
-    id: number;
-    denominacion: string;
-    descripcion: string;
-    imagen: string;
-    precioVenta: number;
-    tiempoEstimadoCocina?: string;
-    rubro?: Rubro;
-}
-
+/**
+ * Componente para crear/actualizar un ArticuloManufacturado.
+ * @author Castillo, Bulos 
+ */
 function AMArticuloManufacturado(): JSX.Element {
     const { id } = useParams();
     const { getAccessTokenSilently } = useAuth0();
-    const [rubros, setRubros] = useState<Rubro[]>([]);
-    const [messageError, setMessageError] = useState<string>("");
-    const { showAlert, handleAlert } = useAlert();
-    const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>({
-        id: 0,
-        denominacion: '',
-        descripcion: '',
-        imagen: '',
-        tiempoEstimadoCocina: '',
-        precioVenta: 0,
+    const [values, setValues] = useState<ArticuloManufacturado>({
+        "id": 0,
+        "denominacion": "",
+        "descripcion": "",
+        "imagen": "",
+        "precioVenta": 0,
+        "tiempoEstimadoCocina": "",
+        "rubro": {
+            "id": 0,
+            "denominacion": ""
+        }
     });
+    const [rubros, setRubros] = useState<Rubro[]>([]);
+    const [file, setFile] = useState<File | null>(null);
+    const { showAlert, handleAlert } = useAlert();
 
     useEffect(() => {
-        getRubros();
+        getAllRubro();
     }, []);
 
-    const getRubros = async () => {
-        const token = await getAccessTokenSilently();
+    useEffect(() => {
+        getArticuloManufacturado();
+    }, [id]);
 
-        const newRubrosPadres: Rubro[] = await findAllRubro(token);
-        setRubros(newRubrosPadres);
-    };
-
-    const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newDenominacion = event.target.value;
-        setArticuloManufacturado((prevState) => ({
-            ...prevState,
-            denominacion: newDenominacion
-        }));
-    };
-
-    const handleChangeRubro = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const rubroId = parseInt(event.target.value);
-        const selectedRubro = rubros.find((rubro) => rubro.id === rubroId);
-        setArticuloManufacturado((prevState) => ({
-            ...prevState,
-            rubro: selectedRubro,
-        }));
-    };
-
-    const handleChangeTiempoCocina = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newTiempoCocina = event.target.value;
-        setArticuloManufacturado((prevState) => ({
-            ...prevState,
-            tiempoCocina: newTiempoCocina
-        }));
-    };
-
-    const handleChangePrecioVenta = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newPrecioVenta = Number(event.target.value);
-        setArticuloManufacturado((prevState) => ({
-            ...prevState,
-            precioVenta: newPrecioVenta
-        }));
-    };
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        if (!articuloManufacturado.denominacion) {
+    const getArticuloManufacturado = async () => {
+        if (id !== "-1") {
             const token = await getAccessTokenSilently();
 
-            if (Number(id) === -1) {
-                await saveArticuloManufacturado(articuloManufacturado, token);
+            const newArticuloManufacturado = await findArticuloManufacturadoFullById(Number(id), token);
+            setValues(newArticuloManufacturado);
+        }
+    };
+
+    const getAllRubro = async () => {
+        const token = await getAccessTokenSilently();
+
+        const newRubros = await findAllRubro(token);
+        setRubros(newRubros);
+    };
+
+    const getRubroById = async (id: number) => {
+        const token = await getAccessTokenSilently();
+
+        return await findRubroById(id, token);
+    }
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setValues((prevState) => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const rubroSelected = Number(event.currentTarget.value);
+        if (rubroSelected !== -1) {
+            const newRubro = await getRubroById(rubroSelected);
+            setValues((prevState) => ({
+                ...prevState,
+                rubro: newRubro
+            }));
+        }
+    };
+
+    const handleChangeImagen = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+          const file = event.target.files[0];
+          const imagen = generateImageName(file.name);
+          setFile(file);
+          setValues((prevState) => ({
+            ...prevState,
+            imagen: imagen
+          }));
+        }
+    };
+
+    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (file !== null && isImagen(file) && isArticuloManufacturado(values)) {
+            const token = await getAccessTokenSilently();
+
+            if (values.id === 0) {
+                await saveArticuloManufacturado(values, file, token);
             } else {
-                await updateArticuloManufacturado(Number(id), articuloManufacturado, token);
+                // TODO: Implementar update
+                // await updateArticuloManufacturado(values.id, values, file, token);
             }
+
+            window.location.href = "/admin/stock/articulos-manufacturados";
+        } else {
+            handleAlert();
         }
     };
 
     return (
-        <>
-            <Container>
-                <Form onSubmit={handleSubmit}>
+        <Container>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Denominación</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="denominacion"
+                        placeholder="Denominación"
+                        defaultValue={values?.denominacion}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Nombre</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="nombre"
-                            defaultValue={articuloManufacturado?.denominacion}
-                            onChange={handleChangeDenominacion}
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Descripción</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="descripcion"
+                        placeholder="Descripción"
+                        defaultValue={values?.descripcion}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
+                <Form.Group className="mb-3">
+                    <Form.Label>Tiempo Estimado Cocina</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="tiempoEstimadoCocina"
+                        placeholder="Tiempo Estimado Cocina"
+                        defaultValue={values?.tiempoEstimadoCocina}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Precio de venta</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="precioVenta"
+                        placeholder="Precio de venta"
+                        value={values?.precioVenta}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>Imagen</Form.Label>
+                    <Form.Control
+                        type="file"
+                        name="imagen"
+                        onChange={handleChangeImagen}
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
                         <Form.Label>Rubro</Form.Label>
-                        <Form.Select id="rubro" value={articuloManufacturado.rubro?.id || -1} onChange={handleChangeRubro}>
+                        <Form.Select id="rubro" value={values?.rubro?.id || -1} onChange={handleChangeRubro}>
                             <option value="-1">--Seleccione--</option>
                             {
                                 rubros.map((item: Rubro, index: number) =>
-                                    <option value={item.id} key={index}>
-                                        {item.denominacion}
+                                    <option key={index} value={item.id}>
+                                        { item.denominacion }
                                     </option>
                                 )
                             }
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Imagen</Form.Label>
-                        <Form.Control
-                            type="file"
-                        //onChange={""}
-                        />
-                    </Form.Group>
+                <Button variant="danger">
+                    Cancelar
+                </Button>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Tiempo Cocina</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="tiempoCocina"
-                            defaultValue={articuloManufacturado?.tiempoEstimadoCocina}
-                            onChange={handleChangeTiempoCocina}
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                        <Form.Label>Precio de Venta</Form.Label>
-                        <Form.Control
-                            type="number"
-                            min={0}
-                            defaultValue={articuloManufacturado?.precioVenta}
-                            onChange={handleChangePrecioVenta}
-                        />
-                    </Form.Group>
-
-                    <Button variant="danger">
-                        Cancelar
-                    </Button>
-                    <Button type="submit" variant="success">
-                        Guardar
-                    </Button>
-                </Form>
-                <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
-                    <Alert.Heading>Error!</Alert.Heading>
-                    <p>{messageError}</p>
-                </Alert>
-            </Container>
-
-        </>
+                <Button type="submit" variant="success">
+                    Guardar
+                </Button>
+            </Form>
+            <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
+                <Alert.Heading>Error!</Alert.Heading>
+                <p>Campos vacios y/o incorrectos.</p>
+            </Alert>
+        </Container>
     );
 }
 

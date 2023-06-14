@@ -30,7 +30,10 @@ function TableArticuloManufacturado(): JSX.Element {
         <>
             <Container className="d-flex mt-3">
                 <h1>Artículos Manufacturados</h1>
-                <Button variant="success">
+                <Button
+                    href="/admin/stock/articulos-manufacturados/form/-1"
+                    variant="success"
+                >
                     Nuevo
                 </Button>
             </Container>

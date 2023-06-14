@@ -26,8 +26,10 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
                 </td>
 
                 <td>
-                    {/* TODO: Implementar update */}
-                    <Button variant="warning">
+                    <Button
+                        href={`/admin/stock/articulos-manufacturados/form/${props.id}`}
+                        variant="warning"
+                    >
                         Editar
                     </Button>
                 </td>

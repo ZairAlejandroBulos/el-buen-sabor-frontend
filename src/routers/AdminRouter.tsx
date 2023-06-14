@@ -4,6 +4,7 @@ import HeaderAdmin from "../components/Admin/Header/HeaderAdmin";
 import TableUsuario from "../components/Admin/Usuarios/TableUsuario";
 import TableRubro from "../components/Rubro/TableRubro";
 import TableArticuloManufacturado from "../components/ArticuloManufacturado/TableArticuloManufacturado";
+import AMArticuloManufacturado from "../components/ArticuloManufacturado/AMArticuloManufacturado";
 
 /**
  * Componente de enrutamiento para la sección de Administrador.
@@ -18,6 +19,9 @@ function AdminRouter(): JSX.Element {
                 <Route path="/usuarios" element={<TableUsuario />} />
                 <Route path="/rubros" element={<TableRubro />} />
                 <Route path="/stock/articulos-manufacturados" element={<TableArticuloManufacturado />} />
+                <Route path="/stock/articulos-manufacturados/form">
+                    <Route path=":id" element={<AMArticuloManufacturado />} />
+                </Route>
             </Routes>
         </>
     );
