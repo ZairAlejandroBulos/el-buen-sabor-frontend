@@ -10,6 +10,7 @@ import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturad
 import { findArticuloInsumoById } from "../../../services/ArticuloInsumoService";
 import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 /**
  * Componente que muestra los detalles de un Artículo Manufacturado .
@@ -51,7 +52,7 @@ export const DetalleArticuloManufacturado = () => {
             <Row className="row-detalle">
                 <Col>
                     <img
-                        src={""}
+                        src={articuloManufacturado?.imagen}
                         alt={articuloManufacturado?.denominacion}
                         className="mx-auto d-block img-detalle"
                     />
@@ -60,14 +61,16 @@ export const DetalleArticuloManufacturado = () => {
                     <Row>
                         <Col className="col-nombre">
                             <h1>
-                                {articuloManufacturado?.denominacion}
+                                <strong>
+                                    {articuloManufacturado?.denominacion}
+                                </strong>
                             </h1>
                         </Col>
 
                         <Col className="col-precio">
                             <h2>
                                 <strong>
-                                    ${articuloManufacturado?.articuloManufacturadoPrecioVenta.precioVenta} 
+                                    ${articuloManufacturado?.precioVenta} 
                                 </strong>
                             </h2>
                         </Col>
