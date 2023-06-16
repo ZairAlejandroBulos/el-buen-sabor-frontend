@@ -1,13 +1,14 @@
 import { Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado"
 import cart3 from "../../../assets/cart3.svg";
+
+import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado"
 
 /**
  * Componente que representa un elemento de Artículo Manufacturado en la lista.
  * @author Castillo
  */
-export const ItemArticuloManufacturado = (props: ArticuloManufacturado) => {
+function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
     return (
         <Card style={{ width: '18rem' }}>
             <Link to={`/detalle/${props.id}`}>
@@ -15,18 +16,25 @@ export const ItemArticuloManufacturado = (props: ArticuloManufacturado) => {
             </Link>
             <Card.Body>
                 <Card.Title>
-                    {props.denominacion}
+                    { props.denominacion }
                 </Card.Title>
                 <Card.Text style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <strong>
-                        ${props.precioVenta}
+                        ${ props.precioVenta }
                     </strong>
                     <Link to={""}>
-                        <img src={cart3} alt="cart3" width="25px" className="link-cart3" />
+                        <img 
+                            src={cart3} 
+                            alt="cart3" 
+                            width="25px" 
+                            className="link-cart3" 
+                        />
                     </Link>
                 </Card.Text>
 
             </Card.Body>
         </Card>
-    )
+    );
 }
+
+export default ItemArticuloManufacturado;

@@ -3,14 +3,14 @@ import { Container, Row } from "react-bootstrap";
 
 import Home from "../../Layout/Home/Home";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
-import { ItemArticuloManufacturado } from "./ItemArticuloManufacturado";
+import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
 import { useArticulosManufacturados } from "../../../hooks/useArticulosManufacturados";
 
 /**
  * Componente que muestra una lista de Artículos Manufacturados.
  * @author Castillo
  */
-export function ListArticuloManufacturado() {
+function ListArticuloManufacturado(): JSX.Element {
     const { termino } = useParams<string>();
     const { articulosManufacturados } = useArticulosManufacturados(termino);
 
@@ -40,3 +40,5 @@ export function ListArticuloManufacturado() {
         </>
     );
 }
+
+export default ListArticuloManufacturado;

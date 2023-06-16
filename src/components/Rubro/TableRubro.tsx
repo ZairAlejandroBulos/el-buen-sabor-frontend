@@ -1,4 +1,3 @@
-import "./Rubro.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Table } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -46,14 +45,14 @@ function TableRubro(): JSX.Element {
 
     return (
         <>
-            <Container className="container-header">
+            <Container className="d-flex mt-3">
                 <h1>Rubro</h1>
                 <Button onClick={handleClose} variant="success">Nuevo</Button>
             </Container>
 
             <Container className="table-scrollable">
                 <Table responsive bordered hover>
-                    <thead className="thead-rubro">
+                    <thead className="table-thead">
                         <tr>
                             <th>Denominación</th>
                             <th>Rubro Padre</th>

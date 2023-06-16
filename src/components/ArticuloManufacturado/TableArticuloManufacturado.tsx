@@ -1,4 +1,3 @@
-import "./ArticuloManufacturado.css";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Table } from "react-bootstrap";
@@ -40,7 +39,7 @@ function TableArticuloManufacturado(): JSX.Element {
 
             <Container className="table-scrollable mt-3">
                 <Table responsive bordered hover>
-                    <thead className="thead-articulo-manufacturado">
+                    <thead className="table-thead">
                         <tr>
                             <th>Denominación</th>
                             <th>Rubro</th>

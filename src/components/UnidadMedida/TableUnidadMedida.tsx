@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useModal } from "../../hooks/useModal";
-import { UnidadMedida } from "../../types/UnidadMedida";
 import { useAuth0 } from "@auth0/auth0-react";
-import { findAllUnidadMedida } from "../../services/UnidadMedidaService";
+
+import { UnidadMedida } from "../../types/UnidadMedida";
+import { useModal } from "../../hooks/useModal";
 import { Button, Container, Table } from "react-bootstrap";
 import ItemUnidadMedida from "./ItemUnidadMedida";
 import ModalUnidadMedida from "./ModalUnidadMedida";
+import { findAllUnidadMedida } from "../../services/UnidadMedidaService";
 
 function TableUnidadMedida(): JSX.Element {
     const [unidadMedida, setUnidadMedida] = useState<UnidadMedida[]>([]);
@@ -18,22 +19,21 @@ function TableUnidadMedida(): JSX.Element {
 
     const getAllUnidadMedida = async () => {
         const token = await getAccessTokenSilently();
+        
         const newUnidadMedida = await findAllUnidadMedida(token);
-
         setUnidadMedida(newUnidadMedida);
     };
 
-
     return (
         <>
-            <Container className="container-header">
+            <Container className="d-flex mt-3">
                 <h1>Unidad Medida</h1>
                 <Button onClick={handleClose} variant="success">Nuevo</Button>
             </Container>
 
             <Container className="table-scrollable">
                 <Table responsive bordered hover>
-                    <thead className="thead-rubro">
+                    <thead className="table-thead">
                         <tr>
                             <th>Denominación</th>
                             <th>Acciones</th>
@@ -55,7 +55,6 @@ function TableUnidadMedida(): JSX.Element {
                 showModal={showModal}
                 handleClose={handleClose}
             />
-
         </>
     );
 }

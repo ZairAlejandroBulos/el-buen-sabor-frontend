@@ -1,9 +1,9 @@
-import { Button, Container, Table } from "react-bootstrap";
-import { ArticuloInsumo } from "../../types/ArticuloInsumo";
-import ItemArticuloInsumo from "./ItemArticuloInsumo";
-import "./ArticuloInsumo.css";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Container, Table } from "react-bootstrap";
+
+import { ArticuloInsumo } from "../../types/ArticuloInsumo";
+import ItemArticuloInsumo from "./ItemArticuloInsumo";
 import { findAllArticuloInsumoFull } from "../../services/ArticuloInsumoService";
 
 /**
@@ -25,7 +25,6 @@ function TableArticuloInsumo(): JSX.Element {
         setArticulosInsumos(newArticulosInsumos);
     };
 
-
     return (
         <>
             <Container className="d-flex mt-3">
@@ -40,9 +39,9 @@ function TableArticuloInsumo(): JSX.Element {
 
             <Container className="table-scrollable mt-3">
                 <Table responsive bordered hover >
-                    <thead className="thead-cliente">
+                    <thead className="table-thead">
                         <tr>
-                            <th>Nombre</th>
+                            <th>Denominación</th>
                             <th>Rubro</th>
                             <th>Costo</th>
                             <th>Stock Minimo</th>
@@ -64,7 +63,6 @@ function TableArticuloInsumo(): JSX.Element {
             </Container>
         </>
     );
-
-
 }
+
 export default TableArticuloInsumo;

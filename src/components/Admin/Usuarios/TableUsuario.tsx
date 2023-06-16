@@ -1,4 +1,3 @@
-import "./TableUsuario.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -10,7 +9,7 @@ import { Cliente } from "../../../types/Cliente";
 import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/ClienteService";
 
 /**
- * Componente que muestra una tabla de Usuarios.
+ * Componente que muestra una tabla de Usuarios (Rol: Clientes/Empleados).
  * Vista de Admin.
  * @author Bulos
  */
@@ -97,7 +96,7 @@ function TableUsuario(): JSX.Element {
 
             <Container className="table-scrollable">
                 <Table responsive bordered hover>
-                    <thead className="thead-cliente">
+                    <thead className="table-thead">
                         <tr>
                             <th>Nombre</th>
                             <th>Apellido</th>

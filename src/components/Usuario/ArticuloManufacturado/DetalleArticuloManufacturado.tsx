@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Link, useParams } from "react-router-dom";
+import { Button, Col, Container, Row } from "react-bootstrap";
 
 import "./ArticuloManufacturado.css";
 import { ArticuloInsumo } from "../../../types/ArticuloInsumo";
@@ -10,13 +10,12 @@ import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturad
 import { findArticuloInsumoById } from "../../../services/ArticuloInsumoService";
 import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
-import { propTypes } from "react-bootstrap/esm/Image";
 
 /**
  * Componente que muestra los detalles de un Artículo Manufacturado .
  * @author Castillo
  */
-export const DetalleArticuloManufacturado = () => {
+function DetalleArticuloManufacturado(): JSX.Element {
     const { id } = useParams();
     const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>();
     const [articulosInsumos, setArticulosInsumos] = useState<ArticuloInsumo[]>([]);
@@ -112,5 +111,7 @@ export const DetalleArticuloManufacturado = () => {
                 </Col>
             </Row>
         </Container>
-    )
+    );
 }
+
+export default DetalleArticuloManufacturado;
