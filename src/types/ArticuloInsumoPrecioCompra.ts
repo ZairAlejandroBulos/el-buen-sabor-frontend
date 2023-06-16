@@ -1,5 +1,5 @@
 export interface ArticuloInsumoPrecioCompra {
     id: number;
-    fecha: Date;
+    fecha: string;
     monto: number;
 }

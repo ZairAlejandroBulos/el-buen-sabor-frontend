@@ -1,27 +1,49 @@
-import { Button, Col, Container, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
-import { useArticulosInsumos } from "../../hooks/useArticulosInsumos";
 import ItemArticuloInsumo from "./ItemArticuloInsumo";
 import "./ArticuloInsumo.css";
-import ModalArticuloInsumo from "./ModalArticuloInsumo";
-import { useModal } from "../../hooks/useModal";
+import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { findAllArticuloInsumoFull } from "../../services/ArticuloInsumoService";
 
 /**
  * Componente que muestra una lista de Artículos Insumos.
  * @author Castillo
  */
-function ListArticuloInsumo(): JSX.Element {
-    const { showModal, handleClose } = useModal();
-    const { articulosInsumos } = useArticulosInsumos();
+function TableArticuloInsumo(): JSX.Element {
+    const [articulosInsumos, setArticulosInsumos] = useState<ArticuloInsumo[]>([]);
+    const { getAccessTokenSilently } = useAuth0();
+
+    useEffect(() => {
+        getAllArticuloInsumos();
+    }, []);
+
+    const getAllArticuloInsumos = async () => {
+        const token = await getAccessTokenSilently();
+
+        const newArticulosInsumos = await findAllArticuloInsumoFull(token);
+        setArticulosInsumos(newArticulosInsumos);
+    };
+
 
     return (
         <>
-            <Container fluid="md" className="container-articulo-insumo">
-                <h1>Ingredientes<Button onClick={handleClose} variant="success">Nuevo</Button></h1>
+            <Container className="d-flex mt-3">
+                <h1>Artículos Insumos</h1>
+                <Button
+                    variant="success"
+                    href="/admin/stock/articulos-insumos/form/-1"
+                >
+                    Nuevo
+                </Button>
+            </Container>
+
+            <Container className="table-scrollable mt-3">
                 <Table responsive bordered hover >
                     <thead className="thead-cliente">
                         <tr>
                             <th>Nombre</th>
+                            <th>Rubro</th>
                             <th>Costo</th>
                             <th>Stock Minimo</th>
                             <th>Stock Actual</th>
@@ -39,17 +61,10 @@ function ListArticuloInsumo(): JSX.Element {
                         }
                     </tbody>
                 </Table>
-
             </Container>
-
-            {/*<ModalArticuloInsumo
-                showModal={showModal}
-                handleClose={handleClose}
-            />*/}
-
         </>
     );
 
 
 }
-export default ListArticuloInsumo;
+export default TableArticuloInsumo;

@@ -15,8 +15,9 @@ function HeaderCocinero(): JSX.Element {
             </Nav.Item>
             <Nav.Item>
                 <NavDropdown title="Stock" id="stock-dropdown">
-                    <Nav.Link as={Link} to="/cocinero/stock/articulos-insumos">Artículo Insumo</Nav.Link>
+                <Nav.Link as={Link} to="/cocinero/stock/articulos-insumos">Articulo Insumo</Nav.Link>
                     <Nav.Link as={Link} to="/cocinero/stock/articulos-manufacturados">Artículo Manufacturado</Nav.Link>
+                    <Nav.Link as={Link} to="/cocinero/unidad-medida">Unidad Medida</Nav.Link>
                 </NavDropdown>
             </Nav.Item>
             <Nav.Item>

@@ -21,6 +21,7 @@ export async function findAllArticuloInsumo(token: string) {
         }
 
         const data = await response.json() as ArticuloInsumo[];
+
         return data;
     } catch (error) {
         console.log(error);
@@ -65,6 +66,47 @@ export async function findBebidas(token: string) {
 export async function findArticuloInsumoById(id: number, token: string) {
     try {
         const response = await fetch(`${URL_API_BASE}/articulos-insumos/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as ArticuloInsumo;
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+export async function findAllArticuloInsumoFull(token: string) {
+    try {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/findAllFull`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as ArticuloInsumo[];
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+export async function findArticuloInsumoFullById(id: number, token: string) {
+    try {
+        const response = await fetch(`${URL_API_BASE}/articulos-insumos/full/byId/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }

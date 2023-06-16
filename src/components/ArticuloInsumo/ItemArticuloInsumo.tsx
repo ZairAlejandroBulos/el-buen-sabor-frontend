@@ -1,15 +1,11 @@
 import { Button } from "react-bootstrap";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
-import ModalArticuloInsumo from "./ModalArticuloInsumo";
-import { useModal } from "../../hooks/useModal";
 
 /**
  * Componente que representa un elemento de Artículo Insumo en la lista.
  * @author Castillo
  */
 function ItemArticuloInsumo(props: ArticuloInsumo): JSX.Element {
-    const { showModal, handleClose } = useModal();
-
     return (
         <>
             <tr>
@@ -17,20 +13,26 @@ function ItemArticuloInsumo(props: ArticuloInsumo): JSX.Element {
                     {props.denominacion}
                 </td>
                 <td>
-                    ${props.articuloInsumoPrecioCompra.monto}
+                    {props.rubro?.denominacion}
                 </td>
                 <td>
-                    {props.articuloInsumoStockMinimo.stockMinimo}
+                    ${props.precioCompra}
                 </td>
                 <td>
-                    {props.articuloInsumoStockActual.stockActual}
+                    {props.stockMinimo}
                 </td>
                 <td>
-                    {props.unidadMedida.denominacion}
+                    {props.stockActual}
                 </td>
                 <td>
-                    <Button onClick={() => handleClose()} variant="warning">
-                        Modificar
+                    {props.unidadMedida?.denominacion}
+                </td>
+                <td>
+                    <Button
+                        href={`/admin/stock/articulos-insumos/form/${props.id}`}
+                        variant="warning"
+                    >
+                        Editar
                     </Button>
                 </td>
                 <td>
@@ -39,12 +41,7 @@ function ItemArticuloInsumo(props: ArticuloInsumo): JSX.Element {
                     </Button>
                 </td>
             </tr>
-            {/*<ModalArticuloInsumo
-                showModal={showModal}
-                handleClose={handleClose}
-                articuloInsumo={props}
-            />
-            */}
+
         </>
     );
 }
