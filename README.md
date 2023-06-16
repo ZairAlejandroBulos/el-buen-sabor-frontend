@@ -8,8 +8,6 @@ Su público objetivo son personas mayores de 16 años de la provincia de Mendoza
 
 * [Zair Alejandro Bulos](https://github.com/ZairAlejandroBulos)
 * [Santiago Martin Castillo](https://github.com/SantyCastillo)
-* [Martin Alejandro Lucero](https://github.com/martinlucero13)
-* [Santigo Tobias Lopez San Martin](https://github.com/SantiagoLopezK2)
 
 ## Wireframe
 
