@@ -1,7 +1,9 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "../components/Layout/Home/Home";
+
 import NavBar from "../components/Layout/NavBar/NavBar";
-import { ListArticuloManufacturado } from "../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado";
+const Home = lazy(() => import("../components/Layout/Home/Home"));
+const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 
 /**
  * Componente de enrutamiento para la sección de Usuario.
@@ -11,10 +13,12 @@ function UserRouter(): JSX.Element {
     return (
         <>
             <NavBar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/productos/:termino" element={<ListArticuloManufacturado />} />
-            </Routes>
+            <Suspense>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/productos/:termino" element={<ListArticuloManufacturado />} />
+                </Routes>
+            </Suspense>
         </>
     );
 }
