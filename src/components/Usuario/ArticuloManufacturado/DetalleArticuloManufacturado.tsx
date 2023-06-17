@@ -7,7 +7,7 @@ import "./ArticuloManufacturado.css";
 import { ArticuloInsumo } from "../../../types/ArticuloInsumo";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
 import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturadoInsumo";
-import { findArticuloInsumoById } from "../../../services/ArticuloInsumoService";
+import { findArticuloInsumoById, findArticuloInsumoFullById } from "../../../services/ArticuloInsumoService";
 import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
 
@@ -31,12 +31,12 @@ function DetalleArticuloManufacturado(): JSX.Element {
 
         const newArticuloManufacturado = await findArticuloManufacturadoById(Number(id), token);
 
-        const newArticulosManufacturadosInsumos = await findByArticuloManufacturado(newArticuloManufacturado.id, token);
+        const newArticulosManufacturadosInsumos = await findByArticuloManufacturado(Number(newArticuloManufacturado.id), token);
 
         let articulosInsumosArray = [];
         for (const item of newArticulosManufacturadosInsumos) {
-            const id = item.articuloInsumoId;
-            const newArticuloInsumo = await findArticuloInsumoById(id, token);
+            const id = item.articuloInsumo.id;
+            const newArticuloInsumo = await findArticuloInsumoFullById(id, token);
 
             articulosInsumosArray.push(newArticuloInsumo);
         };
@@ -57,7 +57,7 @@ function DetalleArticuloManufacturado(): JSX.Element {
                     />
                 </Col>
                 <Col className="col-detalle">
-                    <Row>
+                    <Row className="row-detalle">
                         <Col className="col-nombre">
                             <h1>
                                 <strong>
@@ -94,16 +94,16 @@ function DetalleArticuloManufacturado(): JSX.Element {
                             </>
                         }
                     </Row>
-                    <Row className="botones">
+                    <Row>
                         <Col>
                             <Link to={`/productos/all`}>
-                                <Button variant='success'>
+                                <Button variant='success' className="botones">
                                     Seguir Comprando
                                 </Button>
                             </Link>
                         </Col>
                         <Col>
-                            <Button variant='primary'>
+                            <Button variant='primary'className="botones">
                                 Agregar al Carrito
                             </Button>
                         </Col>

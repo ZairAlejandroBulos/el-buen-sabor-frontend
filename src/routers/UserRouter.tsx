@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NavBar from "../components/Layout/NavBar/NavBar";
+import DetalleArticuloManufacturado from "../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado";
 const Home = lazy(() => import("../components/Layout/Home/Home"));
 const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 
@@ -16,7 +17,12 @@ function UserRouter(): JSX.Element {
             <Suspense>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/productos/:termino" element={<ListArticuloManufacturado />} />
+                    <Route path="/productos">
+                        <Route path=":termino" element={<ListArticuloManufacturado />} />
+                    </Route>
+                    <Route path="/detalle-manufacturado">
+                        <Route path=":id" element={<DetalleArticuloManufacturado />} />
+                    </Route>
                 </Routes>
             </Suspense>
         </>

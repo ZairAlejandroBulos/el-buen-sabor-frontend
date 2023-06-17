@@ -82,6 +82,7 @@
     position: absolute;
 }
 
+
 .col-precio {
     text-align: end;
     margin-right: 50px;
@@ -90,7 +91,9 @@
 .botones {
     position: relative;
     margin-top: 200px;
-    margin-left: 80px;
+    margin-left: 60px;
+    width: 160px;
+    height: 60px;
 }
 
 .row-descripcion {
