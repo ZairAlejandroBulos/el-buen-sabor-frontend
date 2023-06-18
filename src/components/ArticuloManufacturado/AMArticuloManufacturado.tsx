@@ -105,14 +105,17 @@ function AMArticuloManufacturado(): JSX.Element {
             if (values.id === 0) {
                 await saveArticuloManufacturado(values, file, token);
             } else {
-                // TODO: Implementar update
-                // await updateArticuloManufacturado(values.id, values, file, token);
+                await updateArticuloManufacturado(values.id, values, file, token);
             }
 
-            window.location.href = "/admin/stock/articulos-manufacturados";
+            handleNavigate();
         } else {
             handleAlert();
         }
+    };
+
+    const handleNavigate = () => {
+        window.location.href = "/admin/stock/articulos-manufacturados";
     };
 
     return (
@@ -185,7 +188,7 @@ function AMArticuloManufacturado(): JSX.Element {
                         </Form.Select>
                     </Form.Group>
 
-                <Button variant="danger">
+                <Button onClick={handleNavigate} variant="danger">
                     Cancelar
                 </Button>
 
