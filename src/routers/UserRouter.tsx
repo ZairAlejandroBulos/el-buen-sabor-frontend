@@ -2,8 +2,8 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NavBar from "../components/Layout/NavBar/NavBar";
-import DetalleArticuloManufacturado from "../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado";
 const Home = lazy(() => import("../components/Layout/Home/Home"));
+const DetalleArticuloManufacturado = lazy(() => import ("../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado"));
 const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 
 /**
