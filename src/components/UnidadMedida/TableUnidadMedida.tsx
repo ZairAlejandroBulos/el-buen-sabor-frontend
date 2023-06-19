@@ -1,28 +1,18 @@
-import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { useModal } from "../../hooks/useModal";
 import { Button, Container, Table } from "react-bootstrap";
 import ItemUnidadMedida from "./ItemUnidadMedida";
 import ModalUnidadMedida from "./ModalUnidadMedida";
-import { findAllUnidadMedida } from "../../services/UnidadMedidaService";
+import { useUnidadMedida } from "../../hooks/useUnidadMedida";
 
+/**
+ * Componente que muestra una tabla de UnidadMedida.
+ * Vista de Admin/Cocinero.
+ * @author Castillo
+ */
 function TableUnidadMedida(): JSX.Element {
-    const [unidadMedida, setUnidadMedida] = useState<UnidadMedida[]>([]);
+    const { unidadMedida } = useUnidadMedida();
     const { showModal, handleClose } = useModal();
-    const { getAccessTokenSilently } = useAuth0();
-
-    useEffect(() => {
-        getAllUnidadMedida();
-    }, []);
-
-    const getAllUnidadMedida = async () => {
-        const token = await getAccessTokenSilently();
-        
-        const newUnidadMedida = await findAllUnidadMedida(token);
-        setUnidadMedida(newUnidadMedida);
-    };
 
     return (
         <>
@@ -36,7 +26,7 @@ function TableUnidadMedida(): JSX.Element {
                     <thead className="table-thead">
                         <tr>
                             <th>Denominación</th>
-                            <th>Acciones</th>
+                            <th colSpan={2}>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>

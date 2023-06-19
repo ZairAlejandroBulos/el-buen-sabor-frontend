@@ -3,7 +3,8 @@ import { UnidadMedida } from "../../types/UnidadMedida";
 import { useAlert } from "../../hooks/useAlert";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
-import { existsByDenominacion, saveUnidadMedida, updateUnidadMedida } from "../../services/UnidadMedidaService";
+import { existsByDenominacion } from "../../services/UnidadMedidaService";
+import { save, update } from "../../services/BaseService";
 
 type Props = {
     showModal: boolean,
@@ -11,7 +12,10 @@ type Props = {
     unidadMedida?: UnidadMedida
 }
 
-
+/**
+ * Componente para crear/actualizar una UnidadMedida.
+ * @author Castillo
+ */
 function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX.Element {
     const [values, setValues] = useState<UnidadMedida>({
         id: 0,
@@ -58,14 +62,18 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
             handleAlert();
         } else {
             if (values.id === 0) {
-                await saveUnidadMedida(values, token);
+                await save('unidad-medida', values, token);
             } else {
-                await updateUnidadMedida(values.id, values, token);
+                await update('unidad-medida', values.id, values, token);
             }
-            handleClose();
-            setMessageError("");
-            window.location.reload();
+            handleReset();
         }
+    };
+
+    const handleReset = () => {
+        handleClose();
+        setMessageError("");
+        window.location.reload();
     };
 
     return (
