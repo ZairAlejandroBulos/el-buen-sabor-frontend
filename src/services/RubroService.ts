@@ -29,6 +29,33 @@ export async function findAllRubro(token: string): Promise<Rubro[]> {
 }
 
 /**
+ * Obtiene todos los Rubros Desbloqueados (bloqueado = false).
+ * 
+ * @param token oken de autenticación.
+ * @returns Una promesa que se resuelve en una lista de Rubros.
+ */
+export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/rubros/desbloqueados`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as Rubro[];
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
  * Obtiene un Rubro por su ID.
  * 
  * @param id ID del Rubro a buscar.
@@ -137,7 +164,25 @@ export async function updateRubro(id: number, entity: Rubro, token: string): Pro
             const data = await response.json() as Rubro;
             return data;
         } else {
-            console.log("ERROR UPDATE RESPONSE")
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+export async function bloquearDebloquearRubro(id: number, token: string): Promise<void> {
+    try {
+        const response = await fetch(`${URL_API_BASE}/rubros/bloquear-desbloquear/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (response.status !== 204) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 

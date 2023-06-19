@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy } from "react";
 import { Button, Container, Table } from "react-bootstrap";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import ItemRubro from "./ItemRubro";
-import ModalRubro from "./ModalRubro";
 import { Rubro } from "../../types/Rubro";
 import { useModal } from "../../hooks/useModal";
-import { findAllRubro, findRubroById } from "../../services/RubroService";
+import { useRubros } from "../../hooks/useRubros";
+const ModalRubro = lazy(() => import("./ModalRubro"));
 
 /**
  * Componente que muestra una tabla de Rubros.
@@ -14,34 +13,8 @@ import { findAllRubro, findRubroById } from "../../services/RubroService";
  * @author Bulos
  */
 function TableRubro(): JSX.Element {
-    const [rubros, setRubros] = useState<Rubro[]>([]);
+    const { rubros } = useRubros();
     const { showModal, handleClose } = useModal();
-    const { getAccessTokenSilently } = useAuth0();
-
-    useEffect(() => {
-        getAllRubros();
-    }, []);
-
-    const getAllRubros = async () => {
-        const token = await getAccessTokenSilently();
-        const newRubros = await findAllRubro(token);
-
-        for (const item of newRubros) {
-            if (item.rubroPadreId) {
-                const rubroPadre = await getRubroPadreById(item.rubroPadreId);
-                item.rubroPadre = rubroPadre;
-            }
-        }
-
-        setRubros(newRubros);
-    };
-
-    const getRubroPadreById = async (id: number) => {
-        const token = await getAccessTokenSilently();
-        const newRubro = await findRubroById(id, token);
-
-        return newRubro;
-    };
 
     return (
         <>
@@ -55,27 +28,27 @@ function TableRubro(): JSX.Element {
                     <thead className="table-thead">
                         <tr>
                             <th>Denominación</th>
-                            <th>Rubro Padre</th>
-                            <th>Acciones</th>
+                            <th>Rubro Principal</th>
+                            <th>Estado</th>
+                            <th colSpan={2}>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             rubros?.map((item: Rubro, index: number) =>
-                                <ItemRubro key={index}
-                                    {...item}
-                                />
+                                <ItemRubro key={index} {...item} />
                             )
                         }
                     </tbody>
                 </Table>
             </Container>
 
-            <ModalRubro
-                showModal={showModal}
-                handleClose={handleClose}
-            />
-
+            <Suspense>
+                <ModalRubro
+                    showModal={showModal}
+                    handleClose={handleClose}
+                    />
+            </Suspense>
         </>
     );
 }

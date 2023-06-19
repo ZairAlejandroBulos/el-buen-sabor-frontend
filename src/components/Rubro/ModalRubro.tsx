@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
-import { existsByDenominacion, findAllRubro, saveRubro, updateRubro } from "../../services/RubroService";
+import { existsByDenominacion, findRubroById, findRubrosDesbloqueados, saveRubro, updateRubro } from "../../services/RubroService";
 
 type Props = {
     showModal: boolean,
@@ -17,44 +17,41 @@ type Props = {
  * @author Bulos
  */
 function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
-    const [values, setValues] = useState<Rubro>({
-        id: 0,
-        denominacion: ""
-    });
-    const [selectedRubroPadreId, setSelectedRubroPadreId] = useState<number | null>(null);
+    const [inicialRubro, setInicialRubro] = useState<Rubro>({ 'id': 0, 'denominacion': '', 'bloqueado': false });
     const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
-    const [messageError, setMessageError] = useState<string>("");
+    const [selectedRubroPadreId, setSelectedRubroPadreId] = useState<number | null>(null);
+    
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
+    const [messageError, setMessageError] = useState<string>("");
+
+    useEffect(() => {
+        getRubrosDesbloqueados();
+    }, []);
 
     useEffect(() => {
         if (rubro) {
-            if (rubro.rubroPadreId === null) {
-                setValues({
-                    id: rubro.id,
-                    denominacion: rubro.denominacion
-                });
-            } else {
-                setValues({
-                    id: rubro.id,
-                    denominacion: rubro.denominacion,
-                    rubroPadreId: rubro.rubroPadreId
-                });
-            }
+            getRubroById(rubro.id);
         }
-        getRubrosPadres();
     }, [rubro]);
 
-    const getRubrosPadres = async () => {
+    const getRubroById = async (id: number) => {
         const token = await getAccessTokenSilently();
         
-        const newRubrosPadres: Rubro[] = await findAllRubro(token);
+        const newRubro = await findRubroById(id, token);
+        setInicialRubro(newRubro);
+    };
+
+    const getRubrosDesbloqueados = async () => {
+        const token = await getAccessTokenSilently();
+
+        const newRubrosPadres = await findRubrosDesbloqueados(token);
         setRubrosPadres(newRubrosPadres);
     };
 
     const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDenominacion = event.target.value;
-        setValues((prevState) => ({
+        setInicialRubro((prevState) => ({
             ...prevState,
             denominacion: newDenominacion
         }));
@@ -62,16 +59,9 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
 
     const handleChangeRubroPadre = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const rubroPadreId = Number(event.currentTarget.value);
-
-        if (rubroPadreId === -1) {
-            setSelectedRubroPadreId(null);
-            setValues((prevState) => ({
-                ...prevState,
-                rubroPadreId: NaN
-            }));
-        } else {
+        if (rubroPadreId !== -1) {
             setSelectedRubroPadreId(rubroPadreId);
-            setValues((prevState) => ({
+            setInicialRubro((prevState) => ({
                 ...prevState,
                 rubroPadreId: rubroPadreId
             }));
@@ -82,30 +72,34 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
         event.preventDefault();
         const token = await getAccessTokenSilently();
 
-        if (!values.denominacion || values.denominacion.trim() === "") {
+        if (!inicialRubro.denominacion || inicialRubro.denominacion.trim() === "") {
             setMessageError("El Rubro debe tener una denominación");
             handleAlert();
-        } else if (values.id === 0 && await existsByDenominacion(values.denominacion, token)) {
-            setMessageError(`Ya existe un Rubro denominado ${values.denominacion}`);
+        } else if (inicialRubro.id === 0 && (await existsByDenominacion(inicialRubro.denominacion, token))) {
+            setMessageError(`Ya existe un Rubro denominado ${inicialRubro.denominacion}`);
             handleAlert();
-        } else if (values.id === selectedRubroPadreId) {
-            setMessageError("No se puede seleccionar como rubro padre al mismo Rubro.");
+        } else if (inicialRubro.id === selectedRubroPadreId) {
+            setMessageError("No se puede seleccionar como rubro principal al mismo Rubro.");
             handleAlert();
         } else {
-            if (values.id === 0) {
-                await saveRubro(values, token);
+            if (inicialRubro.id === 0) {
+                await saveRubro(inicialRubro, token);
             } else {
-                await updateRubro(values.id, values, token);
+                await updateRubro(inicialRubro.id, inicialRubro, token);
             }
 
-            handleClose();
-            setMessageError("");
-            window.location.reload();
+            handleReset();
         }
     };
 
+    const handleReset = () => {
+        handleClose();
+        setMessageError('');
+        window.location.reload();
+    };
+
     return (
-        <Modal show={showModal} onHide={handleClose}>
+        <Modal show={showModal} onHide={handleClose} centered backdrop="static">
             <Modal.Header closeButton>
                 {
                     <Modal.Title className="text-center">
@@ -123,14 +117,14 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                             id="denominacion"
                             name="denominacion"
                             placeholder="Ingrese denominacion"
-                            value={values?.denominacion || ""}
+                            value={inicialRubro?.denominacion || ""}
                             onChange={handleChangeDenominacion}
                         />
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Rubro Artículo Padre</Form.Label>
-                        <Form.Select id="rubroPadreId" value={values?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
+                        <Form.Label>Rubro Principal</Form.Label>
+                        <Form.Select id="rubroPadreId" value={inicialRubro?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
                             <option value="-1">--Seleccione--</option>
                             {
                                 rubrosPadres.map((item: Rubro, index: number) =>
@@ -142,7 +136,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                         </Form.Select>
                     </Form.Group>
 
-                    <Button onClick={handleClose} variant="danger buttons-modal-form">
+                    <Button onClick={handleClose} variant="danger">
                         Cerrar
                     </Button>
 
