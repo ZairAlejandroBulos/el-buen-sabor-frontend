@@ -4,7 +4,8 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 import { Rubro } from "../../types/Rubro";
 import { useAlert } from "../../hooks/useAlert";
-import { existsByDenominacion, findRubroById, findRubrosDesbloqueados, saveRubro, updateRubro } from "../../services/RubroService";
+import { findById } from "../../services/BaseService";
+import { existsByDenominacion, findRubrosDesbloqueados, saveRubro, updateRubro } from "../../services/RubroService";
 
 type Props = {
     showModal: boolean,
@@ -38,7 +39,7 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
     const getRubroById = async (id: number) => {
         const token = await getAccessTokenSilently();
         
-        const newRubro = await findRubroById(id, token);
+        const newRubro = await findById<Rubro>('rubros', id, token);
         setInicialRubro(newRubro);
     };
 

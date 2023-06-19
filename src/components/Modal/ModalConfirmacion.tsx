@@ -8,6 +8,10 @@ interface Props {
     onCancel: () => void;
 }
 
+/**
+ * Componente ventana modal de confirmación.
+ * @author Bulos
+ */
 function ModalConfirmacion({ title, message, showModal, onOk, onCancel }: Props): JSX.Element {
     return(
         <Modal show={showModal} onHide={onCancel} centered backdrop="static">

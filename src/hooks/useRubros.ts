@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import { Rubro } from "../types/Rubro";
-import { findAllRubro } from "../services/RubroService";
+import { findAll } from "../services/BaseService";
 
 /**
  * Hook personalizado para obtener una lista de Rubro.
@@ -19,7 +19,7 @@ export const useRubros = () => {
     const getAllRubros = async () => {
         const token = await getAccessTokenSilently();
         
-        const newRubros = await findAllRubro(token);
+        const newRubros = await findAll<Rubro>('rubros', token);
         setRubros(newRubros);
     };
 

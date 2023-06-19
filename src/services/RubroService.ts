@@ -2,33 +2,6 @@ import { URL_API_BASE } from "../constants";
 import { Rubro } from "../types/Rubro";
 
 /**
- * Obtiene todos los Rubros.
- * 
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en una lista de Rubros.
- */
-export async function findAllRubro(token: string): Promise<Rubro[]> {
-    try {
-        const response = await fetch(`${URL_API_BASE}/rubros`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as Rubro[];
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
  * Obtiene todos los Rubros Desbloqueados (bloqueado = false).
  * 
  * @param token oken de autenticación.
@@ -48,33 +21,6 @@ export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
         }
 
         const data = await response.json() as Rubro[];
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
- * Obtiene un Rubro por su ID.
- * 
- * @param id ID del Rubro a buscar.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en un Rubro.
- */
-export async function findRubroById(id: number, token: string): Promise<Rubro> {
-    try {
-        const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as Rubro;
         return data;
     } catch (error) {
         console.log(error);
@@ -173,6 +119,12 @@ export async function updateRubro(id: number, entity: Rubro, token: string): Pro
     }
 }
 
+/**
+ * Bloquea/Desbloquea un Rubro por su ID.
+ * 
+ * @param id ID del Rubro a bloquear/desbloquear.
+ * @param token Token de autenticación.
+ */
 export async function bloquearDebloquearRubro(id: number, token: string): Promise<void> {
     try {
         const response = await fetch(`${URL_API_BASE}/rubros/bloquear-desbloquear/${id}`, {
