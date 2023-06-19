@@ -66,6 +66,11 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                 ...prevState,
                 rubroPadreId: rubroPadreId
             }));
+        } else {
+            setInicialRubro((prevState) => ({
+                ...prevState,
+                rubroPadreId: NaN
+            }));
         }
     };
 
