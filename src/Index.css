@@ -3,6 +3,13 @@
 body {
   font-family: "Roboto", sans-serif;
   background-color: #DEE2E6;
+  height: 100vh;
+}
+
+.table {
+  text-align: center;
+  font-weight: bold;
+  background-color: #fff;
 }
 
 .table-scrollable {
@@ -13,4 +20,8 @@ body {
 .table-thead {
   background-color: #212529;
   color: #fff;
+}
+
+.form-label {
+  font-weight: bold;
 }
