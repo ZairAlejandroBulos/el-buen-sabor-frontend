@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 import { Endpoint } from "../../types/Endpoint";
 import { TipoModal } from "../../types/TipoModal";
@@ -9,7 +10,6 @@ import { useModal } from "../../hooks/useModal";
 import { remove } from "../../services/BaseService";
 const ModalConfirmacion = lazy(() => import("../Modal/ModalConfirmacion"));
 const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"))
-const ModalError = lazy(() => import("../Modal/ModalError"));
 
 /**
  * Componente que representa un elemento de UnidadMedida en la tabla.
@@ -27,7 +27,10 @@ function ItemUnidadMedida(props: UnidadMedida): JSX.Element {
             await remove(Endpoint.UnidadMedida, props.id, token);
             handleReset();
         } catch (error) {
-            setTipoModal(TipoModal.Error);
+            toast.error(`No se pudo eliminar la Unidad de Medida "${props.denominacion}". Está siendo utiliza en Artículos Insumos.`, {
+                position: toast.POSITION.TOP_CENTER
+            });
+            handleClose();
         }
     };
 
@@ -62,34 +65,25 @@ function ItemUnidadMedida(props: UnidadMedida): JSX.Element {
             </tr>
 
             {
-                tipoModal === TipoModal.Editar ? (
-                    <Suspense>
-                        <ModalUnidadMedida
-                            showModal={showModal}
-                            handleClose={handleClose}
-                            unidadMedida={props}
-                        />
-                    </Suspense>
-                ) : tipoModal === TipoModal.Eliminar ? (
-                    <Suspense>
-                        <ModalConfirmacion
-                            title="Confirmación de eliminación"
-                            message={`¿Está seguro que desea eliminar la unidad de medida "${props.denominacion}"?`}
-                            showModal={showModal}
-                            onOk={handleDelete}
-                            onCancel={handleClose}
-                        />
-                    </Suspense>
-                ) : tipoModal === TipoModal.Error ? (
-                    <Suspense>
-                        <ModalError
-                            title="Error al eliminar"
-                            message={`La unidad de medida "${props.denominacion}" esta siendo utilizada en Articulos Insumos.`}
-                            showModal={showModal}
-                            handleClose={handleClose}
-                        />
-                    </Suspense>
-                ) : null
+                tipoModal === TipoModal.Editar
+                ?
+                <Suspense>
+                    <ModalUnidadMedida
+                        showModal={showModal}
+                        handleClose={handleClose}
+                        unidadMedida={props}
+                    />
+                </Suspense>
+                :
+                <Suspense>
+                    <ModalConfirmacion
+                        title="Confirmación de eliminación"
+                        message={`¿Está seguro que desea eliminar la unidad de medida "${props.denominacion}"?`}
+                        showModal={showModal}
+                        onOk={handleDelete}
+                        onCancel={handleClose}
+                    />
+                </Suspense>
             }
         </>
     );
