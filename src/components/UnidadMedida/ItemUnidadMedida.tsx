@@ -1,11 +1,12 @@
 import { Suspense, lazy, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "react-bootstrap";
 
+import { Endpoint } from "../../types/Endpoint";
+import { TipoModal } from "../../types/TipoModal";
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { useModal } from "../../hooks/useModal";
-import { useAuth0 } from "@auth0/auth0-react";
 import { remove } from "../../services/BaseService";
-import { TipoModal } from "../../types/TipoModal";
 const ModalConfirmacion = lazy(() => import("../Modal/ModalConfirmacion"));
 const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"))
 const ModalError = lazy(() => import("../Modal/ModalError"));
@@ -23,7 +24,7 @@ function ItemUnidadMedida(props: UnidadMedida): JSX.Element {
         const token = await getAccessTokenSilently();
 
         try {
-            await remove("unidad-medida", props.id, token);
+            await remove(Endpoint.UnidadMedida, props.id, token);
             handleReset();
         } catch (error) {
             setTipoModal(TipoModal.Error);

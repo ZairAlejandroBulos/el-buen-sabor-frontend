@@ -1,9 +1,11 @@
-import { UnidadMedida } from "../../types/UnidadMedida";
+import { Suspense, lazy } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Button, Container, Table } from "react-bootstrap";
+
 import ItemUnidadMedida from "./ItemUnidadMedida";
-import ModalUnidadMedida from "./ModalUnidadMedida";
-import { useUnidadMedida } from "../../hooks/useUnidadMedida";
+import { UnidadMedida } from "../../types/UnidadMedida";
+import { useUnidadesMedidas } from "../../hooks/useUnidadesMedidas";
+const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
 
 /**
  * Componente que muestra una tabla de UnidadMedida.
@@ -11,7 +13,7 @@ import { useUnidadMedida } from "../../hooks/useUnidadMedida";
  * @author Castillo
  */
 function TableUnidadMedida(): JSX.Element {
-    const { unidadMedida } = useUnidadMedida();
+    const { unidadesMedidas } = useUnidadesMedidas();
     const { showModal, handleClose } = useModal();
 
     return (
@@ -31,7 +33,7 @@ function TableUnidadMedida(): JSX.Element {
                     </thead>
                     <tbody>
                         {
-                            unidadMedida?.map((item: UnidadMedida, index: number) =>
+                            unidadesMedidas?.map((item: UnidadMedida, index: number) =>
                                 <ItemUnidadMedida key={index}
                                     {...item}
                                 />
@@ -41,10 +43,12 @@ function TableUnidadMedida(): JSX.Element {
                 </Table>
             </Container>
 
-            <ModalUnidadMedida
-                showModal={showModal}
-                handleClose={handleClose}
-            />
+            <Suspense>
+                <ModalUnidadMedida
+                    showModal={showModal}
+                    handleClose={handleClose}
+                    />
+            </Suspense>
         </>
     );
 }

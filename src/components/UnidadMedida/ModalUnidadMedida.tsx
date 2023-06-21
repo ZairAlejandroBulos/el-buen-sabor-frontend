@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { useAlert } from "../../hooks/useAlert";
-import { useAuth0 } from "@auth0/auth0-react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { existsByDenominacion } from "../../services/UnidadMedidaService";
 import { save, update } from "../../services/BaseService";
+import { useUnidadMedida } from "../../hooks/useUnidadMedida";
 
 type Props = {
     showModal: boolean,
@@ -17,29 +19,11 @@ type Props = {
  * @author Castillo
  */
 function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX.Element {
-    const [values, setValues] = useState<UnidadMedida>({
-        id: 0,
-        denominacion: ""
-    });
-    const [messageError, setMessageError] = useState<string>("");
+    const  { unidadMedida: values, setUnidadMedida: setValues } = useUnidadMedida(unidadMedida ? unidadMedida.id : -1);
+    
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
-
-    useEffect(() => {
-        if (unidadMedida) {
-            if (unidadMedida.id === 0) {
-                setValues({
-                    id: unidadMedida.id,
-                    denominacion: unidadMedida.denominacion
-                });
-            } else {
-                setValues({
-                    id: unidadMedida.id,
-                    denominacion: unidadMedida.denominacion,
-                });
-            }
-        }
-    }, [unidadMedida]);
+    const [messageError, setMessageError] = useState<string>("");
 
 
     const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,10 +46,11 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
             handleAlert();
         } else {
             if (values.id === 0) {
-                await save('unidad-medida', values, token);
+                await save<UnidadMedida>('unidades-medidas', values, token);
             } else {
-                await update('unidad-medida', values.id, values, token);
+                await update<UnidadMedida>('unidades-medidas', values.id, values, token);
             }
+
             handleReset();
         }
     };
@@ -110,7 +95,7 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
                 </Form>
                 <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
                     <Alert.Heading>Error!</Alert.Heading>
-                    <p>{messageError}</p>
+                    <p>{ messageError }</p>
                 </Alert>
             </Modal.Body>
         </Modal>

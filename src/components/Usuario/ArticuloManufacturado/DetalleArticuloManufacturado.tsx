@@ -1,15 +1,16 @@
+import "./ArticuloManufacturado.css";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
 
-import "./ArticuloManufacturado.css";
+import { Endpoint } from "../../../types/Endpoint";
 import { ArticuloInsumo } from "../../../types/ArticuloInsumo";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
 import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturadoInsumo";
-import { findArticuloInsumoById, findArticuloInsumoFullById } from "../../../services/ArticuloInsumoService";
-import { findArticuloManufacturadoById } from "../../../services/ArticuloManufacturadoService";
+import { findById } from "../../../services/BaseService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
+import { findArticuloManufacturadoSimpleById } from "../../../services/ArticuloManufacturadoService";
 
 /**
  * Componente que muestra los detalles de un Artículo Manufacturado .
@@ -29,14 +30,14 @@ function DetalleArticuloManufacturado(): JSX.Element {
     const getArticuloManufacturado = async () => {
         const token = await getAccessTokenSilently();
 
-        const newArticuloManufacturado = await findArticuloManufacturadoById(Number(id), token);
+        const newArticuloManufacturado = await findArticuloManufacturadoSimpleById(Number(id), token);
 
         const newArticulosManufacturadosInsumos = await findByArticuloManufacturado(Number(newArticuloManufacturado.id), token);
 
         let articulosInsumosArray = [];
         for (const item of newArticulosManufacturadosInsumos) {
             const id = item.articuloInsumo.id;
-            const newArticuloInsumo = await findArticuloInsumoFullById(id, token);
+            const newArticuloInsumo = await findById<ArticuloInsumo>(Endpoint.ArticuloInsumo, id, token);
 
             articulosInsumosArray.push(newArticuloInsumo);
         };

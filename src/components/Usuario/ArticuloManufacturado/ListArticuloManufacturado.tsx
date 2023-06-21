@@ -4,7 +4,7 @@ import { Container, Row } from "react-bootstrap";
 import Home from "../../Layout/Home/Home";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
 import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
-import { useArticulosManufacturados } from "../../../hooks/useArticulosManufacturados";
+import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosManufacturadosSimple";
 
 /**
  * Componente que muestra una lista de Artículos Manufacturados.
@@ -12,7 +12,7 @@ import { useArticulosManufacturados } from "../../../hooks/useArticulosManufactu
  */
 function ListArticuloManufacturado(): JSX.Element {
     const { termino } = useParams<string>();
-    const { articulosManufacturados } = useArticulosManufacturados(termino);
+    const { articulosManufacturados } = useArticulosManufacturadosSimple(termino);
 
     return (
         <>

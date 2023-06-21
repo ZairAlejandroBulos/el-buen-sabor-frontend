@@ -1,29 +1,15 @@
-import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Table } from "react-bootstrap";
 
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 import ItemArticuloInsumo from "./ItemArticuloInsumo";
-import { findAllArticuloInsumoFull } from "../../services/ArticuloInsumoService";
+import { useArticulosInsumos } from "../../hooks/useArticulosInsumos";
 
 /**
  * Componente que muestra una lista de Artículos Insumos.
  * @author Castillo
  */
 function TableArticuloInsumo(): JSX.Element {
-    const [articulosInsumos, setArticulosInsumos] = useState<ArticuloInsumo[]>([]);
-    const { getAccessTokenSilently } = useAuth0();
-
-    useEffect(() => {
-        getAllArticuloInsumos();
-    }, []);
-
-    const getAllArticuloInsumos = async () => {
-        const token = await getAccessTokenSilently();
-
-        const newArticulosInsumos = await findAllArticuloInsumoFull(token);
-        setArticulosInsumos(newArticulosInsumos);
-    };
+    const { articulosInsumos } = useArticulosInsumos();
 
     return (
         <>
@@ -44,7 +30,7 @@ function TableArticuloInsumo(): JSX.Element {
                             <th>Denominación</th>
                             <th>Rubro</th>
                             <th>Costo</th>
-                            <th>Stock Minimo</th>
+                            <th>Stock Mínimo</th>
                             <th>Stock Actual</th>
                             <th>Unidad Medida</th>
                             <th colSpan={2}>Acciones</th>
