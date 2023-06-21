@@ -6,8 +6,9 @@ import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 import { findById } from "../services/BaseService";
 
 /**
- * Hook personalizado para obtener un Artículo Manufacturado.
+ * Hook personalizado para obtener un Artículo Manufacturado por su ID.
  * @param id ID del Artículo Manufacturado a buscar.
+ * @returns Un objeto que contiene el estado del Artículo Manufacturado y la función para actualizarla.
  */
 export const useArticuloManufacturado = (id: number) => {
     const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>({

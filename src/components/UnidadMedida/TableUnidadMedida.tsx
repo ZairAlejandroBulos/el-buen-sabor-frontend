@@ -4,7 +4,8 @@ import { Button, Container, Table } from "react-bootstrap";
 
 import ItemUnidadMedida from "./ItemUnidadMedida";
 import { UnidadMedida } from "../../types/UnidadMedida";
-import { useUnidadesMedidas } from "../../hooks/useUnidadesMedidas";
+import { useEntities } from "../../hooks/useEntities";
+import { Endpoint } from "../../types/Endpoint";
 const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
 
 /**
@@ -13,7 +14,7 @@ const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
  * @author Castillo
  */
 function TableUnidadMedida(): JSX.Element {
-    const { unidadesMedidas } = useUnidadesMedidas();
+    const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
     const { showModal, handleClose } = useModal();
 
     return (

@@ -5,7 +5,7 @@ import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 import { findAllSimpleArticuloManufacturados, findAllArticuloManufacturadosByTermino } from "../services/ArticuloManufacturadoService";
 
 /**
- * Hook personalizado para obtener la lista de Artículos Manufacturados.
+ * Hook personalizado para obtener la lista de Artículos Manufacturados (Simple).
  * @param termino Término de búsqueda opcional.
  * @returns Un objeto que contiene la lista de Artículos Manufacturados.
  */

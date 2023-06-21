@@ -5,8 +5,9 @@ import { ArticuloManufacturadoInsumo } from "../types/ArticuloManufacturadoInsum
 import { findByArticuloManufacturado } from "../services/ArticuloManufacturadoInsumoService";
 
 /**
- * Hook personalizado para obtener una lista de Artículos Manufacturados Insumos.
+ * Hook personalizado para obtener los Artículos Manufacturados Insumos relacionados a un Artículo Manufacturado.
  * @param id ID del Artículo Manufacturado.
+ * @returns Un objeto que contiene el estado del Artículo Manufacturado Insumo y la función para actualizarla.
  */
 export const useArticulosManufacturadosInsumos = (id: number) => {
     const [articulosManufacturadosInsumos, setArticulosManufacturadosInsumos] = useState<ArticuloManufacturadoInsumo[]>([]);
@@ -23,5 +24,5 @@ export const useArticulosManufacturadosInsumos = (id: number) => {
         setArticulosManufacturadosInsumos(newArticulosManufacturadosInsumos);
     };
 
-    return { articulosManufacturadosInsumos };
+    return { articulosManufacturadosInsumos, setArticulosManufacturadosInsumos };
 };

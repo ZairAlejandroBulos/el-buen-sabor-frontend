@@ -6,8 +6,9 @@ import { ArticuloInsumo } from "../types/ArticuloInsumo";
 import { findById } from "../services/BaseService";
 
 /**
- * 
- * @param id 
+ * Hook personalizado para obtener un Artículo Insumo por su ID.
+ * @param id ID del Artículo Insumo a buscar.
+ * @returns Un objeto que contiene el estado del Artículo Insumo y la función para actualizarla.
  */
 export const useArticuloInsumo = (id: number) => {
     const [articuloInsumo, setArticuloInsumo] = useState<ArticuloInsumo>({

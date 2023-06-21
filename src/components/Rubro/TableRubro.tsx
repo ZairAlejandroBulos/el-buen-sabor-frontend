@@ -4,7 +4,8 @@ import { Button, Container, Table } from "react-bootstrap";
 import ItemRubro from "./ItemRubro";
 import { Rubro } from "../../types/Rubro";
 import { useModal } from "../../hooks/useModal";
-import { useRubros } from "../../hooks/useRubros";
+import { useEntities } from "../../hooks/useEntities";
+import { Endpoint } from "../../types/Endpoint";
 const ModalRubro = lazy(() => import("./ModalRubro"));
 
 /**
@@ -13,7 +14,7 @@ const ModalRubro = lazy(() => import("./ModalRubro"));
  * @author Bulos
  */
 function TableRubro(): JSX.Element {
-    const { rubros } = useRubros();
+    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
     const { showModal, handleClose } = useModal();
 
     return (

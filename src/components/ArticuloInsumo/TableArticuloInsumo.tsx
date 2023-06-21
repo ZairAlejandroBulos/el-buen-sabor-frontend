@@ -1,15 +1,16 @@
 import { Button, Container, Table } from "react-bootstrap";
 
+import { Endpoint } from "../../types/Endpoint";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 import ItemArticuloInsumo from "./ItemArticuloInsumo";
-import { useArticulosInsumos } from "../../hooks/useArticulosInsumos";
+import { useEntities } from "../../hooks/useEntities";
 
 /**
  * Componente que muestra una lista de Artículos Insumos.
  * @author Castillo
  */
 function TableArticuloInsumo(): JSX.Element {
-    const { articulosInsumos } = useArticulosInsumos();
+    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo);
 
     return (
         <>

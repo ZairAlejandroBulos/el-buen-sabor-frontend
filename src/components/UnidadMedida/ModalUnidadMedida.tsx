@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
+import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { useAlert } from "../../hooks/useAlert";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
@@ -46,9 +47,9 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
             handleAlert();
         } else {
             if (values.id === 0) {
-                await save<UnidadMedida>('unidades-medidas', values, token);
+                await save<UnidadMedida>(Endpoint.UnidadMedida, values, token);
             } else {
-                await update<UnidadMedida>('unidades-medidas', values.id, values, token);
+                await update<UnidadMedida>(Endpoint.UnidadMedida, values.id, values, token);
             }
 
             handleReset();

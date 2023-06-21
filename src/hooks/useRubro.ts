@@ -6,8 +6,9 @@ import { Rubro } from "../types/Rubro";
 import { findById } from "../services/BaseService";
 
 /**
- * Hook personalizado para obtener una lista de Rubro.
- * @author Bulos
+ * Hook personalizado para obtener un Rubro por su ID.
+ * @param id ID del Rubro a buscar.
+ * @returns Un objeto que contiene el estado del Rubro y la función para actualizarla.
  */
 export const useRubro = (id: number) => {
     const [rubro, setRubro] = useState<Rubro>({ 'id': 0, 'denominacion': '', 'bloqueado': false });
