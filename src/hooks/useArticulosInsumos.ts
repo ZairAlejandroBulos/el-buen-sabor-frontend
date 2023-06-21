@@ -1,8 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 
+import { Endpoint } from "../types/Endpoint";
 import { ArticuloInsumo } from "../types/ArticuloInsumo";
-import { findAllArticuloInsumo } from "../services/ArticuloInsumoService";
+import { findAll } from "../services/BaseService";
 
 /**
  * Hook personalizado para obtener la lista de Artículos Insumos.
@@ -19,7 +20,7 @@ export const useArticulosInsumos = () => {
     const getAllArticuloInsumos = async () => {
         const token = await getAccessTokenSilently();
 
-        const newArticulosInsumos = await findAllArticuloInsumo(token);
+        const newArticulosInsumos = await findAll<ArticuloInsumo>(Endpoint.ArticuloInsumo, token);
         setArticulosInsumos(newArticulosInsumos);
     };
 
