@@ -1,5 +1,6 @@
-import { URL_API_BASE } from "../constants";
 import { Rubro } from "../types/Rubro";
+import { Endpoint } from "../types/Endpoint";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /**
  * Obtiene todos los Rubros Desbloqueados (bloqueado = false).
@@ -9,7 +10,7 @@ import { Rubro } from "../types/Rubro";
  */
 export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros/desbloqueados`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/desbloqueados`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -37,7 +38,7 @@ export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
  */
 export async function existsByDenominacion(denominacion: string, token: string): Promise<boolean> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros/exists/${denominacion}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/exists/${denominacion}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -56,70 +57,6 @@ export async function existsByDenominacion(denominacion: string, token: string):
 }
 
 /**
- * Guarda un nuevo Rubro.
- * 
- * @param entity Rubro a guardar.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Rubro guardado.
- */
-export async function saveRubro(entity: Rubro, token: string): Promise<Rubro> {
-    try {
-        const response = await fetch(`${URL_API_BASE}/rubros`, {
-            method: "POST",
-            body: JSON.stringify(entity),
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": 'application/json'
-            }
-        });
-
-        if (response.status === 201) {
-            const data = await response.json() as Rubro;
-            return data;
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
- * Actualiza un Rubro existente por su ID.
- * 
- * @param id ID del Rubro a actualizar.
- * @param entity Rubro con los datos actualizados.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Rubro actualizado.
- */
-export async function updateRubro(id: number, entity: Rubro, token: string): Promise<Rubro> {
-    try {
-        console.log(`update ${id}, values ${entity}`)
-        const response = await fetch(`${URL_API_BASE}/rubros/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(entity),
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": 'application/json',
-            }
-        });
-
-        if (response.status === 201) {
-            const data = await response.json() as Rubro;
-            return data;
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
  * Bloquea/Desbloquea un Rubro por su ID.
  * 
  * @param id ID del Rubro a bloquear/desbloquear.
@@ -127,7 +64,7 @@ export async function updateRubro(id: number, entity: Rubro, token: string): Pro
  */
 export async function bloquearDebloquearRubro(id: number, token: string): Promise<void> {
     try {
-        const response = await fetch(`${URL_API_BASE}/rubros/bloquear-desbloquear/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/bloquear-desbloquear/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`

@@ -1,5 +1,6 @@
-import { URL_API_BASE } from "../constants";
 import { Cliente } from "../types/Cliente";
+import { Endpoint } from "../types/Endpoint";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /**
  * Obtiene todos los Clientes filtrados por Roles.
@@ -10,7 +11,7 @@ import { Cliente } from "../types/Cliente";
  */
 export async function findAllClientesByRoles(roles: string[], token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/byRoles/${roles.join(",")}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byRoles/${roles.join(",")}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -36,7 +37,7 @@ export async function findAllClientesByRoles(roles: string[], token: string): Pr
  */
 export async function findAllClientesByNombre(nombre: string, token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/byNombre/${nombre}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byNombre/${nombre}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -62,7 +63,7 @@ export async function findAllClientesByNombre(nombre: string, token: string): Pr
  */
 export async function findAllClientesByApellido(apellido: string, token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/byApellido/${apellido}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byApellido/${apellido}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -89,7 +90,7 @@ export async function findAllClientesByApellido(apellido: string, token: string)
  */
 export async function findAllClientesByNombreAndApellido(nombre: string, apellido: string, token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/byNombreAndApellido/${nombre}/${apellido}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byNombreAndApellido/${nombre}/${apellido}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -115,7 +116,7 @@ export async function findAllClientesByNombreAndApellido(nombre: string, apellid
  */
 export async function saveCliente(entity: Cliente, token: string): Promise<Cliente> {
     try {
-        const response = await fetch(`${URL_API_BASE} / clientes`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}`, {
             method: "POST",
             body: JSON.stringify(entity),
             headers: {
@@ -147,7 +148,7 @@ export async function saveCliente(entity: Cliente, token: string): Promise<Clien
  */
 export async function updateCliente(id: number, entity: Cliente, token: string): Promise<Cliente> {
     try {
-        const response = await fetch(`${URL_API_BASE} / clientes/${id}}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/${id}}`, {
             method: "PUT",
             body: JSON.stringify(entity),
             headers: {
@@ -177,7 +178,7 @@ export async function updateCliente(id: number, entity: Cliente, token: string):
  */
 export async function deleteCliente(id: number, token: string): Promise<void> {
     try {
-        const response = await fetch(`${URL_API_BASE}/clientes/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`

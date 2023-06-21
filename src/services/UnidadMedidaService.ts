@@ -1,5 +1,5 @@
+import { Endpoint } from "../types/Endpoint";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
-
 
 /**
  * Verifica si existe una UnidadMedida por denominación.
@@ -10,7 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
  */
 export async function existsByDenominacion(denominacion: string, token: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_BASE_URL}/unidad-medida/exists/${denominacion}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.UnidadMedida}/exists/${denominacion}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }

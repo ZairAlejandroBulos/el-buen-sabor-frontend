@@ -1,6 +1,7 @@
-import { URL_API_BASE } from "../constants";
+import { Endpoint } from "../types/Endpoint";
 import { findImagenByName } from "./ImagenService";
 import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /** 
 * Obtiene todos los Artículos Manufacturados.
@@ -8,9 +9,9 @@ import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en una lista de Artículos Manufacturados.
 */
-export async function findAllArticuloManufacturados(token: string) {
+export async function findAllSimpleArticuloManufacturados(token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/findAll`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/simple`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -41,9 +42,9 @@ export async function findAllArticuloManufacturados(token: string) {
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en un Artículo Manufacturado.
 */
-export async function findArticuloManufacturadoById(id: number, token: string) {
+export async function findArticuloManufacturadoSimpleById(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/byId/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/simple/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -73,7 +74,7 @@ export async function findArticuloManufacturadoById(id: number, token: string) {
 */
 export async function findAllArticuloManufacturadosByTermino(termino: string, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/byTermino/${termino}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/byTermino/${termino}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -98,60 +99,6 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
     }
 }
 
-/** 
-* Obtiene todos los Artículos Manufacturados (ArticuloManufacturadoFullDTO).
-*
-* @param token Token de autenticación.
-* @returns Una promesa que se resuelve en una lista de Artículos Manufacturados.
-*/
-export async function findAllArticuloManufacturadosFull(token: string) {
-    try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/findAllFull`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as ArticuloManufacturado[];
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/** 
-* Obtiene un Artículo Manufacturado por su ID.
-*
-* @param id ID del Artículo Manufacturado a buscar.
-* @param token Token de autenticación.
-* @returns Una promesa que se resuelve en un Artículo Manufacturado.
-*/
-export async function findArticuloManufacturadoFullById(id: number, token: string) {
-    try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/full/byId/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as ArticuloManufacturado;
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
 /**
  * Guarda un nuevo ArticuloManufacturado.
  * 
@@ -165,7 +112,7 @@ export async function saveArticuloManufacturado(entity: ArticuloManufacturado, f
         const formData = new FormData();
         formData.append('file', file);
 
-        const responseImagen = await fetch(`${URL_API_BASE}/imagenes/${entity.imagen}`, {
+        const responseImagen = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/${entity.imagen}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -174,7 +121,7 @@ export async function saveArticuloManufacturado(entity: ArticuloManufacturado, f
         });
         
         if (responseImagen.status === 204) {
-            const response = await fetch(`${URL_API_BASE}/articulos-manufacturados`, {
+            const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}`, {
                 method: "POST",
                 body: JSON.stringify(entity),
                 headers: {
@@ -212,7 +159,7 @@ export async function updateArticuloManufacturado(id: number, entity: ArticuloMa
         const formData = new FormData();
         formData.append('file', file);
 
-        const responseImagen = await fetch(`${URL_API_BASE}/imagenes/${entity.imagen}`, {
+        const responseImagen = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/${entity.imagen}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -221,7 +168,7 @@ export async function updateArticuloManufacturado(id: number, entity: ArticuloMa
         });
         
         if (responseImagen.status === 204) {
-            const response = await fetch(`${URL_API_BASE}/articulos-manufacturados/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/${id}`, {
                 method: "PUT",
                 body: JSON.stringify(entity),
                 headers: {

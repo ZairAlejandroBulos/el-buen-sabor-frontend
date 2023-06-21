@@ -1,4 +1,5 @@
 import { URL_API_BASE } from "../constants";
+import { Endpoint } from "../types/Endpoint";
 
 /**
  * Busca una Imagen por su nombre y devuelve su URL.
@@ -9,7 +10,7 @@ import { URL_API_BASE } from "../constants";
  */
 export async function findImagenByName(nombre: string, token: string): Promise<string> {
     try {
-        const response = await fetch(`${URL_API_BASE}/imagenes/byName/${nombre}`, {
+        const response = await fetch(`${URL_API_BASE}/${Endpoint.Imagen}/byName/${nombre}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ export async function saveImagen(file: File, nombre: string, token: string): Pro
     formData.append("file", file);
 
     try {
-        const response = await fetch(`${URL_API_BASE}/imagenes/${nombre}`, {
+        const response = await fetch(`${URL_API_BASE}/${Endpoint.Imagen}/${nombre}`, {
             method: "POST",
             body: formData,
             headers: {

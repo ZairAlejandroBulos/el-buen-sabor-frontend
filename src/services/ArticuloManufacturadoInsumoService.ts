@@ -1,5 +1,6 @@
-import { URL_API_BASE } from "../constants";
+import { Endpoint } from "../types/Endpoint";
 import { ArticuloManufacturadoInsumo } from "../types/ArticuloManufacturadoInsumo";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /** 
 * Obtiene una lista de Artículos Insumos que contenga un Artículo Manufacturado.
@@ -10,7 +11,7 @@ import { ArticuloManufacturadoInsumo } from "../types/ArticuloManufacturadoInsum
 */
 export async function findByArticuloManufacturado(id: number, token: string) {
     try {
-        const response = await fetch(`${URL_API_BASE}/articulos-manufacturados-insumos/byArticuloManufacturado/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturadoInsumo}/byArticuloManufacturado/${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
