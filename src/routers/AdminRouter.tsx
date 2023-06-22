@@ -13,7 +13,7 @@ const AMArticuloInsumo = lazy(() => import("../components/ArticuloInsumo/AMArtic
 
 /**
  * Componente de enrutamiento para la sección de Administrador.
- * @returns  Un elemento JSX que representa el enrutamiento de la sección de Administrador.
+ * @returns Un elemento JSX que representa el enrutamiento de la sección de Administrador.
  */
 function AdminRouter(): JSX.Element {
     return(
@@ -22,7 +22,10 @@ function AdminRouter(): JSX.Element {
             <HeaderAdmin />
             <Suspense>
                 <Routes>
-                    <Route path="/usuarios" element={<TableUsuario />} />
+                    <Route path="/usuarios">
+                        <Route path=":usuario" element={<TableUsuario />} />
+                        <Route path=":usuario" element={<TableUsuario />} />
+                    </Route>
                     <Route path="/rubros" element={<TableRubro />} />
                     <Route path="/unidad-medida" element={<TableUnidadMedida />} />
                     <Route path="/stock/articulos-manufacturados" element={<TableArticuloManufacturado />} />

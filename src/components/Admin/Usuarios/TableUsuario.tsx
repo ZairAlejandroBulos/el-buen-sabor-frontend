@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form, InputGroup, Table } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 
 import ItemUsuario from "./ItemUsuario";
 import ModalRegistro from "./ModalRegistro";
@@ -9,33 +10,34 @@ import { Cliente } from "../../../types/Cliente";
 import { findAllClientesByNombre, findAllClientesByNombreAndApellido, findAllClientesByRoles } from "../../../services/ClienteService";
 
 /**
- * Componente que muestra una tabla de Usuarios (Rol: Clientes/Empleados).
+ * Componente que muestra una tabla de Usuarios (Rol: Usuarios/Empleados).
  * Vista de Admin.
  * @author Bulos
  */
 function TableUsuario(): JSX.Element {
+    const { usuario } = useParams<string>();
+
     const [filtro, setFiltro] = useState("");
-    const [tipo, setTipo] = useState("Usuario");
-    const [clientes, setClientes] = useState<Cliente[]>([]);
+    const [usuarios, setUsuarios] = useState<Cliente[]>([]);
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         getClientesByRoles();
-    }, [tipo]);
+    }, [usuario]);
 
     const getClientesByRoles = async () => {
         const token = await getAccessTokenSilently();
         let roles: string[] = [];
 
-        if (tipo === "Usuario") {
+        if (usuario === "clientes") {
             roles = ["Usuario"];
         } else {
             roles = ["Admin", "Cocinero", "Delivery", "Cajero"];
         }
 
-        const newClientes = await findAllClientesByRoles(roles, token);
-        setClientes(newClientes);
+        const newUsuarios = await findAllClientesByRoles(roles, token);
+        setUsuarios(newUsuarios);
     }
 
     const handleChangeFiltro = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,13 +53,15 @@ function TableUsuario(): JSX.Element {
 
             if (filtroArray.length === 1) {
                 const nombre = filtroArray[0];
-                const newClientes = await findAllClientesByNombre(nombre, token);
-                setClientes(newClientes);
+                
+                const newUsuarios = await findAllClientesByNombre(nombre, token);
+                setUsuarios(newUsuarios);
             } else {
                 const nombre = filtroArray[0];
                 const apellido = filtroArray.slice(1).join(" ");
-                const newClientes = await findAllClientesByNombreAndApellido(nombre, apellido, token);
-                setClientes(newClientes);
+                
+                const newUsuarios = await findAllClientesByNombreAndApellido(nombre, apellido, token);
+                setUsuarios(newUsuarios);
             }
         } else {
             getClientesByRoles();
@@ -68,30 +72,34 @@ function TableUsuario(): JSX.Element {
 
     return (
         <>
-            <Container className="text-center mt-3">
-                <Button onClick={() => setTipo("Usuario")} variant="dark">
-                    Usuarios
-                </Button>
-                <Button onClick={() => setTipo("Empleado")} variant="dark">
-                    Empleados
-                </Button>
+            <Container className="mt-3 mb-3">
+                <h1>
+                    { usuario === 'clientes' ? 'Clientes' : 'Empleados'  }
+                </h1>
             </Container>
 
-            <Container className="d-flex mb-3 mt-3">
-                <InputGroup>
-                    <Form.Label htmlFor="search" style={{ marginRight: '10px' }}>Nombre</Form.Label>
-
-                    <Form.Control
-                        id="search"
-                        name="search"
-                        type="search"
-                        onChange={handleChangeFiltro}
-                    />
-                    <Button onClick={handleFiltro} variant="light">
-                        <i className="bi bi-search"></i>
-                    </Button>
-                </InputGroup>
-                <Button onClick={handleClose} variant="success">Nuevo</Button>
+            <Container className="mb-3">
+                <Row>
+                    <Col>
+                        <Button onClick={handleClose} variant="success">
+                            Nuevo
+                        </Button>
+                    </Col>
+                    <Col>
+                        <InputGroup>
+                            <Form.Control
+                                id="search"
+                                name="search"
+                                type="search"
+                                placeholder="Nombre y Apellido"
+                                onChange={handleChangeFiltro}
+                            />
+                            <Button onClick={handleFiltro} variant="light">
+                                <i className="bi bi-search"></i>
+                            </Button>
+                        </InputGroup>
+                    </Col>
+                </Row>
             </Container>
 
             <Container className="table-scrollable">
@@ -109,7 +117,7 @@ function TableUsuario(): JSX.Element {
                     </thead>
                     <tbody>
                         {
-                            clientes.map((item: Cliente, index: number) =>
+                            usuarios.map((item: Cliente, index: number) =>
                                 <ItemUsuario key={index}
                                     {...item}
                                 />
