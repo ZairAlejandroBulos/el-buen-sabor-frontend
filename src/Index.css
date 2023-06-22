@@ -9,7 +9,7 @@ body {
 .table {
   text-align: center;
   font-weight: bold;
-  background-color: #fff;
+  background-color: #E9ECEF;
 }
 
 .table-scrollable {
@@ -24,4 +24,41 @@ body {
 
 .form-label {
   font-weight: bold;
+}
+
+.container-amb {
+  border-radius: 15px;
+  border: 1px solid black;
+  background-color: #E9ECEF;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-amb .form-control {
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid black;
+  background-color: #E9ECEF;
+}
+
+.container-amb .form-select {
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid black;
+  background-color: #E9ECEF;
+}
+
+.btn-add:hover {
+  background-color:#0b5ed7;
+  border-color: #0a58ca;
+}
+
+.btn-ok:hover {
+  background-color:#157347;
+  border-color: #146c43;
+}
+
+.btn-cancel:hover {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
 }

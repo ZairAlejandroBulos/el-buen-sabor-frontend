@@ -1,4 +1,5 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import { Container, Table } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
@@ -14,14 +15,14 @@ function TableArticuloInsumo(): JSX.Element {
 
     return (
         <>
-            <Container className="d-flex mt-3">
+            <Container className="mt-3">
                 <h1>Artículos Insumos</h1>
-                <Button
-                    variant="success"
-                    href="/admin/stock/articulos-insumos/form/-1"
+                <NavLink 
+                    className="btn btn-success"
+                    to="/admin/stock/articulos-insumos/form/-1"
                 >
                     Nuevo
-                </Button>
+                </NavLink >
             </Container>
 
             <Container className="table-scrollable mt-3">

@@ -1,4 +1,5 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import { Container, Table } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
@@ -15,14 +16,14 @@ function TableArticuloManufacturado(): JSX.Element {
 
     return (
         <>
-            <Container className="d-flex mt-3">
+            <Container className="mt-3">
                 <h1>Artículos Manufacturados</h1>
-                <Button
-                    href="/admin/stock/articulos-manufacturados/form/-1"
-                    variant="success"
+                <NavLink
+                    className="btn btn-success me-2"
+                    to="/admin/stock/articulos-manufacturados/form/-1"
                 >
                     Nuevo
-                </Button>
+                </NavLink>
             </Container>
 
             <Container className="table-scrollable mt-3">

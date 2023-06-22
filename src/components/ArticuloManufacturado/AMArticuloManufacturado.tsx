@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
@@ -23,6 +23,7 @@ import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../se
  */
 function AMArticuloManufacturado(): JSX.Element {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const { articuloManufacturado, setArticuloManufacturado } = useArticuloManufacturado(Number(id));
     const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
@@ -162,238 +163,241 @@ function AMArticuloManufacturado(): JSX.Element {
     };
 
     const handleNavigate = () => {
-        window.location.href = "/admin/stock/articulos-manufacturados";
+        navigate("/admin/stock/articulos-manufacturados");
     };
 
     return (
         <>
-            <Container className="mt-3 mb-3">
-                <h1>Artículo Manufacturado</h1>
-            </Container>
+            <Container className="container-amb mt-4 mb-4">
+                <Container className="text-center">
+                    <h1>Artículo Manufacturado</h1>
+                </Container>
 
-            <Container>
-                <Form onSubmit={handleSubmit}>
-                    <Row>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="denominacion">Denominación</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    id="denominacion"
-                                    name="denominacion"
-                                    placeholder="Denominación"
-                                    defaultValue={articuloManufacturado?.denominacion}
-                                    onChange={handleChange}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="descripcion">Descripción</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    id="descripcion"
-                                    name="descripcion"
-                                    placeholder="Descripción"
-                                    defaultValue={articuloManufacturado?.descripcion}
-                                    onChange={handleChange}
-                                />
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                <Container className="mt-3 mb-3">
+                    <Form onSubmit={handleSubmit}>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="denominacion">Denominación</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="denominacion"
+                                        name="denominacion"
+                                        placeholder="Denominación"
+                                        defaultValue={articuloManufacturado?.denominacion}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="descripcion">Descripción</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="descripcion"
+                                        name="descripcion"
+                                        placeholder="Descripción"
+                                        defaultValue={articuloManufacturado?.descripcion}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="tiempoEstimadoCocina">Tiempo Estimado Cocina</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    id="tiempoEstimadoCocina"
-                                    name="tiempoEstimadoCocina"
-                                    placeholder="Tiempo Estimado Cocina (00:35:00)"
-                                    defaultValue={articuloManufacturado?.tiempoEstimadoCocina}
-                                    onChange={handleChange}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="precioVenta">Precio de venta</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    id="precioVenta"
-                                    name="precioVenta"
-                                    placeholder="Precio de venta"
-                                    value={articuloManufacturado?.precioVenta}
-                                    onChange={handleChange}
-                                />
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="tiempoEstimadoCocina">Tiempo Estimado Cocina</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="tiempoEstimadoCocina"
+                                        name="tiempoEstimadoCocina"
+                                        placeholder="Tiempo Estimado Cocina (00:35:00)"
+                                        defaultValue={articuloManufacturado?.tiempoEstimadoCocina}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="precioVenta">Precio de venta</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        id="precioVenta"
+                                        name="precioVenta"
+                                        placeholder="Precio de venta"
+                                        value={articuloManufacturado?.precioVenta}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="imagen">Imagen</Form.Label>
-                                <Form.Control
-                                    type="file"
-                                    id="imagen"
-                                    name="imagen"
-                                    onChange={handleChangeImagen}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="rubro">Rubro</Form.Label>
-                                <Form.Select id="rubro" value={articuloManufacturado?.rubro?.id || -1} onChange={handleChangeRubro}>
-                                    <option value="-1">--Seleccione--</option>
-                                    {
-                                        rubros.map((item: Rubro, index: number) =>
-                                            <option key={index} value={item.id}>
-                                                {item.denominacion}
-                                            </option>
-                                        )
-                                    }
-                                </Form.Select>
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="imagen">Imagen</Form.Label>
+                                    <Form.Control
+                                        type="file"
+                                        id="imagen"
+                                        name="imagen"
+                                        onChange={handleChangeImagen}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="rubro">Rubro</Form.Label>
+                                    <Form.Select id="rubro" value={articuloManufacturado?.rubro?.id || -1} onChange={handleChangeRubro}>
+                                        <option value="-1">--Seleccione--</option>
+                                        {
+                                            rubros.map((item: Rubro, index: number) =>
+                                                <option key={index} value={item.id}>
+                                                    {item.denominacion}
+                                                </option>
+                                            )
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Ingredientes</Form.Label>
-                                <Row>
-                                    <Button onClick={handleClose} variant="dark">Añadir Ingredientes</Button>
-                                </Row>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3">
-                                <Form.Label htmlFor="receta">Receta</Form.Label>
-                                <Form.Control
-                                    id="receta"
-                                    as="textarea"
-                                    rows={3}
-                                    placeholder="Procedimiento..."
-                                    defaultValue={receta}
-                                    onChange={handleChangeReceta}
-                                />
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Ingredientes</Form.Label>
+                                    <Row>
+                                        <Button onClick={handleClose} variant="dark" className="btn-add">
+                                            Añadir Ingredientes
+                                        </Button>
+                                    </Row>
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="receta">Receta</Form.Label>
+                                    <Form.Control
+                                        id="receta"
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="Procedimiento..."
+                                        defaultValue={receta}
+                                        onChange={handleChangeReceta}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col>
-                            <Button onClick={handleNavigate} variant="danger">
+                        <div className="d-flex justify-content-end mt-4">
+                            <Button onClick={handleNavigate} variant="dark" className="me-2 btn-cancel">
                                 Cancelar
                             </Button>
-                            <Button type="submit" variant="success">
+
+                            <Button type="submit" variant="dark" className="btn-ok">
                                 Guardar
                             </Button>
-                        </Col>
-                    </Row>
-                </Form>
+                        </div>
+                    </Form>
 
-                { /* Modal Articulos Insumos */}
-                <Modal show={showModal} onHide={handleClose} centered backdrop="static" size="xl">
-                    <Modal.Header closeButton>
-                        <Modal.Title>Artículos Insumos</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form>
-                            <Row>
-                                <Col>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label htmlFor="articuloInsumo">Artículo Insumo</Form.Label>
-                                        <Form.Select id="articuloInsumo" onChange={handleChangeArticuloInsumo}>
-                                            <option value="-1">--Seleccione--</option>
-                                            {
-                                                articulosInsumos.map((item: ArticuloInsumo, index: number) =>
-                                                    <option key={index} value={item.id}>
-                                                        {item.denominacion}
-                                                    </option>
-                                                )
-                                            }
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label htmlFor="cantidad">Cantidad</Form.Label>
-                                        <Form.Control
-                                            type="number"
-                                            id="cantidad"
-                                            name="cantidad"
-                                            placeholder="Cantidad"
-                                            value={cantidad}
-                                            onChange={handleChangeCantidad}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label htmlFor="unidadMedida">Unidad de Medida</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            id="unidadMedida"
-                                            name="unidadMedida"
-                                            placeholder="Unidad de Medida"
-                                            value={unidadMedida}
-                                            readOnly
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <Row>
-                                        <Form.Label htmlFor="unidadMedida">Acciones</Form.Label>
-                                    </Row>
-                                    <Button onClick={handleAddArticuloManufacturadoInsumo}>
-                                        <i className="bi bi-plus-square"></i>
-                                    </Button>
-                                </Col>
-                            </Row>
-                            <hr />
-                            <Container className="text-center">
+                    { /* Modal Articulos Insumos */}
+                    <Modal show={showModal} onHide={handleClose} centered backdrop="static" size="xl">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Artículos Insumos</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form>
                                 <Row>
-                                    <Row>
-                                        <Col>Artículo Insumo</Col>
-                                        <Col>Cantidad</Col>
-                                        <Col>Unidad de Medida</Col>
-                                        <Col>Eliminar</Col>
-                                    </Row>
-                                    {
-                                        articulosManufacturadosInsumos.map((item: ArticuloManufacturadoInsumo, index: number) =>
-
-                                            <Row key={index} className="mb-1">
-                                                <Col>
-                                                    { item.articuloInsumo.denominacion }
-                                                </Col>
-                                                <Col>
-                                                    { item.cantidad }
-                                                </Col>
-                                                <Col>
-                                                    { item.articuloInsumo.unidadMedida?.denominacion }
-                                                </Col>
-                                                <Col>
-                                                    <Button onClick={() => handleDeleteArticuloManufacturadoInsumo(item)} variant="danger">
-                                                        <i className="bi bi-trash3"></i>
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        )
-                                    }
+                                    <Col>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label htmlFor="articuloInsumo">Artículo Insumo</Form.Label>
+                                            <Form.Select id="articuloInsumo" onChange={handleChangeArticuloInsumo}>
+                                                <option value="-1">--Seleccione--</option>
+                                                {
+                                                    articulosInsumos.map((item: ArticuloInsumo, index: number) =>
+                                                        <option key={index} value={item.id}>
+                                                            {item.denominacion}
+                                                        </option>
+                                                    )
+                                                }
+                                            </Form.Select>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label htmlFor="cantidad">Cantidad</Form.Label>
+                                            <Form.Control
+                                                type="number"
+                                                id="cantidad"
+                                                name="cantidad"
+                                                placeholder="Cantidad"
+                                                value={cantidad}
+                                                onChange={handleChangeCantidad}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label htmlFor="unidadMedida">Unidad de Medida</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                id="unidadMedida"
+                                                name="unidadMedida"
+                                                placeholder="Unidad de Medida"
+                                                value={unidadMedida}
+                                                readOnly
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Row>
+                                            <Form.Label htmlFor="unidadMedida">Acciones</Form.Label>
+                                        </Row>
+                                        <Button onClick={handleAddArticuloManufacturadoInsumo} variant="dark" className="btn-add">
+                                            <i className="bi bi-plus-square"></i>
+                                        </Button>
+                                    </Col>
                                 </Row>
-                            </Container>
-                        </Form>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={handleClose} variant="dark">
-                            Guardar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+                                <hr />
+                                <Container className="text-center">
+                                    <Row>
+                                        <Row>
+                                            <Col>Artículo Insumo</Col>
+                                            <Col>Cantidad</Col>
+                                            <Col>Unidad de Medida</Col>
+                                            <Col>Eliminar</Col>
+                                        </Row>
+                                        {
+                                            articulosManufacturadosInsumos.map((item: ArticuloManufacturadoInsumo, index: number) =>
+
+                                                <Row key={index} className="mb-1">
+                                                    <Col>
+                                                        {item.articuloInsumo.denominacion}
+                                                    </Col>
+                                                    <Col>
+                                                        {item.cantidad}
+                                                    </Col>
+                                                    <Col>
+                                                        {item.articuloInsumo.unidadMedida?.denominacion}
+                                                    </Col>
+                                                    <Col>
+                                                        <Button onClick={() => handleDeleteArticuloManufacturadoInsumo(item)} variant="danger">
+                                                            <i className="bi bi-trash3"></i>
+                                                        </Button>
+                                                    </Col>
+                                                </Row>
+                                            )
+                                        }
+                                    </Row>
+                                </Container>
+                            </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={handleClose} variant="dark" className="btn-ok">
+                                Guardar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </Container>
             </Container>
         </>
     );

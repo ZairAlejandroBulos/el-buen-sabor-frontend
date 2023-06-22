@@ -3,10 +3,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 import { Rubro } from "../../types/Rubro";
+import { Endpoint } from "../../types/Endpoint";
 import { useAlert } from "../../hooks/useAlert";
+import { useRubro } from "../../hooks/useRubro";
 import { save, update } from "../../services/BaseService";
 import { existsByDenominacion, findRubrosDesbloqueados } from "../../services/RubroService";
-import { useRubro } from "../../hooks/useRubro";
 
 type Props = {
     showModal: boolean,
@@ -77,9 +78,9 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
             handleAlert();
         } else {
             if (values.id === 0) {
-                await save<Rubro>('rubros', values, token);
+                await save<Rubro>(Endpoint.Rubro, values, token);
             } else {
-                await update<Rubro>('rubros', values.id, values, token);
+                await update<Rubro>(Endpoint.Rubro, values.id, values, token);
             }
 
             handleReset();
@@ -96,8 +97,8 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
         <Modal show={showModal} onHide={handleClose} centered backdrop="static">
             <Modal.Header closeButton>
                 {
-                    <Modal.Title className="text-center">
-                        { rubro ? "Editar" : "Nuevo" } Rubro
+                    <Modal.Title>
+                        { rubro ? 'Editar' : 'Nuevo' } Rubro
                     </Modal.Title>
                 }
             </Modal.Header>
@@ -130,13 +131,16 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                         </Form.Select>
                     </Form.Group>
 
-                    <Button onClick={handleClose} variant="danger">
-                        Cerrar
-                    </Button>
+                    <div className="d-flex justify-content-end mt-4">
+                        <Button onClick={handleClose} variant="dark" className="me-2 btn-cancel">
+                            
+                            Cerrar
+                        </Button>
 
-                    <Button type="submit" variant="success">
-                        Guardar
-                    </Button>
+                        <Button type="submit" variant="dark" className="btn-ok">
+                            Guardar
+                        </Button>
+                    </div>
                 </Form>
                 <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
                     <Alert.Heading>Error!</Alert.Heading>

@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 
 import { Rubro } from "../../types/Rubro";
@@ -18,6 +18,7 @@ import { isArticuloInsumo } from "../../util/ArticuloInsumoUtil";
  */
 function AMArticuloInsumo(): JSX.Element {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { articuloInsumo, setArticuloInsumo } = useArticuloInsumo(Number(id));
     const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
     const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
@@ -94,124 +95,137 @@ function AMArticuloInsumo(): JSX.Element {
     };
 
     const handleNavigate = () => {
-        window.location.href = "/admin/stock/articulos-insumos";
+        navigate("/admin/stock/articulos-insumos");
     };
 
     return (
-        <Container className="mt-3 mb-3">
-            <Form onSubmit={handleSubmit}>
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label htmlFor="denominacion">Denominación</Form.Label>
-                            <Form.Control
-                                type="text"
-                                id="denominacion"
-                                name="denominacion"
-                                placeholder="Ingrese denominacion"
-                                value={articuloInsumo?.denominacion}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label htmlFor="precioCompra">Precio de Costo</Form.Label>
-                            <Form.Control
-                                type="number"
-                                id="precioCompra"
-                                name="precioCompra"
-                                placeholder="Ingrese Precio Costo"
-                                value={articuloInsumo?.precioCompra}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
+        <>
+            <Container className="container-amb mt-4 mb-4">
+                <Container className="text-center">
+                    <h1>Artículo Insumo</h1>
+                </Container>
 
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label htmlFor="stockMinimo">Stock Mínimo</Form.Label>
-                            <Form.Control
-                                type="number"
-                                id="stockMinimo"
-                                name="stockMinimo"
-                                placeholder="Ingrese Stock Minimo"
-                                value={articuloInsumo?.stockMinimo}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label htmlFor="stockActual">Stock Actual</Form.Label>
-                            <Form.Control
-                                type="number"
-                                id="stockActual"
-                                name="stockActual"
-                                placeholder="Ingrese Stock Actual"
-                                value={articuloInsumo?.stockActual}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
+                <Container className="mt-3 mb-3">
+                    <Form onSubmit={handleSubmit}>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="denominación">Denominación</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        id="denominacion"
+                                        name="denominacion"
+                                        placeholder="Denominación"
+                                        value={articuloInsumo?.denominacion}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="precioCompra">Precio de Costo</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        id="precioCompra"
+                                        name="precioCompra"
+                                        placeholder="Precio de Costo"
+                                        value={articuloInsumo?.precioCompra}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Rubro</Form.Label>
-                            <Form.Select id="rubro" name="rubro" value={articuloInsumo.rubro?.id || -1} onChange={handleChangeRubro}>
-                                <option value="-1">--Seleccione--</option>
-                                {
-                                    rubros.map((item: Rubro, index: number) =>
-                                        <option value={item.id} key={index}>
-                                            {item.denominacion}
-                                        </option>
-                                    )
-                                }
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Unidad Medida</Form.Label>
-                            <Form.Select id="unidadMedida" name="unidadMedida" value={articuloInsumo.unidadMedida?.id || -1} onChange={handleChangeUnidadMedida}>
-                                <option value="-1">--Seleccione--</option>
-                                {
-                                    unidadesMedidas.map((item: UnidadMedida, index: number) =>
-                                        <option value={item.id} key={index}>
-                                            {item.denominacion}
-                                        </option>
-                                    )
-                                }
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="esInsumo">Es Insumo</Form.Label>
-                    <Form.Select name="esInsumo" value={articuloInsumo.esInsumo ? 1 : 0} onChange={handleChangeInsumo}>
-                        <option value="0">No</option>
-                        <option value="1">Si</option>
-                    </Form.Select>
-                </Form.Group>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="stockMinimo">Stock Mínimo</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        id="stockMinimo"
+                                        name="stockMinimo"
+                                        placeholder="Stock Mínimo"
+                                        value={articuloInsumo?.stockMinimo}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="stockActual">Stock Actual</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        id="stockActual"
+                                        name="stockActual"
+                                        placeholder="Stock Actual"
+                                        value={articuloInsumo?.stockActual}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                <Button onClick={handleNavigate} variant="danger">
-                    Cancelar
-                </Button>
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Rubro</Form.Label>
+                                    <Form.Select id="rubro" name="rubro" value={articuloInsumo.rubro?.id || -1} onChange={handleChangeRubro}>
+                                        <option value="-1">--Seleccione--</option>
+                                        {
+                                            rubros.map((item: Rubro, index: number) =>
+                                                <option value={item.id} key={index}>
+                                                    {item.denominacion}
+                                                </option>
+                                            )
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Unidad Medida</Form.Label>
+                                    <Form.Select id="unidadMedida" name="unidadMedida" value={articuloInsumo.unidadMedida?.id || -1} onChange={handleChangeUnidadMedida}>
+                                        <option value="-1">--Seleccione--</option>
+                                        {
+                                            unidadesMedidas.map((item: UnidadMedida, index: number) =>
+                                                <option value={item.id} key={index}>
+                                                    {item.denominacion}
+                                                </option>
+                                            )
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                        </Row>
 
-                <Button type="submit" variant="success">
-                    Guardar
-                </Button>
-            </Form>
+                        <Row>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="esInsumo">Es Insumo</Form.Label>
+                                <Form.Select name="esInsumo" value={articuloInsumo.esInsumo ? 1 : 0} onChange={handleChangeInsumo}>
+                                    <option value="0">No</option>
+                                    <option value="1">Si</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Row>
 
-            <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
-                <Alert.Heading>Error!</Alert.Heading>
-                <p>Campos vacios y/o incorrectos.</p>
-            </Alert>
-        </Container>
+                        <div className="d-flex justify-content-end mt-4">
+                            <Button onClick={handleNavigate} className="btn btn-dark me-2 btn-cancel">
+                                Cancelar
+                            </Button>
+
+                            <Button type="submit" variant="dark" className="btn-ok">
+                                Guardar
+                            </Button>
+                        </div>
+                    </Form>
+
+                    <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
+                        <Alert.Heading>Error!</Alert.Heading>
+                        <p>Campos vacios y/o incorrectos.</p>
+                    </Alert>
+                </Container>
+            </Container>
+        </>
     );
 }
 export default AMArticuloInsumo;

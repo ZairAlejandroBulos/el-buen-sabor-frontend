@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { useAlert } from "../../hooks/useAlert";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { useUnidadMedida } from "../../hooks/useUnidadMedida";
 import { existsByDenominacion } from "../../services/UnidadMedidaService";
 import { save, update } from "../../services/BaseService";
-import { useUnidadMedida } from "../../hooks/useUnidadMedida";
 
 type Props = {
     showModal: boolean,
@@ -67,7 +67,7 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
             <Modal.Header closeButton>
                 {
                     <Modal.Title className="text-center">
-                        {unidadMedida ? "Editar" : "Nuevo"} UnidadMedida
+                        { unidadMedida ? 'Editar' : 'Nueva' } Unidad de Medida
                     </Modal.Title>
                 }
             </Modal.Header>
@@ -86,13 +86,15 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
                         />
                     </Form.Group>
 
-                    <Button onClick={handleClose} variant="danger buttons-modal-form">
-                        Cerrar
-                    </Button>
+                    <div className="d-flex justify-content-end mt-4">
+                        <Button onClick={handleClose} variant="dark" className="btn-cancel me-2">
+                            Cerrar
+                        </Button>
 
-                    <Button type="submit" variant="success">
-                        Guardar
-                    </Button>
+                        <Button type="submit" variant="dark" className="btn-ok">
+                            Guardar
+                        </Button>
+                    </div>
                 </Form>
                 <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
                     <Alert.Heading>Error!</Alert.Heading>

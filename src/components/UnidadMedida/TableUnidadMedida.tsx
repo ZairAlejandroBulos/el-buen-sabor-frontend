@@ -19,9 +19,11 @@ function TableUnidadMedida(): JSX.Element {
 
     return (
         <>
-            <Container className="d-flex mt-3">
-                <h1>Unidad Medida</h1>
-                <Button onClick={handleClose} variant="success">Nuevo</Button>
+            <Container className="mt-3 mb-3">
+                <h1>Unidad de Medida</h1>
+                <Button onClick={handleClose} variant="success">
+                    Nuevo
+                </Button>
             </Container>
 
             <Container className="table-scrollable">

@@ -19,9 +19,11 @@ function TableRubro(): JSX.Element {
 
     return (
         <>
-            <Container className="d-flex mt-3">
+            <Container className="mt-3 mb-3">
                 <h1>Rubro</h1>
-                <Button onClick={handleClose} variant="success">Nuevo</Button>
+                <Button onClick={handleClose} variant="success">
+                    Nuevo
+                </Button>
             </Container>
 
             <Container className="table-scrollable">
