@@ -7,20 +7,20 @@ import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 import { useAlert } from "../../hooks/useAlert";
-import { useRubros } from "../../hooks/useRubros";
-import { useUnidadesMedidas } from "../../hooks/useUnidadesMedidas";
+import { useEntities } from "../../hooks/useEntities";
 import { useArticuloInsumo } from "../../hooks/useArticuloInsumo";
 import { findById, save, update } from "../../services/BaseService";
 import { isArticuloInsumo } from "../../util/ArticuloInsumoUtil";
 
 /**
- * 
+ * Componente para crear/actualizar un Artículo Insumo.
+ * @author Castillo 
  */
 function AMArticuloInsumo(): JSX.Element {
     const { id } = useParams();
     const { articuloInsumo, setArticuloInsumo } = useArticuloInsumo(Number(id));
-    const { rubros } = useRubros();
-    const { unidadesMedidas } = useUnidadesMedidas();
+    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
+    const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
 
     const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
