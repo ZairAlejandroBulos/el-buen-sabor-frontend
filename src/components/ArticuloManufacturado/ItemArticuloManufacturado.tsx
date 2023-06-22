@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 
 /**
- * Componente que representa un elemento de ArticuloManufacturado en la tabla.
+ * Componente que representa un elemento de Artículo Manufacturado en la tabla.
  * @author Bulos
  */
 function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
@@ -22,7 +22,7 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
                 </td>
 
                 <td>
-                    { props.precioVenta }
+                    ${ props.precioVenta }
                 </td>
 
                 <td>

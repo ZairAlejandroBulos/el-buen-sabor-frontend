@@ -1,83 +1,64 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Alert, Button, Container, Form } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
 import { Rubro } from "../../types/Rubro";
-import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
+import { Endpoint } from "../../types/Endpoint";
+import { ArticuloInsumo } from "../../types/ArticuloInsumo";
+import { ArticuloManufacturadoInsumo } from "../../types/ArticuloManufacturadoInsumo";
+import { useModal } from "../../hooks/useModal";
 import { useAlert } from "../../hooks/useAlert";
-import { findAllRubro, findRubroById } from "../../services/RubroService";
-import { findArticuloManufacturadoFullById, saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
-import { generateImageName } from "../../util/ImagenUtil";
+import { useEntities } from "../../hooks/useEntities";
+import { useArticuloManufacturado } from "../../hooks/useArticuloManufacturado";
+import { useArticulosManufacturadosInsumos } from "../../hooks/useArticulosManufacturadosInsumos";
+import { generateImageName, isImagen } from "../../util/ImagenUtil";
 import { isArticuloManufacturado } from "../../util/ArticuloManufacturadoUtil";
-import { isImagen } from "../../util/ImagenUtil";
+import { findById } from "../../services/BaseService";
+import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
 
 /**
- * Componente para crear/actualizar un ArticuloManufacturado.
- * @author Castillo, Bulos 
+ * Componente para crear/actualizar un Artículo Manufacturado.
+ * @author Bulos 
  */
 function AMArticuloManufacturado(): JSX.Element {
     const { id } = useParams();
-    const { getAccessTokenSilently } = useAuth0();
-    const [values, setValues] = useState<ArticuloManufacturado>({
-        "id": 0,
-        "denominacion": "",
-        "descripcion": "",
-        "imagen": "",
-        "precioVenta": 0,
-        "tiempoEstimadoCocina": "",
-        "rubro": {
-            "id": 0,
-            "denominacion": ""
-        }
-    });
-    const [rubros, setRubros] = useState<Rubro[]>([]);
+
+    const { articuloManufacturado, setArticuloManufacturado } = useArticuloManufacturado(Number(id));
+    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
     const [file, setFile] = useState<File | null>(null);
+
+    const { articulosManufacturadosInsumos, setArticulosManufacturadosInsumos } = useArticulosManufacturadosInsumos(Number(id));
+
+    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo);
+    const [receta, setReceta] = useState<string>('');
+    const [cantidad, setCantidad] = useState<number>(0);
+    const [unidadMedida, setUnidadMedida] = useState<string>('');
+    const [articuloInsumoSelected, setArticuloInsumoSelected] = useState<ArticuloInsumo | undefined>(undefined);
+
+    const { showModal, handleClose } = useModal();
     const { showAlert, handleAlert } = useAlert();
-
-    useEffect(() => {
-        getAllRubro();
-    }, []);
-
-    useEffect(() => {
-        getArticuloManufacturado();
-    }, [id]);
-
-    const getArticuloManufacturado = async () => {
-        if (id !== "-1") {
-            const token = await getAccessTokenSilently();
-
-            const newArticuloManufacturado = await findArticuloManufacturadoFullById(Number(id), token);
-            setValues(newArticuloManufacturado);
-        }
-    };
-
-    const getAllRubro = async () => {
-        const token = await getAccessTokenSilently();
-
-        const newRubros = await findAllRubro(token);
-        setRubros(newRubros);
-    };
+    const { getAccessTokenSilently } = useAuth0();
 
     const getRubroById = async (id: number) => {
         const token = await getAccessTokenSilently();
 
-        return await findRubroById(id, token);
-    }
+        return await findById<Rubro>(Endpoint.Rubro, id, token);
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setValues((prevState) => ({
+        setArticuloManufacturado((prevState) => ({
             ...prevState,
             [name]: value
         }));
     };
 
     const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const rubroSelected = Number(event.currentTarget.value);
-        if (rubroSelected !== -1) {
-            const newRubro = await getRubroById(rubroSelected);
-            setValues((prevState) => ({
+        const rubroId = Number(event.currentTarget.value);
+        if (rubroId !== -1) {
+            const newRubro = await getRubroById(rubroId);
+            setArticuloManufacturado((prevState) => ({
                 ...prevState,
                 rubro: newRubro
             }));
@@ -86,26 +67,92 @@ function AMArticuloManufacturado(): JSX.Element {
 
     const handleChangeImagen = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-          const file = event.target.files[0];
-          const imagen = generateImageName(file.name);
-          setFile(file);
-          setValues((prevState) => ({
-            ...prevState,
-            imagen: imagen
-          }));
+            const file = event.target.files[0];
+            const imagen = generateImageName(file.name);
+            setFile(file);
+            setArticuloManufacturado((prevState) => ({
+                ...prevState,
+                imagen: imagen
+            }));
         }
+    };
+
+    const handleChangeReceta = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newReceta = event.target.value;
+        setReceta(newReceta);
+    };
+
+    const handleChangeArticuloInsumo = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const articuloInsumoId = Number(event.currentTarget.value);
+
+        if (articuloInsumoId !== -1) {
+            const token = await getAccessTokenSilently();
+
+            const newArticuloInsumo = await findById<ArticuloInsumo>(Endpoint.ArticuloInsumo, articuloInsumoId, token);
+            setArticuloInsumoSelected(newArticuloInsumo);
+
+            setUnidadMedida(newArticuloInsumo.unidadMedida?.denominacion ?? '');
+        }
+    };
+
+    const handleChangeCantidad = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newCantidad = Number(event.target.value);
+        setCantidad(newCantidad);
+    };
+
+    const articuloManufacturadoInsumoExists = (articuloInsumo: ArticuloInsumo): boolean => {
+        return articulosManufacturadosInsumos.some((item) => item.articuloInsumo.id === articuloInsumo.id);
+    };
+
+    const handleAddArticuloManufacturadoInsumo = () => {
+        if (articuloInsumoSelected && cantidad !== 0) {
+            if (articuloManufacturadoInsumoExists(articuloInsumoSelected)) {
+                const updatedArticulosManufacturadosInsumos = articulosManufacturadosInsumos.map((item) => {
+                    if (item.articuloInsumo.id === articuloInsumoSelected.id) {
+                        return {
+                            ...item,
+                            cantidad: cantidad
+                        };
+                    }
+                    return item;
+                });
+                setArticulosManufacturadosInsumos(updatedArticulosManufacturadosInsumos);
+            } else {
+                const newArticuloManufacturadoInsumo = {
+                    id: 0,
+                    cantidad: cantidad,
+                    articuloInsumo: articuloInsumoSelected,
+                    articuloManufacturado: articuloManufacturado
+                };
+                setArticulosManufacturadosInsumos((prevState) => [...prevState, newArticuloManufacturadoInsumo]);
+            }
+
+            handleResetArticuloManufacturadoInsumo();
+        }
+    };
+
+    const handleResetArticuloManufacturadoInsumo = () => {
+        setArticuloInsumoSelected(undefined);
+        setCantidad(0);
+        setUnidadMedida('');
+    };
+
+    const handleDeleteArticuloManufacturadoInsumo = (item: ArticuloManufacturadoInsumo) => {
+        const index = articulosManufacturadosInsumos.indexOf(item, 0);
+        articulosManufacturadosInsumos.splice(index, 1);
+        setArticulosManufacturadosInsumos([...articulosManufacturadosInsumos]);
     };
 
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (file !== null && isImagen(file) && isArticuloManufacturado(values)) {
+        if (file !== null && isImagen(file) && isArticuloManufacturado(articuloManufacturado)) {
             const token = await getAccessTokenSilently();
 
-            if (values.id === 0) {
-                await saveArticuloManufacturado(values, file, token);
+            if (articuloManufacturado.id === 0) {
+                await saveArticuloManufacturado(articuloManufacturado, file, articulosManufacturadosInsumos, token);
             } else {
-                await updateArticuloManufacturado(values.id, values, file, token);
+                await updateArticuloManufacturado(articuloManufacturado.id, articuloManufacturado, file, articulosManufacturadosInsumos, token);
             }
 
             handleNavigate();
@@ -119,88 +166,236 @@ function AMArticuloManufacturado(): JSX.Element {
     };
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label>Denominación</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="denominacion"
-                        placeholder="Denominación"
-                        defaultValue={values?.denominacion}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+        <>
+            <Container className="mt-3 mb-3">
+                <h1>Artículo Manufacturado</h1>
+            </Container>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Descripción</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="descripcion"
-                        placeholder="Descripción"
-                        defaultValue={values?.descripcion}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+            <Container>
+                <Form onSubmit={handleSubmit}>
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="denominacion">Denominación</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    id="denominacion"
+                                    name="denominacion"
+                                    placeholder="Denominación"
+                                    defaultValue={articuloManufacturado?.denominacion}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="descripcion">Descripción</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    id="descripcion"
+                                    name="descripcion"
+                                    placeholder="Descripción"
+                                    defaultValue={articuloManufacturado?.descripcion}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Tiempo Estimado Cocina</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="tiempoEstimadoCocina"
-                        placeholder="Tiempo Estimado Cocina"
-                        defaultValue={values?.tiempoEstimadoCocina}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="tiempoEstimadoCocina">Tiempo Estimado Cocina</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    id="tiempoEstimadoCocina"
+                                    name="tiempoEstimadoCocina"
+                                    placeholder="Tiempo Estimado Cocina (00:35:00)"
+                                    defaultValue={articuloManufacturado?.tiempoEstimadoCocina}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="precioVenta">Precio de venta</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    id="precioVenta"
+                                    name="precioVenta"
+                                    placeholder="Precio de venta"
+                                    value={articuloManufacturado?.precioVenta}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Precio de venta</Form.Label>
-                    <Form.Control
-                        type="number"
-                        name="precioVenta"
-                        placeholder="Precio de venta"
-                        value={values?.precioVenta}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="imagen">Imagen</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    id="imagen"
+                                    name="imagen"
+                                    onChange={handleChangeImagen}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="rubro">Rubro</Form.Label>
+                                <Form.Select id="rubro" value={articuloManufacturado?.rubro?.id || -1} onChange={handleChangeRubro}>
+                                    <option value="-1">--Seleccione--</option>
+                                    {
+                                        rubros.map((item: Rubro, index: number) =>
+                                            <option key={index} value={item.id}>
+                                                {item.denominacion}
+                                            </option>
+                                        )
+                                    }
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Imagen</Form.Label>
-                    <Form.Control
-                        type="file"
-                        name="imagen"
-                        onChange={handleChangeImagen}
-                    />
-                </Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Ingredientes</Form.Label>
+                                <Row>
+                                    <Button onClick={handleClose} variant="dark">Añadir Ingredientes</Button>
+                                </Row>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label htmlFor="receta">Receta</Form.Label>
+                                <Form.Control
+                                    id="receta"
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Procedimiento..."
+                                    defaultValue={receta}
+                                    onChange={handleChangeReceta}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
-                <Form.Group className="mb-3">
-                        <Form.Label>Rubro</Form.Label>
-                        <Form.Select id="rubro" value={values?.rubro?.id || -1} onChange={handleChangeRubro}>
-                            <option value="-1">--Seleccione--</option>
-                            {
-                                rubros.map((item: Rubro, index: number) =>
-                                    <option key={index} value={item.id}>
-                                        { item.denominacion }
-                                    </option>
-                                )
-                            }
-                        </Form.Select>
-                    </Form.Group>
+                    <Row>
+                        <Col>
+                            <Button onClick={handleNavigate} variant="danger">
+                                Cancelar
+                            </Button>
+                            <Button type="submit" variant="success">
+                                Guardar
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
 
-                <Button onClick={handleNavigate} variant="danger">
-                    Cancelar
-                </Button>
+                { /* Modal Articulos Insumos */}
+                <Modal show={showModal} onHide={handleClose} centered backdrop="static" size="xl">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Artículos Insumos</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Row>
+                                <Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label htmlFor="articuloInsumo">Artículo Insumo</Form.Label>
+                                        <Form.Select id="articuloInsumo" onChange={handleChangeArticuloInsumo}>
+                                            <option value="-1">--Seleccione--</option>
+                                            {
+                                                articulosInsumos.map((item: ArticuloInsumo, index: number) =>
+                                                    <option key={index} value={item.id}>
+                                                        {item.denominacion}
+                                                    </option>
+                                                )
+                                            }
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label htmlFor="cantidad">Cantidad</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            id="cantidad"
+                                            name="cantidad"
+                                            placeholder="Cantidad"
+                                            value={cantidad}
+                                            onChange={handleChangeCantidad}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label htmlFor="unidadMedida">Unidad de Medida</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            id="unidadMedida"
+                                            name="unidadMedida"
+                                            placeholder="Unidad de Medida"
+                                            value={unidadMedida}
+                                            readOnly
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Row>
+                                        <Form.Label htmlFor="unidadMedida">Acciones</Form.Label>
+                                    </Row>
+                                    <Button onClick={handleAddArticuloManufacturadoInsumo}>
+                                        <i className="bi bi-plus-square"></i>
+                                    </Button>
+                                </Col>
+                            </Row>
+                            <hr />
+                            <Container className="text-center">
+                                <Row>
+                                    <Row>
+                                        <Col>Artículo Insumo</Col>
+                                        <Col>Cantidad</Col>
+                                        <Col>Unidad de Medida</Col>
+                                        <Col>Eliminar</Col>
+                                    </Row>
+                                    {
+                                        articulosManufacturadosInsumos.map((item: ArticuloManufacturadoInsumo, index: number) =>
 
-                <Button type="submit" variant="success">
-                    Guardar
-                </Button>
-            </Form>
-            <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
-                <Alert.Heading>Error!</Alert.Heading>
-                <p>Campos vacios y/o incorrectos.</p>
-            </Alert>
-        </Container>
+                                            <Row key={index} className="mb-1">
+                                                <Col>
+                                                    { item.articuloInsumo.denominacion }
+                                                </Col>
+                                                <Col>
+                                                    { item.cantidad }
+                                                </Col>
+                                                <Col>
+                                                    { item.articuloInsumo.unidadMedida?.denominacion }
+                                                </Col>
+                                                <Col>
+                                                    <Button onClick={() => handleDeleteArticuloManufacturadoInsumo(item)} variant="danger">
+                                                        <i className="bi bi-trash3"></i>
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        )
+                                    }
+                                </Row>
+                            </Container>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={handleClose} variant="dark">
+                            Guardar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Container>
+        </>
     );
 }
 

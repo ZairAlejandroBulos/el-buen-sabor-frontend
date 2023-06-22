@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Container, Table } from "react-bootstrap";
 
+import { Endpoint } from "../../types/Endpoint";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
-import { findAllArticuloManufacturadosFull } from "../../services/ArticuloManufacturadoService";
+import { useEntities } from "../../hooks/useEntities";
 
 /**
  * Componente que muestra una tabla de Artículos Manufacturados.
@@ -12,18 +11,7 @@ import { findAllArticuloManufacturadosFull } from "../../services/ArticuloManufa
  * @author Bulos 
  */
 function TableArticuloManufacturado(): JSX.Element {
-    const [articulosManufactuados, setArticulosManufacturados] = useState<ArticuloManufacturado[]>([]);
-    const { getAccessTokenSilently } = useAuth0();
-
-    useEffect(() => {
-        getAllArticuloManufacturados();
-    }, []);
-
-    const getAllArticuloManufacturados = async () => {
-        const token = await getAccessTokenSilently();
-        const newArticulosManufactuados = await findAllArticuloManufacturadosFull(token);
-        setArticulosManufacturados(newArticulosManufactuados);
-    };
+    const { entities: articulosManufacturados } = useEntities<ArticuloManufacturado>(Endpoint.ArticuloManufacturado);
 
     return (
         <>
@@ -45,12 +33,12 @@ function TableArticuloManufacturado(): JSX.Element {
                             <th>Rubro</th>
                             <th>Tiempo Preparación</th>
                             <th>Precio Venta</th>
-                            <th colSpan={2}>Acciones</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            articulosManufactuados.map((item: ArticuloManufacturado, index: number) =>
+                            articulosManufacturados.map((item: ArticuloManufacturado, index: number) =>
                                 <ItemArticuloManufacturado key={index} {...item} />
                             )
                         }
