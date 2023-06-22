@@ -1,5 +1,5 @@
-import { URL_API_BASE } from "../constants";
 import { Endpoint } from "../types/Endpoint";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /**
  * Busca una Imagen por su nombre y devuelve su URL.
@@ -10,7 +10,7 @@ import { Endpoint } from "../types/Endpoint";
  */
 export async function findImagenByName(nombre: string, token: string): Promise<string> {
     try {
-        const response = await fetch(`${URL_API_BASE}/${Endpoint.Imagen}/byName/${nombre}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/byName/${nombre}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -44,7 +44,7 @@ export async function saveImagen(file: File, nombre: string, token: string): Pro
     formData.append("file", file);
 
     try {
-        const response = await fetch(`${URL_API_BASE}/${Endpoint.Imagen}/${nombre}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/${nombre}`, {
             method: "POST",
             body: formData,
             headers: {
