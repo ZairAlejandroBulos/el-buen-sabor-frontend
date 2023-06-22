@@ -19,7 +19,7 @@ function HeaderHome(): JSX.Element {
                 <Nav.Link as={Link} to="/productos/hamburguesa">Burgers</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={Link} to="/productos/bebida">Bebibas</Nav.Link>
+                <Nav.Link as={Link} to="/productos/bebida">Bebidas</Nav.Link>
             </Nav.Item>
         </Nav>
     );

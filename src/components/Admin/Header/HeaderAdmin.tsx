@@ -11,11 +11,14 @@ function HeaderAdmin(): JSX.Element {
     return (
         <Nav justify variant="tabs" className="header-admin">
             <Nav.Item>
-                <Nav.Link as={Link} to="/admin/usuarios">Usuarios</Nav.Link>
+                <NavDropdown title="Usuarios" id="stock-dropdown">
+                    <Nav.Link as={Link} to="/admin/usuarios/clientes">Clientes</Nav.Link>
+                    <Nav.Link as={Link} to="/admin/usuarios/empleados">Empleados</Nav.Link>
+                </NavDropdown>
             </Nav.Item>
             <Nav.Item>
                 <NavDropdown title="Stock" id="stock-dropdown">
-                    <Nav.Link as={Link} to="/admin/stock/articulos-insumos">Articulo Insumo</Nav.Link>
+                    <Nav.Link as={Link} to="/admin/stock/articulos-insumos">Artículo Insumo</Nav.Link>
                     <Nav.Link as={Link} to="/admin/stock/articulos-manufacturados">Artículo Manufacturado</Nav.Link>
                     <Nav.Link as={Link} to="/admin/unidad-medida">Unidad Medida</Nav.Link>
                 </NavDropdown>
