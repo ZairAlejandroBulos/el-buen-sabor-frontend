@@ -11,6 +11,7 @@ import { ArticuloManufacturadoInsumo } from "../../../types/ArticuloManufacturad
 import { findById } from "../../../services/BaseService";
 import { findByArticuloManufacturado } from "../../../services/ArticuloManufacturadoInsumoService";
 import { findArticuloManufacturadoSimpleById } from "../../../services/ArticuloManufacturadoService";
+import { useCarrito } from "../../../context/CarritoContext";
 
 /**
  * Componente que muestra los detalles de un Artículo Manufacturado .
@@ -22,6 +23,7 @@ function DetalleArticuloManufacturado(): JSX.Element {
     const [articulosInsumos, setArticulosInsumos] = useState<ArticuloInsumo[]>([]);
     const [articulosManufacturadosInsumos, setArticulosManufacturadosInsumos] = useState<ArticuloManufacturadoInsumo[]>([]);
     const { getAccessTokenSilently } = useAuth0();
+    const { getItemQuantity, increaseCartQuantity, decreaseCartQuantity, removeFromCart } = useCarrito();
 
     useEffect(() => {
         getArticuloManufacturado();
@@ -70,7 +72,7 @@ function DetalleArticuloManufacturado(): JSX.Element {
                         <Col className="col-precio">
                             <h2>
                                 <strong>
-                                    ${articuloManufacturado?.precioVenta} 
+                                    ${articuloManufacturado?.precioVenta}
                                 </strong>
                             </h2>
                         </Col>
@@ -104,7 +106,7 @@ function DetalleArticuloManufacturado(): JSX.Element {
                             </Link>
                         </Col>
                         <Col>
-                            <Button variant='primary'className="botones">
+                            <Button onClick={() => increaseCartQuantity(Number(id))} variant='primary' className="botones">
                                 Agregar al Carrito
                             </Button>
                         </Col>

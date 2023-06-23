@@ -1,0 +1,63 @@
+.button-cart button {
+    background-color: black !important;
+    border: none;
+    color: white;
+}
+
+.carrito-detalle-imagen img {
+    width: 125px;
+    height: 75px;
+    object-fit: cover;
+}
+
+.container.carrito-detalle {
+    margin-left: 40px;
+}
+
+.carrito-detalle-subtotal div {
+    margin-left: 40px;
+}
+
+.container.carrito-detalle button {
+    width: 35px;
+    height: 35px;
+    font-size: 30px;
+    margin-top: -40px;
+    margin-right: 10px;
+    background-color: transparent;
+    color: black;
+    border: none;
+}
+
+.menu-desplegable img {
+    width: 125px;
+    height: 75px;
+    objectFit: cover;
+}
+
+.cantidad-articulos {
+    font-size: .65rem;
+}
+
+.precio-articulos {
+    font-size: .75rem;
+
+}
+
+.tabla-detalle {
+    background-color: transparent;
+    font-size: 18px;
+}
+
+.boton-finalizar button{
+    background-color: #277DA1;
+    color: white;
+    border: none;
+}
+
+.boton-seguir button{
+    background-color: #43AA8B;
+    color: white;
+    border: none;
+    margin-top:-200px;
+}

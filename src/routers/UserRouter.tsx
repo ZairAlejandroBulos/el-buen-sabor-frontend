@@ -2,8 +2,10 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NavBar from "../components/Layout/NavBar/NavBar";
+import { CarritoProvider } from "../context/CarritoContext";
+import { DetalleCarrito } from "../components/Usuario/Cart/DetalleCarrito";
 const Home = lazy(() => import("../components/Layout/Home/Home"));
-const DetalleArticuloManufacturado = lazy(() => import ("../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado"));
+const DetalleArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado"));
 const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 
 /**
@@ -13,18 +15,21 @@ const ListArticuloManufacturado = lazy(() => import("../components/Usuario/Artic
 function UserRouter(): JSX.Element {
     return (
         <>
-            <NavBar />
-            <Suspense>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/productos">
-                        <Route path=":termino" element={<ListArticuloManufacturado />} />
-                    </Route>
-                    <Route path="/detalle-manufacturado">
-                        <Route path=":id" element={<DetalleArticuloManufacturado />} />
-                    </Route>
-                </Routes>
-            </Suspense>
+            <CarritoProvider>
+                <NavBar />
+                <Suspense>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/productos">
+                            <Route path=":termino" element={<ListArticuloManufacturado />} />
+                        </Route>
+                        <Route path="/detalle-manufacturado">
+                            <Route path=":id" element={<DetalleArticuloManufacturado />} />
+                        </Route>
+                        <Route path="/carrito-detalle" element={<DetalleCarrito />} />
+                    </Routes>
+                </Suspense>
+            </CarritoProvider>
         </>
     );
 }
