@@ -1,0 +1,15 @@
+.container {
+    margin-top: 4rem;
+}
+
+.banner-home {
+    max-height: 22rem;
+    width: 100%;
+    margin-top: 4.4rem;
+}
+
+@media (max-width: 991px) {
+    .container-item img {
+        height: 12rem;
+    }
+}
