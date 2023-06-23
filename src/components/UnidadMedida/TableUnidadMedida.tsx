@@ -1,11 +1,12 @@
-import { Suspense, lazy } from "react";
-import { useModal } from "../../hooks/useModal";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { Button, Container, Table } from "react-bootstrap";
 
+import { Endpoint } from "../../types/Endpoint";
 import ItemUnidadMedida from "./ItemUnidadMedida";
 import { UnidadMedida } from "../../types/UnidadMedida";
+import { useModal } from "../../hooks/useModal";
 import { useEntities } from "../../hooks/useEntities";
-import { Endpoint } from "../../types/Endpoint";
+import { useReload } from "../../hooks/useReload";
 const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
 
 /**
@@ -14,8 +15,22 @@ const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
  * @author Castillo
  */
 function TableUnidadMedida(): JSX.Element {
-    const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
+    const { reload, handleReload } = useReload();
+    const { entities } = useEntities<UnidadMedida>(Endpoint.UnidadMedida, reload);
+    const [unidadesMedidas, setUnidadesMedidas] = useState<UnidadMedida[]>([]);
     const { showModal, handleClose } = useModal();
+
+    useEffect(() => {
+        getUnidadesMedidas();
+    }, [entities]);
+
+    const getUnidadesMedidas = () => {
+        setUnidadesMedidas(entities);
+    };
+
+    const handleReset = () => {
+        handleReload();
+    };
 
     return (
         <>
@@ -37,8 +52,10 @@ function TableUnidadMedida(): JSX.Element {
                     <tbody>
                         {
                             unidadesMedidas?.map((item: UnidadMedida, index: number) =>
-                                <ItemUnidadMedida key={index}
-                                    {...item}
+                                <ItemUnidadMedida 
+                                    key={index} 
+                                    unidadMedida={item} 
+                                    handleReset={handleReset} 
                                 />
                             )
                         }
@@ -49,8 +66,9 @@ function TableUnidadMedida(): JSX.Element {
             <Suspense>
                 <ModalUnidadMedida
                     showModal={showModal}
+                    handleReset={handleReset}
                     handleClose={handleClose}
-                    />
+                />
             </Suspense>
         </>
     );

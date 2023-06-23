@@ -1,65 +1,77 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
-import { useAlert } from "../../hooks/useAlert";
 import { useUnidadMedida } from "../../hooks/useUnidadMedida";
-import { existsByDenominacion } from "../../services/UnidadMedidaService";
 import { save, update } from "../../services/BaseService";
+import { existsByDenominacion } from "../../services/UnidadMedidaService";
+import { toastError, toastExito } from "../../util/ToastUtil";
 
-type Props = {
-    showModal: boolean,
-    handleClose: () => void,
-    unidadMedida?: UnidadMedida
+interface Props {
+    showModal: boolean;
+    handleClose: () => void;
+    handleReset : () => void;
+    unidadMedida?: UnidadMedida;
 }
 
 /**
  * Componente para crear/actualizar una UnidadMedida.
  * @author Castillo
  */
-function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX.Element {
-    const  { unidadMedida: values, setUnidadMedida: setValues } = useUnidadMedida(unidadMedida ? unidadMedida.id : -1);
-    
-    const { showAlert, handleAlert } = useAlert();
+function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }: Props): JSX.Element {
+    const  { unidadMedida: values } = useUnidadMedida(unidadMedida ? unidadMedida.id : -1);
     const { getAccessTokenSilently } = useAuth0();
-    const [messageError, setMessageError] = useState<string>("");
 
+    useEffect(() => {
+        formik.setValues(values);
+    }, [values]);
 
-    const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newDenominacion = event.target.value;
-        setValues((prevState) => ({
-            ...prevState,
-            denominacion: newDenominacion
-        }));
+    const validationSchema = () => {
+        return Yup.object().shape({
+            id: Yup.number()
+                .integer()
+                .min(0),
+            denominacion: Yup.string()
+                .required('La denominación es requerida')
+                .max(20, 'Máximo de 20 caracteres')
+        });
     };
 
-    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const formik = useFormik({
+        initialValues: {
+            ...values
+        },
+        validationSchema: validationSchema(),
+        validateOnChange: true,
+        validateOnBlur: true,
+        onSubmit: (entity: UnidadMedida) => handleSubmit(entity)
+    });
+
+    const handleSubmit = async (entity: UnidadMedida) => {
         const token = await getAccessTokenSilently();
 
-        if (!values.denominacion || values.denominacion.trim() === "") {
-            setMessageError("La Unidad de Medida debe tener una denominación");
-            handleAlert();
-        } else if (values.id === 0 && await existsByDenominacion(values.denominacion, token)) {
-            setMessageError(`Ya existe una Unidad de Medida denominado ${values.denominacion}`);
-            handleAlert();
-        } else {
-            if (values.id === 0) {
-                await save<UnidadMedida>(Endpoint.UnidadMedida, values, token);
+        if (entity.id === 0) {
+            if (!(await existsByDenominacion(entity.denominacion, token))) {
+                await save<UnidadMedida>(Endpoint.UnidadMedida, entity, token);
+                toastExito(`La Unidad de Medida "${entity.denominacion}" se guardó exitosamente.`)
             } else {
-                await update<UnidadMedida>(Endpoint.UnidadMedida, values.id, values, token);
+                toastError(`No se pudo guardar la Unidad de Medida. Ya existe una Unidad de Medida denominada "${entity.denominacion}".`);
             }
-
-            handleReset();
+        } else {
+            await update<UnidadMedida>(Endpoint.UnidadMedida, entity.id, entity, token);
+            toastExito(`La Unidad de Medida "${entity.denominacion}" se actualizó exitosamente.`);
         }
+
+        handleResetModal();
     };
 
-    const handleReset = () => {
+    const handleResetModal = () => {
+        handleReset();
         handleClose();
-        setMessageError("");
-        window.location.reload();
     };
 
     return (
@@ -73,33 +85,34 @@ function ModalUnidadMedida({ showModal, handleClose, unidadMedida }: Props): JSX
             </Modal.Header>
 
             <Modal.Body>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={formik.handleSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="denominacion">Denominación</Form.Label>
                         <Form.Control
                             type="text"
                             id="denominacion"
                             name="denominacion"
-                            placeholder="Ingrese denominacion"
-                            value={values?.denominacion || ""}
-                            onChange={handleChangeDenominacion}
+                            placeholder="Denominación"
+                            value={formik.values.denominacion}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            isInvalid={Boolean(formik.errors.denominacion && formik.touched.denominacion)}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            { formik.errors.denominacion }
+                        </Form.Control.Feedback>
                     </Form.Group>
 
-                    <div className="d-flex justify-content-end mt-4">
-                        <Button onClick={handleClose} variant="dark" className="btn-cancel me-2">
+                    <Modal.Footer>
+                        <Button onClick={handleClose} variant="dark" className="btn-cancel">
                             Cerrar
                         </Button>
 
                         <Button type="submit" variant="dark" className="btn-ok">
                             Guardar
                         </Button>
-                    </div>
+                    </Modal.Footer>
                 </Form>
-                <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
-                    <Alert.Heading>Error!</Alert.Heading>
-                    <p>{ messageError }</p>
-                </Alert>
             </Modal.Body>
         </Modal>
     );

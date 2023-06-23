@@ -10,13 +10,13 @@ import { findAll } from "../services/BaseService";
  * @param endpoint Endpoint de la API para la entidad deseada.
  * @returns  Un objeto que contiene el estado de las entidades.
  */
-export const useEntities = <T extends Base>(endpoint: Endpoint) => {
+export const useEntities = <T extends Base>(endpoint: Endpoint, reload?: boolean) => {
     const [entities, setEntities] = useState<T[]>([]);
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         getAll();
-    }, []);
+    }, [reload]);
 
     const getAll = async () => {
         const token = await getAccessTokenSilently();

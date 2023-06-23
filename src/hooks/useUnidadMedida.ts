@@ -8,7 +8,7 @@ import { findById } from "../services/BaseService";
 /**
  * Hook personalizado para obtener una Unidad de Medida por su ID.
  * @param id ID de la Unidad de Medida a buscar.
- * @returns Un objeto que contiene el estado de la Unidad de Medida y la función para actualizarla.
+ * @returns Un objeto que contiene el estado de la Unidad de Medida.
  */
 export const useUnidadMedida = (id: number) => {
     const [unidadMedida, setUnidadMedida] = useState<UnidadMedida>({ 'id': 0, 'denominacion': '' });
@@ -27,5 +27,5 @@ export const useUnidadMedida = (id: number) => {
         }
     };
 
-    return { unidadMedida, setUnidadMedida };
+    return { unidadMedida };
 };
