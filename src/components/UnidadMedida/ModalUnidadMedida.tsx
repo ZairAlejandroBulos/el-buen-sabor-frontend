@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Form, Modal } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
+import { validationSchemaUnidadMedida } from "./SchemaUnidadMedida";
 import { useUnidadMedida } from "../../hooks/useUnidadMedida";
 import { save, update } from "../../services/BaseService";
 import { existsByDenominacion } from "../../services/UnidadMedidaService";
@@ -30,22 +30,11 @@ function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }
         formik.setValues(values);
     }, [values]);
 
-    const validationSchema = () => {
-        return Yup.object().shape({
-            id: Yup.number()
-                .integer()
-                .min(0),
-            denominacion: Yup.string()
-                .required('La denominación es requerida')
-                .max(20, 'Máximo de 20 caracteres')
-        });
-    };
-
     const formik = useFormik({
         initialValues: {
             ...values
         },
-        validationSchema: validationSchema(),
+        validationSchema: validationSchemaUnidadMedida(),
         validateOnChange: true,
         validateOnBlur: true,
         onSubmit: (entity: UnidadMedida) => handleSubmit(entity)
