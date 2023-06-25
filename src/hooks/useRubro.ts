@@ -8,10 +8,10 @@ import { findById } from "../services/BaseService";
 /**
  * Hook personalizado para obtener un Rubro por su ID.
  * @param id ID del Rubro a buscar.
- * @returns Un objeto que contiene el estado del Rubro y la función para actualizarla.
+ * @returns Un objeto que contiene el estado del Rubro.
  */
 export const useRubro = (id: number) => {
-    const [rubro, setRubro] = useState<Rubro>({ 'id': 0, 'denominacion': '', 'bloqueado': false });
+    const [rubro, setRubro] = useState<Rubro>({ 'id': 0, 'denominacion': '', 'esInsumo': true, 'bloqueado': false });
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
@@ -27,5 +27,5 @@ export const useRubro = (id: number) => {
         }
     };
 
-    return { rubro, setRubro };
+    return { rubro };
 };

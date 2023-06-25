@@ -1,96 +1,97 @@
 import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
-import { Rubro } from "../../types/Rubro";
 import { Endpoint } from "../../types/Endpoint";
-import { useAlert } from "../../hooks/useAlert";
+import { validationSchemaRubro } from "./SchemaRubro";
+import { Rubro, FiltroRubro, TipoRubro } from "../../types/Rubro";
 import { useRubro } from "../../hooks/useRubro";
+import { useRubros } from "../../hooks/useRubros";
 import { save, update } from "../../services/BaseService";
-import { existsByDenominacion, findRubrosDesbloqueados } from "../../services/RubroService";
+import { toastError, toastExito } from "../../util/ToastUtil";
+import { existsByDenominacion } from "../../services/RubroService";
 
-type Props = {
-    showModal: boolean,
-    handleClose: () => void,
-    rubro?: Rubro
+interface Props {
+    showModal: boolean;
+    handleClose: () => void;
+    handleReset : () => void;
+    rubro?: Rubro;
 }
 
 /**
  * Componente para crear/actualizar un Rubro.
  * @author Bulos
  */
-function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
-    const { rubro: values, setRubro: setValues } = useRubro(rubro ? rubro.id : -1);
-    const [rubrosPadres, setRubrosPadres] = useState<Rubro[]>([]);
-    const [selectedRubroPadreId, setSelectedRubroPadreId] = useState<number | null>(null);
-    
-    const { showAlert, handleAlert } = useAlert();
+function ModalRubro({ showModal, handleClose, handleReset, rubro }: Props): JSX.Element {
+    const { rubro: values } = useRubro(rubro ? rubro.id : -1);
+    const [tipoRubro, setTipoRubro] = useState<TipoRubro>(TipoRubro.INSUMO);
+    const { rubros: rubrosPadres } = useRubros(FiltroRubro.TIPO, tipoRubro);
     const { getAccessTokenSilently } = useAuth0();
-    const [messageError, setMessageError] = useState<string>("");
 
     useEffect(() => {
-        getRubrosDesbloqueados();
-    }, []);
+        formik.setValues(values);
+    }, [values]);
 
-    const getRubrosDesbloqueados = async () => {
-        const token = await getAccessTokenSilently();
+    useEffect(() => {
+        if (rubro) {
+            setTipoRubro(
+                rubro.esInsumo ? TipoRubro.INSUMO : TipoRubro.PRODUCTO
+            );
+        }
+    }, [rubro]);
+    
+    const formik = useFormik({
+        initialValues: {
+            ...values
+        },
+        validationSchema: validationSchemaRubro(),
+        validateOnChange: true,
+        validateOnBlur: true,
+        onSubmit: (entity: Rubro) => handleSubmit(entity)
+    });
 
-        const newRubrosPadres = await findRubrosDesbloqueados(token);
-        setRubrosPadres(newRubrosPadres);
-    };
-
-    const handleChangeDenominacion = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newDenominacion = event.target.value;
-        setValues((prevState) => ({
-            ...prevState,
-            denominacion: newDenominacion
-        }));
+    const handleChangeTipo = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const esInsumo = Number(event.currentTarget.value) === 1 ? true : false;
+        formik.setFieldValue(
+            'esInsumo',
+            esInsumo
+        );
+        setTipoRubro(
+            esInsumo ? TipoRubro.INSUMO : TipoRubro.PRODUCTO
+        );
     };
 
     const handleChangeRubroPadre = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const rubroPadreId = Number(event.currentTarget.value);
-        if (rubroPadreId !== -1) {
-            setSelectedRubroPadreId(rubroPadreId);
-            setValues((prevState) => ({
-                ...prevState,
-                rubroPadreId: rubroPadreId
-            }));
-        } else {
-            setValues((prevState) => ({
-                ...prevState,
-                rubroPadreId: NaN
-            }));
-        }
+        formik.setFieldValue(
+            'rubroPadreId',
+            rubroPadreId === -1 ? null : rubroPadreId
+        );
     };
 
-    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = async (entity: Rubro) => {
         const token = await getAccessTokenSilently();
 
-        if (!values.denominacion || values.denominacion.trim() === "") {
-            setMessageError("El Rubro debe tener una denominación");
-            handleAlert();
-        } else if (values.id === 0 && (await existsByDenominacion(values.denominacion, token))) {
-            setMessageError(`Ya existe un Rubro denominado ${values.denominacion}`);
-            handleAlert();
-        } else if (values.id === selectedRubroPadreId) {
-            setMessageError("No se puede seleccionar como rubro principal al mismo Rubro.");
-            handleAlert();
-        } else {
-            if (values.id === 0) {
-                await save<Rubro>(Endpoint.Rubro, values, token);
+        if (entity.id === 0) {
+            const exists = await existsByDenominacion(entity.denominacion, token);
+            if (!exists) {
+                await save<Rubro>(Endpoint.Rubro, entity, token);
+                toastExito(`El Rubro "${entity.denominacion}" se guardó exitosamente.`)
             } else {
-                await update<Rubro>(Endpoint.Rubro, values.id, values, token);
+                toastError(`No se pudo guardar el Rubro. Ya existe un Rubro Medida denominado "${entity.denominacion}".`);
             }
-
-            handleReset();
+        } else {
+            await update<Rubro>(Endpoint.Rubro, entity.id, entity, token);
+            toastExito(`El Rubro "${entity.denominacion}" se actualizó exitosamente.`);
         }
+
+        handleResetModal();
     };
 
-    const handleReset = () => {
+    const handleResetModal = () => {
+        handleReset();
         handleClose();
-        setMessageError('');
-        window.location.reload();
     };
 
     return (
@@ -104,22 +105,50 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
             </Modal.Header>
 
             <Modal.Body>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={formik.handleSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="denominacion">Denominación</Form.Label>
                         <Form.Control
                             type="text"
                             id="denominacion"
                             name="denominacion"
-                            placeholder="Ingrese denominacion"
-                            value={values?.denominacion || ""}
-                            onChange={handleChangeDenominacion}
+                            placeholder="Denominación"
+                            value={formik.values.denominacion}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            isInvalid={Boolean(formik.errors.denominacion && formik.touched.denominacion)}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            { formik.errors.denominacion }
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Label>Tipo de Rubro</Form.Label>
+                        <Form.Select
+                            id="esInsumo"
+                            name="esInsumo"
+                            value={formik.values.esInsumo ? 1 : 0}
+                            onChange={handleChangeTipo}
+                            isInvalid={Boolean(formik.touched.esInsumo && formik.errors.esInsumo)}
+                        >
+                            <option value={0}>Producto</option>
+                            <option value={1}>Ingrediente</option>
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            { formik.errors.esInsumo }
+                        </Form.Control.Feedback>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
                         <Form.Label>Rubro Principal</Form.Label>
-                        <Form.Select id="rubroPadreId" value={values?.rubroPadreId || -1} onChange={handleChangeRubroPadre}>
+                        <Form.Select 
+                            id="rubroPadreId" 
+                            name="rubroPadreId"
+                            value={formik.values.rubroPadreId || -1} 
+                            onChange={handleChangeRubroPadre}
+                            isInvalid={Boolean(formik.touched.rubroPadreId && formik.errors.rubroPadreId)}
+                        >
                             <option value="-1">--Seleccione--</option>
                             {
                                 rubrosPadres.map((item: Rubro, index: number) =>
@@ -129,23 +158,21 @@ function ModalRubro({ showModal, handleClose, rubro }: Props): JSX.Element {
                                 )
                             }
                         </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            { formik.errors.rubroPadreId }
+                        </Form.Control.Feedback>
                     </Form.Group>
 
-                    <div className="d-flex justify-content-end mt-4">
-                        <Button onClick={handleClose} variant="dark" className="me-2 btn-cancel">
-                            
+                    <Modal.Footer>
+                        <Button onClick={handleClose} variant="dark" className="btn-cancel">
                             Cerrar
                         </Button>
 
                         <Button type="submit" variant="dark" className="btn-ok">
                             Guardar
                         </Button>
-                    </div>
+                    </Modal.Footer>
                 </Form>
-                <Alert show={showAlert} onClick={handleAlert} dismissible variant="danger" className="mt-3">
-                    <Alert.Heading>Error!</Alert.Heading>
-                    <p>{ messageError }</p>
-                </Alert>
             </Modal.Body>
         </Modal>
     );

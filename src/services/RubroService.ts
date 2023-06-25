@@ -1,16 +1,46 @@
-import { Rubro } from "../types/Rubro";
+import { FiltroRubro, Rubro, TipoRubro } from "../types/Rubro";
 import { Endpoint } from "../types/Endpoint";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /**
  * Obtiene todos los Rubros Desbloqueados (bloqueado = false).
  * 
- * @param token oken de autenticación.
+ * @param token Token de autenticación.
  * @returns Una promesa que se resuelve en una lista de Rubros.
  */
 export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/desbloqueados`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/${FiltroRubro.DESBLOQUEADOS}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as Rubro[];
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * Obtiene una lista de Rubros por tipo (Insumo o Producto).
+ * 
+ * @param tipo El tipo de Rubro para filtrar la búsqueda.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en una lista de Rubros.
+ */
+export async function findRubrosByTipo(tipo: TipoRubro, token: string): Promise<Rubro[]> {
+    try {
+        const bool = tipo === TipoRubro.INSUMO ? true : false;
+
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/${FiltroRubro.TIPO}/${bool}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -38,7 +68,7 @@ export async function findRubrosDesbloqueados(token: string): Promise<Rubro[]> {
  */
 export async function existsByDenominacion(denominacion: string, token: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/exists/${denominacion}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/${FiltroRubro.EXISTE}/${denominacion}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -64,7 +94,7 @@ export async function existsByDenominacion(denominacion: string, token: string):
  */
 export async function bloquearDebloquearRubro(id: number, token: string): Promise<void> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/bloquear-desbloquear/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Rubro}/${FiltroRubro.BLOQUEAR_DESBLOQUEAR}/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`

@@ -9,11 +9,16 @@ import { TipoModal } from "../../types/TipoModal";
 const ModalRubro = lazy(() => import("./ModalRubro"));
 const ModalConfirmacion = lazy(() => import("../Modal/ModalConfirmacion"));
 
+interface Props {
+    rubro: Rubro;
+    handleReset: () => void;
+}
+
 /**
  * Componente que representa un elemento de Rubro en la tabla.
  * @author Bulos
  */
-function ItemRubro(props: Rubro): JSX.Element {
+function ItemRubro({ rubro, handleReset }: Props): JSX.Element {
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
     const [tipoModal, setTipoModal] = useState<TipoModal>();
@@ -21,8 +26,9 @@ function ItemRubro(props: Rubro): JSX.Element {
     const handleBloquearDebloquear = async () => {
         const token = await getAccessTokenSilently();
 
-        await bloquearDebloquearRubro(props.id, token);
-        window.location.reload();
+        await bloquearDebloquearRubro(rubro.id, token);
+        handleReset();
+        handleClose();
     };
 
     const changeTipoModal = (tipo: TipoModal) => {
@@ -32,17 +38,21 @@ function ItemRubro(props: Rubro): JSX.Element {
 
     return (
         <>
-            <tr style={{ backgroundColor: props.bloqueado ? '#BFC5CA' : '' }}>
+            <tr style={{ backgroundColor: rubro.bloqueado ? '#BFC5CA' : '' }}>
                 <td>
-                    {props.denominacion}
+                    { rubro.denominacion }
                 </td>
 
                 <td>
-                    {props.rubroPadreDenominacion}
+                    { rubro.rubroPadreDenominacion }
                 </td>
 
                 <td>
-                    {props.bloqueado ? 'Bloqueado' : 'Activo'}
+                    { rubro.esInsumo ? 'Insumo' : 'Producto' }
+                </td>
+
+                <td>
+                    { rubro.bloqueado ? 'Bloqueado' : 'Activo' }
                 </td>
 
                 <td>
@@ -53,7 +63,7 @@ function ItemRubro(props: Rubro): JSX.Element {
 
                 <td>
                     <Button onClick={() => changeTipoModal(TipoModal.CambiarEstado)} variant="danger">
-                        {props.bloqueado ? 'Desbloquear' : 'Bloquear'}
+                        { rubro.bloqueado ? 'Desbloquear' : 'Bloquear' }
                     </Button>
                 </td>
             </tr>
@@ -64,15 +74,16 @@ function ItemRubro(props: Rubro): JSX.Element {
                 <Suspense>
                     <ModalRubro 
                         showModal={showModal} 
-                        handleClose={handleClose} 
-                        rubro={props} 
+                        handleClose={handleClose}
+                        handleReset={handleReset} 
+                        rubro={rubro} 
                     />
                 </Suspense>
                 :
                 <Suspense>
                     <ModalConfirmacion
                         title="Confirmación de Bloqueo/Desbloqueo"
-                        message={`¿Está seguro que desea ${props.bloqueado ? 'desbloquear' : 'bloquear'} el Rubro "${props.denominacion}"?`}
+                        message={`¿Está seguro que desea ${rubro.bloqueado ? 'desbloquear' : 'bloquear'} el Rubro "${rubro.denominacion}"?`}
                         showModal={showModal}
                         onOk={handleBloquearDebloquear}
                         onCancel={handleClose}

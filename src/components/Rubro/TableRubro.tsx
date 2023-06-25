@@ -1,11 +1,12 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Button, Container, Table } from "react-bootstrap";
 
 import ItemRubro from "./ItemRubro";
 import { Rubro } from "../../types/Rubro";
-import { useModal } from "../../hooks/useModal";
-import { useEntities } from "../../hooks/useEntities";
 import { Endpoint } from "../../types/Endpoint";
+import { useModal } from "../../hooks/useModal";
+import { useReload } from "../../hooks/useReload";
+import { useEntities } from "../../hooks/useEntities";
 const ModalRubro = lazy(() => import("./ModalRubro"));
 
 /**
@@ -14,8 +15,22 @@ const ModalRubro = lazy(() => import("./ModalRubro"));
  * @author Bulos
  */
 function TableRubro(): JSX.Element {
-    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
+    const { reload, handleReload } = useReload();
+    const [rubros, setRubros] = useState<Rubro[]>([]);
+    const { entities } = useEntities<Rubro>(Endpoint.Rubro, reload);
     const { showModal, handleClose } = useModal();
+
+    useEffect(() => {
+        getRubros();
+    }, [entities]);
+
+    const getRubros = async () => {
+        setRubros(entities);
+    };
+
+    const handleReset = () => {
+        handleReload();
+    };
 
     return (
         <>
@@ -32,6 +47,7 @@ function TableRubro(): JSX.Element {
                         <tr>
                             <th>Denominación</th>
                             <th>Rubro Principal</th>
+                            <th>Tipo</th>
                             <th>Estado</th>
                             <th colSpan={2}>Acciones</th>
                         </tr>
@@ -39,7 +55,11 @@ function TableRubro(): JSX.Element {
                     <tbody>
                         {
                             rubros?.map((item: Rubro, index: number) =>
-                                <ItemRubro key={index} {...item} />
+                                <ItemRubro 
+                                    key={index} 
+                                    rubro={item} 
+                                    handleReset={handleReset} 
+                                />
                             )
                         }
                     </tbody>
@@ -50,7 +70,8 @@ function TableRubro(): JSX.Element {
                 <ModalRubro
                     showModal={showModal}
                     handleClose={handleClose}
-                    />
+                    handleReset={handleReset} 
+                />
             </Suspense>
         </>
     );
