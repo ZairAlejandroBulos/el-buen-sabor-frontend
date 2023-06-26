@@ -1,4 +1,4 @@
-import "./HeaderAdmin.css";
+import "../../../Header.css";
 import { Link } from "react-router-dom";
 import { Nav, NavDropdown } from 'react-bootstrap';
 
@@ -9,7 +9,7 @@ import { Nav, NavDropdown } from 'react-bootstrap';
  */
 function HeaderAdmin(): JSX.Element {
     return (
-        <Nav justify variant="tabs" className="header-admin">
+        <Nav justify variant="tabs" className="header-empleado">
             <Nav.Item>
                 <NavDropdown title="Usuarios" id="stock-dropdown">
                     <Nav.Link as={Link} to="/admin/usuarios/clientes">Clientes</Nav.Link>

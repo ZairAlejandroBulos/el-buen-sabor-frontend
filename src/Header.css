@@ -1,0 +1,40 @@
+.header-home {
+  background-color: #ff9e00;
+}
+
+.header-home .nav-link {
+  color: #000;
+  font-weight: bold;
+}
+
+.header-home .nav-link:hover {
+  color: #fff;
+  border-color: #ff9000;
+}
+
+.header-empleado {
+  background-color: #ff9e00;
+}
+
+.header-empleado .nav-link {
+  color: #000;
+  font-weight: bold;
+}
+
+.header-empleado .nav-link:hover {
+	border: none;
+  color: #fff;
+}
+
+.header-empleado .nav-item .show .dropdown-menu {
+  background-color: #dee2e6;
+}
+
+.header-empleado .nav-item .show .dropdown-menu .nav-link {
+  border-color: transparent;
+  background-color: #dee2e6;
+}
+
+.header-empleado .nav-item .show .dropdown-menu .nav-link:hover {
+  background-color: #e9ecef;
+}

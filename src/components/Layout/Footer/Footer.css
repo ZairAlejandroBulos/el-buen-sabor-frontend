@@ -1,10 +1,14 @@
-.container-footer {
-  min-width: 100%;
-  background-color: #ff8500;
+.footer {
+  color: #000;
+  background-color: #ff9000;
 }
 
-@media (min-width: 768px) {
-  .container-footer {
-    height: min-content;
-  }
+.footer h5 {
+  font-weight: bold;
+}
+
+.footer .nav-item:hover {
+  color: #DEE2E6;
+  font-weight: bold;
+  cursor: pointer;
 }

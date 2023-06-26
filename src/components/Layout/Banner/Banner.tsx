@@ -1,20 +1,18 @@
 import { Image } from "react-bootstrap";
-import banner from "/images/Banner8.png";
-import "./Banner.css";
 
 /**
  * Componente que muestra el encabezado de la sección de inicio (Home).
  * @author Castillo
  */
-function BannerHome() {
+function BannerHome(): JSX.Element {
     return (
-        <>
-            <Image src={banner}
-                alt="banner"
-                className="d-block w-100 banner-home"
-                fluid />
-        </>
-    )
+        <Image 
+            src="/images/banner.png"
+            alt="banner"
+            fluid 
+            className="d-block w-100"
+        />
+    );
 }
 
 export default BannerHome;
