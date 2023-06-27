@@ -1,16 +1,18 @@
+import { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useFormik } from "formik";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
-import { Rubro } from "../../types/Rubro";
+import { FiltroRubro, Rubro, TipoRubro } from "../../types/Rubro";
 import { Endpoint } from "../../types/Endpoint";
 import { UnidadMedida } from "../../types/UnidadMedida";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
-import { useAlert } from "../../hooks/useAlert";
 import { useEntities } from "../../hooks/useEntities";
 import { useArticuloInsumo } from "../../hooks/useArticuloInsumo";
 import { findById, save, update } from "../../services/BaseService";
-import { isArticuloInsumo } from "../../util/ArticuloInsumoUtil";
+import { validationSchemaArticuloInsumo } from "./SchemaArticuloInsumo";
+import { useRubros } from "../../hooks/useRubros";
 
 /**
  * Componente para crear/actualizar un Artículo Insumo.
@@ -19,79 +21,70 @@ import { isArticuloInsumo } from "../../util/ArticuloInsumoUtil";
 function AMArticuloInsumo(): JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { articuloInsumo, setArticuloInsumo } = useArticuloInsumo(Number(id));
-    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
-    const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
 
-    const { showAlert, handleAlert } = useAlert();
+    const { articuloInsumo: values } = useArticuloInsumo(Number(id));
+    const { rubros } = useRubros(FiltroRubro.TIPO, TipoRubro.INSUMO);
+    const { entities: unidadesMedidas } = useEntities<UnidadMedida>(Endpoint.UnidadMedida);
+    
     const { getAccessTokenSilently } = useAuth0();
 
-    const getRubroById = async (id: number) => {
-        const token = await getAccessTokenSilently();
+    useEffect(() => {
+        formik.setValues(values);
+    }, [values]);
 
-        return await findById<Rubro>(Endpoint.Rubro, id, token);
-    };
-
-    const getUnidadMedidaById = async (id: number) => {
-        const token = await getAccessTokenSilently();
-
-        return await findById<UnidadMedida>(Endpoint.UnidadMedida, id, token);
-    };
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setArticuloInsumo((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleChangeInsumo = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const insumoSelected = Number(event.currentTarget.value);
-        setArticuloInsumo((prevState) => ({
-            ...prevState,
-            esInsumo: insumoSelected === 0 ? false : true
-        }));
-    };
-
-    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const rubroSelected = Number(event.currentTarget.value);
-        if (rubroSelected !== -1) {
-            const newRubro = await getRubroById(rubroSelected);
-            setArticuloInsumo((prevState) => ({
-                ...prevState,
-                rubro: newRubro
-            }));
-        }
-    };
+    const formik = useFormik({
+        initialValues: {
+            ...values
+        },
+        validationSchema: validationSchemaArticuloInsumo(),
+        validateOnChange: true,
+        validateOnBlur: true,
+        onSubmit: (entity: ArticuloInsumo) => handleSubmit(entity)
+    });
 
     const handleChangeUnidadMedida = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const unidadMedidaSelected = Number(event.currentTarget.value);
-        if (unidadMedidaSelected !== -1) {
-            const newUnidadMedida = await getUnidadMedidaById(unidadMedidaSelected);
-            setArticuloInsumo((prevState) => ({
-                ...prevState,
-                unidadMedida: newUnidadMedida
-            }));
+        const unidadMedidaId = Number(event.currentTarget.value);
+        
+        if (unidadMedidaId !== -1) {
+            const newUnidadMedida = await getUnidadMedidaById(unidadMedidaId);
+            formik.setFieldValue("unidadMedida", newUnidadMedida);
+        } else {
+            formik.setFieldTouched("unidadMedida", true);
         }
     };
 
-    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const getUnidadMedidaById = async (unidadMedidaId: number) => {
+        const token = await getAccessTokenSilently();
 
-        if (isArticuloInsumo(articuloInsumo)) {
-            const token = await getAccessTokenSilently();
+        return await findById<UnidadMedida>(Endpoint.UnidadMedida, unidadMedidaId, token);
+    }
 
-            if (articuloInsumo.id === 0) {
-                await save<ArticuloInsumo>(Endpoint.ArticuloInsumo, articuloInsumo, token);
-            } else {
-                await update<ArticuloInsumo>(Endpoint.ArticuloInsumo, articuloInsumo.id, articuloInsumo, token);
-            }
-
-            handleNavigate();
+    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const rubroId = Number(event.currentTarget.value);
+        
+        if (rubroId !== -1) {
+            const newRubro = await getRubroById(rubroId);
+            formik.setFieldValue("rubro", newRubro);
         } else {
-            handleAlert();
+            formik.setFieldTouched("rubro", true);
         }
+    };
+
+    const getRubroById = async (rubroId: number) => {
+        const token = await getAccessTokenSilently();
+
+        return await findById<Rubro>(Endpoint.Rubro, rubroId, token);
+    }
+
+    const handleSubmit = async (entity: ArticuloInsumo) => {
+        const token = await getAccessTokenSilently();
+
+        if (entity.id === 0) {
+            await save<ArticuloInsumo>(Endpoint.ArticuloInsumo, entity, token);
+        } else {
+            await update<ArticuloInsumo>(Endpoint.ArticuloInsumo, entity.id, entity, token);
+        }
+        handleNavigate();
     };
 
     const handleNavigate = () => {
@@ -106,7 +99,7 @@ function AMArticuloInsumo(): JSX.Element {
                 </Container>
 
                 <Container className="mt-3 mb-3">
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={formik.handleSubmit}>
                         <Row>
                             <Col>
                                 <Form.Group className="mb-3">
@@ -116,9 +109,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="denominacion"
                                         name="denominacion"
                                         placeholder="Denominación"
-                                        value={articuloInsumo?.denominacion}
-                                        onChange={handleChange}
+                                        value={formik.values.denominacion}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.denominacion && formik.touched.denominacion)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formik.errors.denominacion}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
@@ -129,9 +127,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="precioCompra"
                                         name="precioCompra"
                                         placeholder="Precio de Costo"
-                                        value={articuloInsumo?.precioCompra}
-                                        onChange={handleChange}
+                                        value={formik.values.precioCompra || 0}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.precioCompra && formik.touched.precioCompra)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formik.errors.precioCompra}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -145,9 +148,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="stockMinimo"
                                         name="stockMinimo"
                                         placeholder="Stock Mínimo"
-                                        value={articuloInsumo?.stockMinimo}
-                                        onChange={handleChange}
+                                        value={formik.values.stockMinimo || 0}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.stockMinimo && formik.touched.stockMinimo)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formik.errors.stockMinimo}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
@@ -158,9 +166,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="stockActual"
                                         name="stockActual"
                                         placeholder="Stock Actual"
-                                        value={articuloInsumo?.stockActual}
-                                        onChange={handleChange}
+                                        value={formik.values.stockActual || 0}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.stockActual && formik.touched.stockActual)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {formik.errors.stockActual}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -168,8 +181,14 @@ function AMArticuloInsumo(): JSX.Element {
                         <Row>
                             <Col>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Rubro</Form.Label>
-                                    <Form.Select id="rubro" name="rubro" value={articuloInsumo.rubro?.id || -1} onChange={handleChangeRubro}>
+                                    <Form.Label htmlFor="rubro">Rubro</Form.Label>
+                                    <Form.Select
+                                        id="rubro"
+                                        name="rubro"
+                                        value={formik.values.rubro?.id || -1}
+                                        onChange={handleChangeRubro}
+                                        isInvalid={!!formik.errors.rubro && formik.touched.rubro}
+                                    >
                                         <option value="-1">--Seleccione--</option>
                                         {
                                             rubros.map((item: Rubro, index: number) =>
@@ -179,12 +198,21 @@ function AMArticuloInsumo(): JSX.Element {
                                             )
                                         }
                                     </Form.Select>
+                                    <Form.Control.Feedback type="invalid">
+                                        Debe seleccionar un Rubro
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Unidad Medida</Form.Label>
-                                    <Form.Select id="unidadMedida" name="unidadMedida" value={articuloInsumo.unidadMedida?.id || -1} onChange={handleChangeUnidadMedida}>
+                                    <Form.Select
+                                        id="unidadMedida"
+                                        name="unidadMedida"
+                                        value={formik.values.unidadMedida?.id || -1}
+                                        onChange={handleChangeUnidadMedida}
+                                        isInvalid={!!formik.errors.unidadMedida && formik.touched.unidadMedida}
+                                    >
                                         <option value="-1">--Seleccione--</option>
                                         {
                                             unidadesMedidas.map((item: UnidadMedida, index: number) =>
@@ -194,6 +222,9 @@ function AMArticuloInsumo(): JSX.Element {
                                             )
                                         }
                                     </Form.Select>
+                                    <Form.Control.Feedback type="invalid">
+                                        Debe seleccionar una Unidad de Medida
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -201,9 +232,17 @@ function AMArticuloInsumo(): JSX.Element {
                         <Row>
                             <Form.Group className="mb-3">
                                 <Form.Label htmlFor="esInsumo">Es Insumo</Form.Label>
-                                <Form.Select name="esInsumo" value={articuloInsumo.esInsumo ? 1 : 0} onChange={handleChangeInsumo}>
+                                <Form.Select
+                                    id="esInsumo"
+                                    name="esInsumo"
+                                    value={formik.values.esInsumo ? 1 : 0}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    isInvalid={Boolean(formik.touched.esInsumo && formik.errors.esInsumo)}
+                                >
                                     <option value="0">No</option>
                                     <option value="1">Si</option>
+                                    {formik.errors.esInsumo}
                                 </Form.Select>
                             </Form.Group>
                         </Row>
@@ -213,16 +252,11 @@ function AMArticuloInsumo(): JSX.Element {
                                 Cancelar
                             </Button>
 
-                            <Button type="submit" variant="dark" className="btn-ok">
+                            <Button type="submit" variant="dark" className="btn-ok" >
                                 Guardar
                             </Button>
                         </div>
                     </Form>
-
-                    <Alert show={showAlert} onClick={handleAlert} variant="danger" dismissible>
-                        <Alert.Heading>Error!</Alert.Heading>
-                        <p>Campos vacios y/o incorrectos.</p>
-                    </Alert>
                 </Container>
             </Container>
         </>

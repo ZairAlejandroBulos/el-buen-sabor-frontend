@@ -8,31 +8,15 @@ import { findById } from "../services/BaseService";
 /**
  * Hook personalizado para obtener un Artículo Insumo por su ID.
  * @param id ID del Artículo Insumo a buscar.
- * @returns Un objeto que contiene el estado del Artículo Insumo y la función para actualizarla.
+ * @returns Un objeto que contiene el estado del Artículo Insumo.
  */
 export const useArticuloInsumo = (id: number) => {
-    const [articuloInsumo, setArticuloInsumo] = useState<ArticuloInsumo>({
-        "id": 0,
-        "denominacion": '',
-        "esInsumo": true,
-        "unidadMedida": {
-            "id": 0,
-            "denominacion": ''
-        },
-        "precioCompra": 0,
-        "stockMinimo": 0,
-        "stockActual": 0,
-        "rubro": {
-            "id": 0,
-            "denominacion": '',
-            "bloqueado": false
-        }
-    });
+    const [articuloInsumo, setArticuloInsumo] = useState<ArticuloInsumo>({ 'id': 0, 'denominacion': ''});
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         getArticuloInsumoById();
-    }, [id]);
+    }, []);
 
     const getArticuloInsumoById = async () => {
         if (id !== -1) {
@@ -43,5 +27,5 @@ export const useArticuloInsumo = (id: number) => {
         }
     };
 
-    return { articuloInsumo, setArticuloInsumo };
+    return { articuloInsumo };
 };
