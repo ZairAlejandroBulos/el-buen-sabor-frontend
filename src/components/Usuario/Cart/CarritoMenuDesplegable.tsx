@@ -1,22 +1,24 @@
 import { Button, Stack } from "react-bootstrap"
+
 import { useCarrito } from "../../../context/CarritoContext"
 import { useCarritoCompras } from "../../../hooks/useCarritoCompras"
 import "./CarritoCompras.css"
-/**
- * Componente que muestra los Artículos Manufacturados en el Carrito de Compras desplegable.
- * @author Castillo
- */
-type CartItemProps = {
+
+interface CartItemProps {
     id: number
     quantity: number
 }
 
+/**
+ * Componente que muestra los Artículos Manufacturados en el Carrito de Compras desplegable.
+ * @author Castillo
+ */
 function CarritoMenuDesplegable({ id, quantity }: CartItemProps): JSX.Element {
     const { removeFromCart } = useCarrito()
     const item = useCarritoCompras(id);
 
     return (
-        <Stack direction="horizontal" gap={2} className="d-flex align-items-center menu-desplegable">
+        <Stack direction="horizontal" gap={2} className="d-flex align-items-center imagenes-articulos">
             <img
                 src={item?.item.imagen}
             />
@@ -24,12 +26,12 @@ function CarritoMenuDesplegable({ id, quantity }: CartItemProps): JSX.Element {
                 <div>
                     {item?.item.denominacion}{" "}
                     {quantity > 1 && (
-                        <span className="text-muted cantidad-articulos" >
+                        <span className="text-muted" >
                             x{quantity}
                         </span>
                     )}
                 </div>
-                <div className="text-muted precio-articulos">
+                <div className="text-muted">
                     ${(item?.item.precioVenta)}
                 </div>
             </div>

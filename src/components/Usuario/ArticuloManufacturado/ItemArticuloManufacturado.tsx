@@ -1,9 +1,9 @@
 import { Button, Card, Container } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import cart3 from "../../../assets/cart3.svg";
-import "./ArticuloManufacturado.css"
+
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado"
 import { useCarrito } from "../../../context/CarritoContext";
+import "./ArticuloManufacturado.css"
 
 /**
  * Componente que representa un elemento de Artículo Manufacturado en la lista.
@@ -14,12 +14,12 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
     const quantity = getItemQuantity(props.id);
     return (
 
-        <Container style={{ width: '18rem', marginTop: '50px', display: 'flex', justifyContent: 'space-between' }}>
-            <Card>
+        <Container className="mt-5 d-flex justify-content-between" style={{ width: "18rem" }}>
+            <Card style={{ backgroundColor: "#DEE2E6" }}>
                 <Link to={`/detalle-manufacturado/${props.id}`}>
                     <Card.Img className="card-imagen" src={props.imagen} alt={props.denominacion} variant="top" />
                 </Link>
-                <Card.Body>
+                <Card.Body style={{ backgroundColor: "#E9ECEF" }}>
                     <Card.Title>
                         {props.denominacion}
                     </Card.Title>
@@ -31,17 +31,17 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
                     <div>
                         {quantity === 0 ? (
                             <div className="middle">
-                                <Button className="w-100" style={{ backgroundColor: "#ff9000", borderRadius: "0%", border: "none" }} onClick={() => increaseCartQuantity(props.id)}>+ Agregar</Button>
+                                <Button className="w-100 mb-5 boton-agregar" onClick={() => increaseCartQuantity(props.id)}>+ Agregar</Button>
                             </div>
                         ) : <div className="agregar"
                             style={{ gap: ".5rem" }}>
-                            <div className="d-flex align-items-center justify-content-center carta"
-                                style={{ gap: "0", backgroundColor: "#ff9000", borderRadius: "0%", width: "100%", height: "35px" }}>
-                                <Button onClick={() => decreaseCartQuantity(props.id)} style={{ backgroundColor: "#ff9000", border: "none", height: "35px", fontWeight: "bold", fontSize: "20px" }} ><span>-</span></Button>
+                            <div className="d-flex align-items-center justify-content-center boton-agregar"
+                            >
+                                <Button onClick={() => decreaseCartQuantity(props.id)} className="boton-agregar-restar"><span>-</span></Button>
                                 <div>
-                                    <span className="fs-3">{quantity}</span>
+                                    <span className="fs-5 text-white">{quantity}</span>
                                 </div>
-                                <Button onClick={() => increaseCartQuantity(props.id)} style={{ backgroundColor: "#ff9000", border: "none", height: "35px", fontWeight: "bold", fontSize: "20px" }} ><span>+</span></Button>
+                                <Button onClick={() => increaseCartQuantity(props.id)} className="boton-agregar-restar"><span>+</span></Button>
                             </div>
                         </div>}
                     </div>

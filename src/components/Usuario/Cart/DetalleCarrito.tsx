@@ -1,8 +1,8 @@
-import { useEffect } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
 import { useCarrito } from "../../../context/CarritoContext";
 import { CarritoItemDetalle } from "./CarritoItemDetalle";
-import { Link } from "react-router-dom";
 import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosManufacturadosSimple";
 
 /**
@@ -21,54 +21,51 @@ export function DetalleCarrito() {
 
     return (
         <>
-            <Container className="d-flex mt-3">
+            <Container className="mt-3 mb-3">
                 <h1>Carrito de Compras</h1>
             </Container>
-            <Container className="table-scrollable mt-3">
-                <Row>
-                    <Table responsive bordered hover className="tabla-detalle">
-                        <thead>
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Precio Unitario</th>
-                                <th>SubTotal</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-
-                    </Table>
-                    {cartItems.map(item => (
-                        <CarritoItemDetalle key={item.id} {...item} />
-                    ))}
-                </Row>
-
-            </Container>
 
             <Container>
-                <div className="row justify-content-end  boton-finalizar">
-                    <div className="col-2">
-                        <h5><strong>Subtotal: </strong>${calcularSubtotal()}</h5>
-                        <h5><strong>Total: </strong>$ {calcularSubtotal()}</h5>
-                        <Button variant="primary" size="lg" className="mt-5 ms-auto">
+                <Table responsive bordered hover className="table-scrollable mt-3 mb-1" style={{ backgroundColor: "#E9ECEF" }}>
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>SubTotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {cartItems.map((item) => (
+                            <CarritoItemDetalle key={item.id} {...item} />
+                        ))}
+                    </tbody>
+                </Table>
+
+                <Row className="mt-5 ">
+                    <Col className="d-flex justify-content-start mt-5">
+                        <Link to="/productos/all">
+                            <Button variant="dark" className="btn-add botones-carrito mt-5">
+                                Seguir Comprando
+                            </Button>
+                        </Link>
+                    </Col>
+                    <Col className="d-flex justify-content-start flex-column col-10 col-md-2 mt-4">
+                        <h5>
+                            <strong>Subtotal: </strong>${calcularSubtotal()}
+                        </h5>
+                        <h5>
+                            <strong>Total: </strong>$ {calcularSubtotal()}
+                        </h5>
+                        <Button className="btn-ok" variant="dark">
                             Finalizar Compra
                         </Button>
-                    </div>
-                </div>
-            </Container>
-
-            <Container>
-                <div className="row justify-content-start boton-seguir">
-                    <div className="col-3">
-                        <Link to="/productos/all">
-                            <Button variant="primary" size="lg">Seguir Comprando</Button>
-                        </Link>
-                    </div>
-
-                </div>
+                    </Col>
+                </Row>
             </Container>
         </>
-
-    )
+    );
 }
