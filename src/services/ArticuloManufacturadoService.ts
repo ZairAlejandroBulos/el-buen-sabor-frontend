@@ -1,7 +1,8 @@
 import { Endpoint } from "../types/Endpoint";
-import { findImagenByName } from "./ImagenService";
+import { findImagenByName, saveImagen } from "./ImagenService";
 import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 import { ArticuloManufacturadoInsumo } from "../types/ArticuloManufacturadoInsumo";
+import { saveDetalles, updateDetalles } from "./ArticuloManufacturadoInsumoService";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /** 
@@ -101,7 +102,65 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
 }
 
 /**
- * Guarda un nuevo Artículo Manufacturado.
+ * 
+ * @param entity 
+ * @param token 
+ * @returns 
+ */
+export async function saveOnlyArticuloManufacturado(entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}`, {
+            method: "POST",
+            body: JSON.stringify(entity),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": 'application/json'
+            }
+        });
+
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloManufacturado;
+            return data;
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * 
+ * @param entity 
+ * @param token 
+ * @returns 
+ */
+export async function updateOnlyArticuloManufacturado(id: number, entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(entity),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": 'application/json'
+            }
+        });
+
+        if (response.status === 201) {
+            const data = await response.json() as ArticuloManufacturado;
+            return data;
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * Guarda un nuevo Artículo Manufacturado (con sus dependencias).
  * 
  * @param entity  Artículo Manufacturado a guardar.
  * @param file Imagen a guardar.
@@ -111,58 +170,16 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
  */
 export async function saveArticuloManufacturado(entity: ArticuloManufacturado, file: File, detalles: ArticuloManufacturadoInsumo[], token: string): Promise<ArticuloManufacturado> {
     try {
-        const formData = new FormData();
-        formData.append('file', file);
+        // Imagen
+        await saveImagen(file, entity.imagen, token);
 
-        const responseImagen = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/${entity.imagen}`, {
-            method: "POST",
-            body: formData,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
+        // Artículo Manufacturado
+        const articuloManufacturado = await saveOnlyArticuloManufacturado(entity, token);
 
-        if (responseImagen.status === 204) {
-            const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}`, {
-                method: "POST",
-                body: JSON.stringify(entity),
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": 'application/json'
-                }
-            });
+        // Artículos Manufacturados Insumos (Detalles)
+        await saveDetalles(detalles, articuloManufacturado, token);
 
-            if (response.status === 201) {
-                const data = await response.json() as ArticuloManufacturado;
-
-                await Promise.all(detalles.map(async (detalle) => {
-                    try {
-                        detalle.articuloManufacturado.id = data.id;
-
-                        const responseDetalle = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturadoInsumo}`, {
-                            method: "POST",
-                            body: JSON.stringify(detalle),
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                                "Content-Type": 'application/json'
-                            }
-                        });
-
-                        if (responseDetalle.status !== 201) {
-                            throw new Error(`HTTP error ArtículoManufacturadoInsumo! status: ${responseDetalle.status}`);
-                        }
-                    } catch (error) {
-                        throw new Error(`Error ArtículoManufacturadoInsumo! ${error}`);
-                    }
-                }));
-
-                return data;
-            } else {
-                throw new Error(`HTTP error Artículo Manufacturado! status: ${responseImagen.status}`);
-            }
-        } else {
-            throw new Error(`HTTP error Imagen! status: ${responseImagen.status}`);
-        }
+        return articuloManufacturado;
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);
@@ -178,75 +195,19 @@ export async function saveArticuloManufacturado(entity: ArticuloManufacturado, f
  * @param detalles Artículos Insumos a guardar/actualizar.
  * @param token Token de autenticación.
  * @returns Una promesa que se resuelve en el Artículo Manufacturado actualizado.
- */
+*/
 export async function updateArticuloManufacturado(id: number, entity: ArticuloManufacturado, file: File, detalles: ArticuloManufacturadoInsumo[], token: string): Promise<ArticuloManufacturado> {
     try {
-        const formData = new FormData();
-        formData.append('file', file);
+        // Imagen
+        saveImagen(file, entity.imagen, token);
 
-        const responseImagen = await fetch(`${API_BASE_URL}/${Endpoint.Imagen}/${entity.imagen}`, {
-            method: "POST",
-            body: formData,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
+        // Artículo Manufacturado
+        const articuloManufacturado = await updateOnlyArticuloManufacturado(id, entity, token);
 
-        if (responseImagen.status === 204) {
-            const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/${id}`, {
-                method: "PUT",
-                body: JSON.stringify(entity),
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": 'application/json'
-                }
-            });
+        // Artículos Manufacturados Insumos (Detalles)
+        updateDetalles(detalles, articuloManufacturado, token);
 
-            if (response.status === 201) {
-                const data = await response.json() as ArticuloManufacturado;
-
-                await Promise.all(detalles.map(async (detalle) => {
-                    try {
-                        detalle.articuloManufacturado.id = data.id;
-                        const idDetalle = detalle.id;
-
-                        let responseDetalle: Response;
-
-                        if (detalle.id === 0) {
-                            responseDetalle = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturadoInsumo}`, {
-                                method: "POST",
-                                body: JSON.stringify(detalle),
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                    "Content-Type": 'application/json'
-                                }
-                            });
-                        } else {
-                            responseDetalle = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturadoInsumo}/${idDetalle}`, {
-                                method: "PUT",
-                                body: JSON.stringify(detalle),
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                    "Content-Type": 'application/json'
-                                }
-                            });
-                        }
-
-                        if (responseDetalle.status !== 201) {
-                            throw new Error(`HTTP error ArtículoManufacturadoInsumo! status: ${responseDetalle.status}`);
-                        }
-                    } catch (error) {
-                        throw new Error(`Error ArtículoManufacturadoInsumo! ${error}`);
-                    }
-                }));
-
-                return data;
-            } else {
-                throw new Error(`HTTP error Artículo Manufacturado! status: ${responseImagen.status}`);
-            }
-        } else {
-            throw new Error(`HTTP error Imagen! status: ${responseImagen.status}`);
-        }
+        return articuloManufacturado;
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);

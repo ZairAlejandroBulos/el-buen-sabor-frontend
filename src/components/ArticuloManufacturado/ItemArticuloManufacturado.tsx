@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 
 /**
@@ -26,12 +26,12 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
                 </td>
 
                 <td>
-                    <Button
-                        href={`/admin/stock/articulos-manufacturados/form/${props.id}`}
-                        variant="warning"
+                    <NavLink
+                        to={`/admin/stock/articulos-manufacturados/form/${props.id}`}
+                        className="btn btn-warning"
                     >
                         Editar
-                    </Button>
+                    </NavLink>
                 </td>
             </tr>
         </>

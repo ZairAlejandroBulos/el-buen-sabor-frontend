@@ -48,12 +48,11 @@ export async function saveImagen(file: File, nombre: string, token: string): Pro
             method: "POST",
             body: formData,
             headers: {
-                Authorization: `Bearer ${token}`,
-                "enctype": "multipart/form-data"
+                Authorization: `Bearer ${token}`
             }
         });
 
-        if (!response.ok) {
+        if (response.status !== 204) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
     } catch (error) {

@@ -1,4 +1,6 @@
 import { Endpoint } from "../types/Endpoint";
+import { save, update } from "./BaseService";
+import { ArticuloManufacturado } from "../types/ArticuloManufacturado";
 import { ArticuloManufacturadoInsumo } from "../types/ArticuloManufacturadoInsumo";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
@@ -24,6 +26,48 @@ export async function findByArticuloManufacturado(id: number, token: string) {
 
         const data = await response.json() as ArticuloManufacturadoInsumo[];
         return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * 
+ * @param entities 
+ * @param articuloManufacturadoId 
+ * @param token 
+ */
+export async function saveDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string) {
+    try {
+        await Promise.all(entities.map(async (detalle: ArticuloManufacturadoInsumo) => {
+            detalle.articuloManufacturado.id = articuloManufacturado.id;
+            
+            await save<ArticuloManufacturadoInsumo>(Endpoint.ArticuloManufacturadoInsumo, detalle, token);
+        }));
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * 
+ * @param entities 
+ * @param articuloManufacturadoId 
+ * @param token 
+ */
+export async function updateDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string) {
+    try {
+        await Promise.all(entities.map(async (detalle: ArticuloManufacturadoInsumo) => {
+            detalle.articuloManufacturado.id = articuloManufacturado.id;
+            
+            if (detalle.id === 0) {
+                await save<ArticuloManufacturadoInsumo>(Endpoint.ArticuloManufacturadoInsumo, detalle, token);
+            } else {
+                await update<ArticuloManufacturadoInsumo>(Endpoint.ArticuloManufacturadoInsumo, detalle.id, detalle, token);
+            }
+        }));
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);

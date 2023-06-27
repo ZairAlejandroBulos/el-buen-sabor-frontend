@@ -5,7 +5,7 @@ export function generateImageName(nombre: string): string {
 }
 
 export function isImagen(file: File): boolean {
-    const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+    const allowedExtensions = ["jpg", "jpeg", "png"];
     const fileName = file.name.toLowerCase();
     const fileExtension = fileName.split(".").pop();
   

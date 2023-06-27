@@ -21,6 +21,7 @@ export const useArticuloManufacturado = (id: number) => {
         "rubro": {
             "id": 0,
             "denominacion": '',
+            'esInsumo': false,
             "bloqueado": false
         }
     });
@@ -39,5 +40,5 @@ export const useArticuloManufacturado = (id: number) => {
         }
     };
 
-    return { articuloManufacturado, setArticuloManufacturado };
+    return { articuloManufacturado };
 };

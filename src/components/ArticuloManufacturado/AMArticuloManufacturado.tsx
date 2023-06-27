@@ -1,21 +1,24 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
-import { Rubro } from "../../types/Rubro";
 import { Endpoint } from "../../types/Endpoint";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
+import { FiltroRubro, Rubro, TipoRubro } from "../../types/Rubro";
+import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
 import { ArticuloManufacturadoInsumo } from "../../types/ArticuloManufacturadoInsumo";
+import { validationSchemaArticuloManufacturado } from "./SchemaArticuloManufacturado";
 import { useModal } from "../../hooks/useModal";
-import { useAlert } from "../../hooks/useAlert";
+import { useRubros } from "../../hooks/useRubros";
 import { useEntities } from "../../hooks/useEntities";
 import { useArticuloManufacturado } from "../../hooks/useArticuloManufacturado";
 import { useArticulosManufacturadosInsumos } from "../../hooks/useArticulosManufacturadosInsumos";
 import { generateImageName, isImagen } from "../../util/ImagenUtil";
-import { isArticuloManufacturado } from "../../util/ArticuloManufacturadoUtil";
-import { findById } from "../../services/BaseService";
+import { findById, remove } from "../../services/BaseService";
 import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
+import { toastAdvertencia, toastExito } from "../../util/ToastUtil";
 
 /**
  * Componente para crear/actualizar un Artículo Manufacturado.
@@ -25,21 +28,42 @@ function AMArticuloManufacturado(): JSX.Element {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { articuloManufacturado, setArticuloManufacturado } = useArticuloManufacturado(Number(id));
-    const { entities: rubros } = useEntities<Rubro>(Endpoint.Rubro);
+    const { articuloManufacturado } = useArticuloManufacturado(Number(id));
+    const { rubros } = useRubros(FiltroRubro.TIPO, TipoRubro.PRODUCTO);
     const [file, setFile] = useState<File | null>(null);
 
     const { articulosManufacturadosInsumos, setArticulosManufacturadosInsumos } = useArticulosManufacturadosInsumos(Number(id));
 
-    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo);
-    const [receta, setReceta] = useState<string>('');
     const [cantidad, setCantidad] = useState<number>(0);
     const [unidadMedida, setUnidadMedida] = useState<string>('');
+    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo);
     const [articuloInsumoSelected, setArticuloInsumoSelected] = useState<ArticuloInsumo | undefined>(undefined);
 
     const { showModal, handleClose } = useModal();
-    const { showAlert, handleAlert } = useAlert();
     const { getAccessTokenSilently } = useAuth0();
+
+    useEffect(() => {
+        formik.setValues(articuloManufacturado);
+    }, [articuloManufacturado]);
+
+    const formik = useFormik({
+        initialValues: {
+            ...articuloManufacturado
+        },
+        validationSchema: validationSchemaArticuloManufacturado(),
+        validateOnChange: true,
+        validateOnBlur: true,
+        onSubmit: (entity: ArticuloManufacturado) => handleSubmit(entity)
+    });
+
+    // TODO: Validación de Rubro con Yup
+    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const rubroId = Number(event.currentTarget.value);
+        if (rubroId !== -1) {
+            const newRubro = await getRubroById(rubroId);
+            formik.setFieldValue('rubro', newRubro);
+        }
+    };
 
     const getRubroById = async (id: number) => {
         const token = await getAccessTokenSilently();
@@ -47,40 +71,15 @@ function AMArticuloManufacturado(): JSX.Element {
         return await findById<Rubro>(Endpoint.Rubro, id, token);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setArticuloManufacturado((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const rubroId = Number(event.currentTarget.value);
-        if (rubroId !== -1) {
-            const newRubro = await getRubroById(rubroId);
-            setArticuloManufacturado((prevState) => ({
-                ...prevState,
-                rubro: newRubro
-            }));
-        }
-    };
-
     const handleChangeImagen = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const file = event.target.files[0];
-            const imagen = generateImageName(file.name);
-            setFile(file);
-            setArticuloManufacturado((prevState) => ({
-                ...prevState,
-                imagen: imagen
-            }));
-        }
-    };
 
-    const handleChangeReceta = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newReceta = event.target.value;
-        setReceta(newReceta);
+            const imagen = generateImageName(file.name);
+
+            setFile(file);
+            formik.setFieldValue('imagen',imagen);
+        }
     };
 
     const handleChangeArticuloInsumo = async (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -91,7 +90,6 @@ function AMArticuloManufacturado(): JSX.Element {
 
             const newArticuloInsumo = await findById<ArticuloInsumo>(Endpoint.ArticuloInsumo, articuloInsumoId, token);
             setArticuloInsumoSelected(newArticuloInsumo);
-
             setUnidadMedida(newArticuloInsumo.unidadMedida?.denominacion ?? '');
         }
     };
@@ -123,7 +121,7 @@ function AMArticuloManufacturado(): JSX.Element {
                     id: 0,
                     cantidad: cantidad,
                     articuloInsumo: articuloInsumoSelected,
-                    articuloManufacturado: articuloManufacturado
+                    articuloManufacturado: formik.values
                 };
                 setArticulosManufacturadosInsumos((prevState) => [...prevState, newArticuloManufacturadoInsumo]);
             }
@@ -132,33 +130,36 @@ function AMArticuloManufacturado(): JSX.Element {
         }
     };
 
-    const handleResetArticuloManufacturadoInsumo = () => {
-        setArticuloInsumoSelected(undefined);
-        setCantidad(0);
-        setUnidadMedida('');
-    };
-
-    const handleDeleteArticuloManufacturadoInsumo = (item: ArticuloManufacturadoInsumo) => {
+    const handleDeleteArticuloManufacturadoInsumo = async (item: ArticuloManufacturadoInsumo) => {
         const index = articulosManufacturadosInsumos.indexOf(item, 0);
         articulosManufacturadosInsumos.splice(index, 1);
         setArticulosManufacturadosInsumos([...articulosManufacturadosInsumos]);
+
+        const token = await getAccessTokenSilently();
+        await remove(Endpoint.ArticuloManufacturadoInsumo, item.id, token);
     };
 
-    const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleResetArticuloManufacturadoInsumo = () => {
+        setCantidad(0);
+        setUnidadMedida('');
+        setArticuloInsumoSelected(undefined);
+    };
 
-        if (file !== null && isImagen(file) && isArticuloManufacturado(articuloManufacturado)) {
-            const token = await getAccessTokenSilently();
+    const handleSubmit = async (entity: ArticuloManufacturado) => {
+        const token = await getAccessTokenSilently();
 
-            if (articuloManufacturado.id === 0) {
-                await saveArticuloManufacturado(articuloManufacturado, file, articulosManufacturadosInsumos, token);
+        if (file && isImagen(file)) {
+            if (entity.id === 0) {
+                await saveArticuloManufacturado(entity, file, articulosManufacturadosInsumos, token);
+                toastExito(`El Artículo Manufacturado "${entity.denominacion}" se guardó exitosamente.`);
             } else {
-                await updateArticuloManufacturado(articuloManufacturado.id, articuloManufacturado, file, articulosManufacturadosInsumos, token);
+                await updateArticuloManufacturado(entity.id, entity, file, articulosManufacturadosInsumos, token);
+                toastExito(`El Artículo Manufacturado "${entity.denominacion}" se actualizó exitosamente.`);
             }
 
             handleNavigate();
         } else {
-            handleAlert();
+            toastAdvertencia('Debe seleccionar una Imagen');
         }
     };
 
@@ -174,7 +175,7 @@ function AMArticuloManufacturado(): JSX.Element {
                 </Container>
 
                 <Container className="mt-3 mb-3">
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={formik.handleSubmit}>
                         <Row>
                             <Col>
                                 <Form.Group className="mb-3">
@@ -184,9 +185,14 @@ function AMArticuloManufacturado(): JSX.Element {
                                         id="denominacion"
                                         name="denominacion"
                                         placeholder="Denominación"
-                                        defaultValue={articuloManufacturado?.denominacion}
-                                        onChange={handleChange}
+                                        defaultValue={formik.values.denominacion}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.denominacion && formik.touched.denominacion)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.denominacion }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
@@ -197,9 +203,14 @@ function AMArticuloManufacturado(): JSX.Element {
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Descripción"
-                                        defaultValue={articuloManufacturado?.descripcion}
-                                        onChange={handleChange}
+                                        defaultValue={formik.values.descripcion}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.descripcion && formik.touched.descripcion)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.descripcion }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -207,28 +218,38 @@ function AMArticuloManufacturado(): JSX.Element {
                         <Row>
                             <Col>
                                 <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="tiempoEstimadoCocina">Tiempo Estimado Cocina</Form.Label>
+                                    <Form.Label htmlFor="tiempoEstimadoCocina">Tiempo Estimado en Cocina</Form.Label>
                                     <Form.Control
                                         type="text"
                                         id="tiempoEstimadoCocina"
                                         name="tiempoEstimadoCocina"
                                         placeholder="Tiempo Estimado Cocina (00:35:00)"
-                                        defaultValue={articuloManufacturado?.tiempoEstimadoCocina}
-                                        onChange={handleChange}
+                                        defaultValue={formik.values.tiempoEstimadoCocina}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.tiempoEstimadoCocina && formik.touched.tiempoEstimadoCocina)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.tiempoEstimadoCocina }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group className="mb-3">
-                                    <Form.Label htmlFor="precioVenta">Precio de venta</Form.Label>
+                                    <Form.Label htmlFor="precioVenta">Precio de Venta</Form.Label>
                                     <Form.Control
                                         type="number"
                                         id="precioVenta"
                                         name="precioVenta"
                                         placeholder="Precio de venta"
-                                        value={articuloManufacturado?.precioVenta}
-                                        onChange={handleChange}
+                                        value={formik.values.precioVenta}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.precioVenta && formik.touched.precioVenta)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.precioVenta }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -241,19 +262,29 @@ function AMArticuloManufacturado(): JSX.Element {
                                         type="file"
                                         id="imagen"
                                         name="imagen"
+                                        accept=".jpg, .jpeg, .png"
                                         onChange={handleChangeImagen}
+                                        isInvalid={Boolean(formik.errors.imagen && formik.touched.imagen)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.imagen }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                             <Col>
                                 <Form.Group className="mb-3">
                                     <Form.Label htmlFor="rubro">Rubro</Form.Label>
-                                    <Form.Select id="rubro" value={articuloManufacturado?.rubro?.id || -1} onChange={handleChangeRubro}>
+                                    <Form.Select
+                                        id="rubro"
+                                        name="rubro"
+                                        value={formik.values.rubro?.id || -1}
+                                        onChange={handleChangeRubro}
+                                    >
                                         <option value="-1">--Seleccione--</option>
                                         {
                                             rubros.map((item: Rubro, index: number) =>
                                                 <option key={index} value={item.id}>
-                                                    {item.denominacion}
+                                                    { item.denominacion }
                                                 </option>
                                             )
                                         }
@@ -281,9 +312,14 @@ function AMArticuloManufacturado(): JSX.Element {
                                         as="textarea"
                                         rows={3}
                                         placeholder="Procedimiento..."
-                                        defaultValue={receta}
-                                        onChange={handleChangeReceta}
+                                        value={formik.values.receta}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={Boolean(formik.errors.receta && formik.touched.receta)}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        { formik.errors.receta }
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
                         </Row>
@@ -315,7 +351,7 @@ function AMArticuloManufacturado(): JSX.Element {
                                                 {
                                                     articulosInsumos.map((item: ArticuloInsumo, index: number) =>
                                                         <option key={index} value={item.id}>
-                                                            {item.denominacion}
+                                                            { item.denominacion }
                                                         </option>
                                                     )
                                                 }
@@ -331,6 +367,7 @@ function AMArticuloManufacturado(): JSX.Element {
                                                 name="cantidad"
                                                 placeholder="Cantidad"
                                                 value={cantidad}
+                                                required
                                                 onChange={handleChangeCantidad}
                                             />
                                         </Form.Group>

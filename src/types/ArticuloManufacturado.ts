@@ -6,6 +6,7 @@ export interface ArticuloManufacturado extends Base {
     descripcion: string;
     imagen: string;
     precioVenta: number;
+    receta?: string;
     tiempoEstimadoCocina?: string;
     rubro?: Rubro;
 }

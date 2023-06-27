@@ -2,6 +2,7 @@ export enum Endpoint {
     ArticuloInsumo = 'articulos-insumos',
     ArticuloManufacturado = 'articulos-manufacturados',
     ArticuloManufacturadoInsumo = 'articulos-manufacturados-insumos',
+    Receta = 'recetas',
     Cliente = 'clientes',
     Domicilio = 'domicilios',
     Imagen = 'imagenes',
