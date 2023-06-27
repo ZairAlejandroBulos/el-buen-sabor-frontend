@@ -21,6 +21,16 @@ export function toastExito(mensaje: string) {
 }
 
 /**
+ * Muestra un mensaje de advertencia utilizando el componente Toast.
+ * @param mensaje El mensaje de advertencia a mostrar.
+ */
+export function toastAdvertencia(mensaje: string) {
+    toast.warning(mensaje, {
+        position: toast.POSITION.TOP_CENTER
+    });
+}
+
+/**
  * Muestra un mensaje de error utilizando el componente Toast.
  * @param mensaje El mensaje de error a mostrar.
  */
