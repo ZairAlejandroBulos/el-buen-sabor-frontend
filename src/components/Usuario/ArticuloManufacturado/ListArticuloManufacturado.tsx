@@ -18,7 +18,7 @@ function ListArticuloManufacturado(): JSX.Element {
         <>
             <Home />
 
-            <Container fluid="md" className="mt-3" style={{ height: "100vh" }}>
+            <Container fluid="md" className="mt-1 mb-1" >
                 <Row>
                     {
                         articulosManufacturados.length !== 0

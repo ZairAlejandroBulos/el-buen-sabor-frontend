@@ -1,8 +1,8 @@
 import { Button, Stack } from "react-bootstrap"
 
 import { useCarrito } from "../../../context/CarritoContext"
-import { useCarritoCompras } from "../../../hooks/useCarritoCompras"
 import "./CarritoCompras.css"
+import { useArticuloManufacturado } from "../../../hooks/useArticuloManufacturado"
 
 interface CartItemProps {
     id: number
@@ -15,16 +15,16 @@ interface CartItemProps {
  */
 function CarritoMenuDesplegable({ id, quantity }: CartItemProps): JSX.Element {
     const { removeFromCart } = useCarrito()
-    const item = useCarritoCompras(id);
+    const item = useArticuloManufacturado(id, true);
 
     return (
         <Stack direction="horizontal" gap={2} className="d-flex align-items-center imagenes-articulos">
             <img
-                src={item?.item.imagen}
+                src={item?.articuloManufacturado.imagen}
             />
             <div className="me-auto">
                 <div>
-                    {item?.item.denominacion}{" "}
+                    {item?.articuloManufacturado.denominacion}{" "}
                     {quantity > 1 && (
                         <span className="text-muted" >
                             x{quantity}
@@ -32,14 +32,14 @@ function CarritoMenuDesplegable({ id, quantity }: CartItemProps): JSX.Element {
                     )}
                 </div>
                 <div className="text-muted">
-                    ${(item?.item.precioVenta)}
+                    ${(item?.articuloManufacturado.precioVenta)}
                 </div>
             </div>
-            <div> ${(item?.item.precioVenta || 0 * quantity)}</div>
+            <div> ${(item?.articuloManufacturado.precioVenta || 0 * quantity)}</div>
             <Button
                 variant="outline-danger"
                 size="sm"
-                onClick={() => removeFromCart(item?.item.id || 0)}
+                onClick={() => removeFromCart(item?.articuloManufacturado.id || 0)}
             ><i className="bi bi-trash3"></i>
             </Button>
         </Stack>

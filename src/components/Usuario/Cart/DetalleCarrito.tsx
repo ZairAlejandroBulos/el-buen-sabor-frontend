@@ -45,18 +45,15 @@ export function DetalleCarrito() {
                     </tbody>
                 </Table>
 
-                <Row className="mt-5 ">
+                <Row className="mt-3">
                     <Col className="d-flex justify-content-start mt-5">
                         <Link to="/productos/all">
-                            <Button variant="dark" className="btn-add botones-carrito mt-5">
+                            <Button variant="dark" className="btn-add botones-carrito">
                                 Seguir Comprando
                             </Button>
                         </Link>
                     </Col>
-                    <Col className="d-flex justify-content-start flex-column col-10 col-md-2 mt-4">
-                        <h5>
-                            <strong>Subtotal: </strong>${calcularSubtotal()}
-                        </h5>
+                    <Col className="d-flex justify-content-start flex-column col-10 col-md-2 mt-3">
                         <h5>
                             <strong>Total: </strong>$ {calcularSubtotal()}
                         </h5>

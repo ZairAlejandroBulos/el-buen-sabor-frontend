@@ -1,8 +1,9 @@
 import { Button } from "react-bootstrap"
 
 import { useCarrito } from "../../../context/CarritoContext"
-import { useCarritoCompras } from "../../../hooks/useCarritoCompras"
 import "./CarritoCompras.css"
+import { useArticuloManufacturado } from "../../../hooks/useArticuloManufacturado"
+import { Dash, Plus } from "react-bootstrap-icons"
 
 interface CartItemProps {
     id: number
@@ -14,30 +15,30 @@ interface CartItemProps {
  * @author Castillo
  */
 export function CarritoItemDetalle({ id, quantity }: CartItemProps) {
-    const item = useCarritoCompras(id)
+    const item = useArticuloManufacturado(id, true)
     const { increaseCartQuantity, decreaseCartQuantity } = useCarrito();
 
     return (
         <tr>
             <td className="imagenes-articulos">
-                <img src={item?.item.imagen} alt="Imagen del artículo" />
+                <img src={item?.articuloManufacturado.imagen} alt="Imagen del artículo" />
             </td>
-            <td>{item?.item.denominacion}</td>
+            <td>{item?.articuloManufacturado.denominacion}</td>
             <td>{quantity > 0 && <span>x{quantity}</span>}</td>
             <td>
-                <div>${item?.item.precioVenta}</div>
+                <div>${item?.articuloManufacturado.precioVenta}</div>
             </td>
             <td>
-                <div>${(item?.item.precioVenta || 0) * quantity}</div>
+                <div>${(item?.articuloManufacturado.precioVenta || 0) * quantity}</div>
             </td>
             <td>
                 <div className="d-flex align-items-center justify-content-center">
-                    <Button onClick={() => decreaseCartQuantity(id)} className="btn-cancel me-2" variant="dark">
-                        <span>-</span>
+                    <Button onClick={() => decreaseCartQuantity(id)} className="btn-cancel btn-sm me-2" variant="dark">
+                        <Dash size={13}/>
                     </Button>
                     <span className="fs-4">{quantity}</span>
-                    <Button onClick={() => increaseCartQuantity(id)} className="btn-ok ms-2" variant="dark">
-                        <span>+</span>
+                    <Button onClick={() => increaseCartQuantity(id)} className="btn-ok ms-2 btn-sm" variant="dark">
+                        <Plus size={13}/>
                     </Button>
                 </div>
             </td>
