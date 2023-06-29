@@ -11,7 +11,7 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en una lista de Artículos Insumos.
 */
-export async function findByArticuloManufacturado(id: number, token: string) {
+export async function findByArticuloManufacturado(id: number, token: string): Promise<ArticuloManufacturadoInsumo[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturadoInsumo}/byArticuloManufacturado/${id}`, {
             method: "GET",
@@ -33,12 +33,13 @@ export async function findByArticuloManufacturado(id: number, token: string) {
 }
 
 /**
+ * Guarda una lista de Artículos Manufacturados Insumos.
  * 
- * @param entities 
- * @param articuloManufacturadoId 
- * @param token 
+ * @param entities Artículos Manufacturados Insumos a guardar.
+ * @param articuloManufacturadoId ID del Artículo Manufacturado.
+ * @param token Token de autenticación.
  */
-export async function saveDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string) {
+export async function saveDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string): Promise<void> {
     try {
         await Promise.all(entities.map(async (detalle: ArticuloManufacturadoInsumo) => {
             detalle.articuloManufacturado.id = articuloManufacturado.id;
@@ -52,12 +53,13 @@ export async function saveDetalles(entities: ArticuloManufacturadoInsumo[], arti
 }
 
 /**
+ * Actualiza una lista de Artículos Manufacturados Insumos.
  * 
- * @param entities 
- * @param articuloManufacturadoId 
- * @param token 
+ * @param entities Artículos Manufacturados Insumos a actualizar.
+ * @param articuloManufacturadoId ID del Artículo Manufacturado.
+ * @param token Token de autenticación.
  */
-export async function updateDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string) {
+export async function updateDetalles(entities: ArticuloManufacturadoInsumo[], articuloManufacturado: ArticuloManufacturado, token: string): Promise<void> {
     try {
         await Promise.all(entities.map(async (detalle: ArticuloManufacturadoInsumo) => {
             detalle.articuloManufacturado.id = articuloManufacturado.id;

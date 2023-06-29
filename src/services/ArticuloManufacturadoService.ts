@@ -11,7 +11,7 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en una lista de Artículos Manufacturados.
 */
-export async function findAllSimpleArticuloManufacturados(token: string) {
+export async function findAllSimpleArticuloManufacturados(token: string): Promise<ArticuloManufacturado[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/simple`, {
             method: "GET",
@@ -25,7 +25,6 @@ export async function findAllSimpleArticuloManufacturados(token: string) {
         }
 
         const data = await response.json() as ArticuloManufacturado[];
-
         for (const item of data) {
             const newImagenUrl = await findImagenByName(item.imagen, token);
             item.imagen = newImagenUrl || "";
@@ -44,9 +43,10 @@ export async function findAllSimpleArticuloManufacturados(token: string) {
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en un Artículo Manufacturado.
 */
-export async function findArticuloManufacturadoSimpleById(id: number, token: string) {
+export async function findArticuloManufacturadoSimpleById(id: number, token: string): Promise<ArticuloManufacturado> {
     try {
         const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/simple/${id}`, {
+            method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -59,7 +59,6 @@ export async function findArticuloManufacturadoSimpleById(id: number, token: str
         const data = await response.json() as ArticuloManufacturado;
         const newImagenUrl = await findImagenByName(data.imagen, token);
         data.imagen = newImagenUrl || "";
-
         return data;
     } catch (error) {
         console.log(error);
@@ -74,7 +73,7 @@ export async function findArticuloManufacturadoSimpleById(id: number, token: str
 * @param token Token de autenticación.
 * @returns Una promesa que se resuelve en una lista de Artículos Manufacturados que coincidan con el término.
 */
-export async function findAllArticuloManufacturadosByTermino(termino: string, token: string) {
+export async function findAllArticuloManufacturadosByTermino(termino: string, token: string): Promise<ArticuloManufacturado[]> {
     try {
         const response = await fetch(`${API_BASE_URL}/${Endpoint.ArticuloManufacturado}/byTermino/${termino}`, {
             method: "GET",
@@ -88,12 +87,10 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
         }
 
         const data = await response.json() as ArticuloManufacturado[];
-
         for (const item of data) {
             const newImagenUrl = await findImagenByName(item.imagen, token);
             item.imagen = newImagenUrl || "";
         }
-
         return data;
     } catch (error) {
         console.log(error);
@@ -102,10 +99,11 @@ export async function findAllArticuloManufacturadosByTermino(termino: string, to
 }
 
 /**
+ * Guarda un nuevo Artículo Manufacturado.
  * 
- * @param entity 
- * @param token 
- * @returns 
+ * @param entity Artículo Manufacturado a guardar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Manufacturado guardado.
  */
 export async function saveOnlyArticuloManufacturado(entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
     try {
@@ -131,10 +129,12 @@ export async function saveOnlyArticuloManufacturado(entity: ArticuloManufacturad
 }
 
 /**
+ * Actualiza un Artículo Manufacturado.
  * 
- * @param entity 
- * @param token 
- * @returns 
+ * @param id ID del Artículo Manufacturado a actualizar.
+ * @param entity Artículo Manufacturado a actualizar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en el Artículo Manufacturado actualizado.
  */
 export async function updateOnlyArticuloManufacturado(id: number, entity: ArticuloManufacturado, token: string): Promise<ArticuloManufacturado> {
     try {
@@ -177,7 +177,7 @@ export async function saveArticuloManufacturado(entity: ArticuloManufacturado, f
         const articuloManufacturado = await saveOnlyArticuloManufacturado(entity, token);
 
         // Artículos Manufacturados Insumos (Detalles)
-        await saveDetalles(detalles, articuloManufacturado, token);
+        await saveDetalles(detalles, articuloManufacturado, "");
 
         return articuloManufacturado;
     } catch (error) {
@@ -187,7 +187,7 @@ export async function saveArticuloManufacturado(entity: ArticuloManufacturado, f
 }
 
 /**
- * Actualiza un Artículo Manufacturado.
+ * Actualiza un Artículo Manufacturado (con sus dependencias).
  * 
  * @param id ID del Artículo Manufacturado a actualizar.
  * @param entity Artículo Manufacturado a actualizar.
@@ -205,7 +205,7 @@ export async function updateArticuloManufacturado(id: number, entity: ArticuloMa
         const articuloManufacturado = await updateOnlyArticuloManufacturado(id, entity, token);
 
         // Artículos Manufacturados Insumos (Detalles)
-        updateDetalles(detalles, articuloManufacturado, token);
+        updateDetalles(detalles, articuloManufacturado, "");
 
         return articuloManufacturado;
     } catch (error) {
