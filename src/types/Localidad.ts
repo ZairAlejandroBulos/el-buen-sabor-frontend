@@ -1,4 +1,5 @@
-export interface Localidad {
-    id: number;
+import { Base } from "./Base";
+
+export interface Localidad extends Base {
     nombre: string;   
 }

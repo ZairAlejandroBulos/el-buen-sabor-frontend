@@ -10,5 +10,6 @@ export enum Endpoint {
     Rol = 'roles',
     Rubro = 'rubros',
     UnidadMedida = 'unidades-medidas',
-    Usuario = 'usuarios'
+    Usuario = 'usuarios',
+    Auth0 = 'auth0'
 }

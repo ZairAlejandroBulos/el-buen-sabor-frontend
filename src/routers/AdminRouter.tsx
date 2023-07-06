@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom";
 
 import NavBarEmpleado from "../components/Layout/NavBar/NavBarEmpleado";
 import HeaderAdmin from "../components/Admin/Header/HeaderAdmin";
-const TableUsuario = lazy(() => import("../components/Admin/Usuarios/TableUsuario"));
+const TableCliente = lazy(() => import("../components/Admin/Clientes/TableCliente"));
+const TableEmpleado = lazy(() => import("../components/Admin/Empleados/TableEmpleado"));
 const TableRubro = lazy(() => import("../components/Rubro/TableRubro"));
 const TableUnidadMedida = lazy(() => import("../components/UnidadMedida/TableUnidadMedida"));
 const TableArticuloManufacturado = lazy(() => import("../components/ArticuloManufacturado/TableArticuloManufacturado"));
@@ -22,10 +23,8 @@ function AdminRouter(): JSX.Element {
             <HeaderAdmin />
             <Suspense>
                 <Routes>
-                    <Route path="/usuarios">
-                        <Route path=":usuario" element={<TableUsuario />} />
-                        <Route path=":usuario" element={<TableUsuario />} />
-                    </Route>
+                    <Route path="/usuarios/clientes" element={<TableCliente />} />
+                    <Route path="/usuarios/empleados" element={<TableEmpleado />} />
                     <Route path="/rubros" element={<TableRubro />} />
                     <Route path="/unidad-medida" element={<TableUnidadMedida />} />
                     <Route path="/stock/articulos-manufacturados" element={<TableArticuloManufacturado />} />

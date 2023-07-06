@@ -3,19 +3,20 @@ import { Endpoint } from "../types/Endpoint";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL as string;
 
 /**
- * Obtiene todos los Clientes filtrados por Roles.
+ * Obtiene todos los Clientes con rol de Cliente.
  * 
- * @param roles Roles de los Clientes a buscar.
  * @param token Token de autenticación.
  * @returns Una promesa que se resuelve en una lista de Clientes.
  */
-export async function findAllClientesByRoles(roles: string[], token: string): Promise<Cliente[]> {
+export async function findAllClientes(token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byRoles/${roles.join(",")}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/rolClientes`, {
+            method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,19 +30,20 @@ export async function findAllClientesByRoles(roles: string[], token: string): Pr
 }
 
 /**
- * Obtiene todos los Clientes filtrados por nombre.
+ * Obtiene todos los Clientes con rol de Empleado (Admin/Cocinero/Cajero/Delivery).
  * 
- * @param nombre Nombre del Cliente a buscar.
  * @param token Token de autenticación.
  * @returns Una promesa que se resuelve en una lista de Clientes.
  */
-export async function findAllClientesByNombre(nombre: string, token: string): Promise<Cliente[]> {
+export async function findAllEmpleados(token: string): Promise<Cliente[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byNombre/${nombre}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/rolEmpleados`, {
+            method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -55,24 +57,28 @@ export async function findAllClientesByNombre(nombre: string, token: string): Pr
 }
 
 /**
- * Obtiene todos los Clientes filtrados por apellido.
+ * Obtiene un Cliente por su auth0Id.
  * 
- * @param apellido Apellido de los Clientes a buscar.
+ * @param auth0Id Auth0Id del Cliente a buscar.
  * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en una lista de Clientes.
+ * @returns Una promesa que se resuelve con un Cliente.
  */
-export async function findAllClientesByApellido(apellido: string, token: string): Promise<Cliente[]> {
+export async function findClienteByUsuarioAuth0Id(auth0Id: string, token: string): Promise<Cliente> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byApellido/${apellido}`, {
+        const encoded = encodeURIComponent(auth0Id);
+
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byAuth0Id?auth0Id=${encoded}`, {
+            method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json() as Cliente[];
+        const data = await response.json() as Cliente;
         return data;
     } catch (error) {
         console.log(error);
@@ -81,114 +87,27 @@ export async function findAllClientesByApellido(apellido: string, token: string)
 }
 
 /**
- * Obtiene todos los Clientes filtrados por nombre y apellido.
- * 
- * @param nombre Nombre del Cliente a buscar.
- * @param apellido Apellido de los Clientes a buscar.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en una lista de Clientes.
- */
-export async function findAllClientesByNombreAndApellido(nombre: string, apellido: string, token: string): Promise<Cliente[]> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/byNombreAndApellido/${nombre}/${apellido}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json() as Cliente[];
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
- * Guarda un nuevo Cliente.
- * 
- * @param entity Cliente a guardar.
- * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Cliente guardado.
- */
-export async function saveCliente(entity: Cliente, token: string): Promise<Cliente> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}`, {
-            method: "POST",
-            body: JSON.stringify(entity),
-            headers: {
-                "Content-Type": 'application/json',
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (response.status === 201) {
-            const data = await response.json() as Cliente;
-            return data;
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
- * Actualiza un Cliente existente por su ID.
+ * Actualiza el estado bloqueado de un Cliente.
  * 
  * @param id ID del Cliente a actualizar.
- * @param entity Cliente con los datos actualizados.
  * @param token Token de autenticación.
- * @returns Una promesa que se resuelve en el Cliente actualizado.
+ * @returns Una promesa que se resuelve con el Cliente actualizado.
  */
-export async function updateCliente(id: number, entity: Cliente, token: string): Promise<Cliente> {
+export async function updateEstadoUsuario(id: number, token: string): Promise<Cliente> {
     try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/${id}}`, {
+        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/cambiarEstado/${id}`, {
             method: "PUT",
-            body: JSON.stringify(entity),
-            headers: {
-                "Content-Type": 'application/json',
-                Authorization: `Bearer ${token}`,
-            }
-        });
-
-        if (response.status === 201) {
-            const data = await response.json() as Cliente;
-            return data;
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Error! ${error}`);
-    }
-}
-
-/**
- * Elimina un Cliente por su ID.
- * 
- * @param id ID del Cliente a eliminar.
- * @param token Token de autenticación.
- */
-export async function deleteCliente(id: number, token: string): Promise<void> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/${Endpoint.Cliente}/${id}`, {
-            method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
 
-        if (!response.ok) {
+        if (response.status !== 201) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
+        const data = await response.json() as Cliente;
+        return data;
     } catch (error) {
         console.log(error);
         throw new Error(`Error! ${error}`);
