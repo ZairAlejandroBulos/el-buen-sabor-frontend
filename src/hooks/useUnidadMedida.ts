@@ -11,7 +11,7 @@ import { findById } from "../services/BaseService";
  * @returns Un objeto que contiene el estado de la Unidad de Medida.
  */
 export const useUnidadMedida = (id: number) => {
-    const [unidadMedida, setUnidadMedida] = useState<UnidadMedida>({ 'id': 0, 'denominacion': '' });
+    const [unidadMedida, setUnidadMedida] = useState<UnidadMedida>({ id: 0, denominacion: '' });
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {

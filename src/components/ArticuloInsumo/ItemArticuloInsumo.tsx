@@ -1,6 +1,6 @@
-import { Button } from "react-bootstrap";
-import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 import { NavLink } from "react-router-dom";
+
+import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 
 /**
  * Componente que representa un elemento de Artículo Insumo en la lista.
@@ -11,22 +11,22 @@ function ItemArticuloInsumo(props: ArticuloInsumo): JSX.Element {
         <>
             <tr>
                 <td>
-                    {props.denominacion}
+                    { props.denominacion }
                 </td>
                 <td>
-                    {props.rubro?.denominacion}
+                    { props.rubro?.denominacion }
                 </td>
                 <td>
-                    ${props.precioCompra}
+                    ${ props.precioCompra }
                 </td>
                 <td>
-                    {props.stockMinimo}
+                    { props.stockMinimo }
                 </td>
                 <td>
-                    {props.stockActual}
+                    { props.stockActual }
                 </td>
                 <td>
-                    {props.unidadMedida?.denominacion}
+                    { props.unidadMedida?.denominacion }
                 </td>
                 <td>
                     <NavLink
@@ -35,11 +35,6 @@ function ItemArticuloInsumo(props: ArticuloInsumo): JSX.Element {
                     >
                         Editar
                     </NavLink>
-                </td>
-                <td>
-                    <Button variant="danger">
-                        Comprar
-                    </Button>
                 </td>
             </tr>
         </>

@@ -13,17 +13,17 @@ import { findArticuloManufacturadoSimpleById } from "../services/ArticuloManufac
  */
 export const useArticuloManufacturado = (id: number, isSimple?: boolean) => {
     const [articuloManufacturado, setArticuloManufacturado] = useState<ArticuloManufacturado>({
-        "id": 0,
-        "denominacion": '',
-        "descripcion": '',
-        "imagen": '',
-        "precioVenta": 0,
-        "tiempoEstimadoCocina": '',
-        "rubro": {
-            "id": 0,
-            "denominacion": '',
-            'esInsumo': false,
-            "bloqueado": false
+        id: 0,
+        denominacion: '',
+        descripcion: '',
+        imagen: '',
+        precioVenta: 0,
+        tiempoEstimadoCocina: '',
+        rubro: {
+            id: 0,
+            denominacion: '',
+            esInsumo: false,
+            bloqueado: false
         }
     });
     const { getAccessTokenSilently } = useAuth0();

@@ -1,5 +1,6 @@
+import { Search } from "react-bootstrap-icons";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { Button, Container, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 
 import ItemRubro from "./ItemRubro";
 import { Rubro } from "../../types/Rubro";
@@ -16,29 +17,59 @@ const ModalRubro = lazy(() => import("./ModalRubro"));
  */
 function TableRubro(): JSX.Element {
     const { reload, handleReload } = useReload();
+    const { showModal, handleClose } = useModal();
+    const [search, setSearch] = useState<string>('');
     const [rubros, setRubros] = useState<Rubro[]>([]);
     const { entities } = useEntities<Rubro>(Endpoint.Rubro, reload);
-    const { showModal, handleClose } = useModal();
 
     useEffect(() => {
         getRubros();
-    }, [entities]);
+    }, [entities, search]);
 
     const getRubros = async () => {
-        setRubros(entities);
+        if (search === '') {
+            setRubros(entities);
+        } else {
+            setRubros(filterRubros(entities, search));
+        }
     };
 
-    const handleReset = () => {
-        handleReload();
+    const filterRubros = (rubros: Rubro[], search: string): Rubro[] => {
+        return rubros.filter((rubro) =>
+            rubro.denominacion.toLowerCase().includes(search.toLowerCase()) ||
+            rubro.rubroPadreDenominacion?.toLowerCase().includes(search.toLowerCase())
+        );
     };
 
     return (
         <>
             <Container className="mt-3 mb-3">
                 <h1>Rubro</h1>
-                <Button onClick={handleClose} variant="success">
-                    Nuevo
-                </Button>
+            </Container>
+
+            <Container className="mb-3">
+                <Row>
+                    <Col>
+                        <Button onClick={handleClose} variant="success">
+                            Nuevo
+                        </Button>
+                    </Col>
+                    <Col>
+                        <InputGroup>
+                            <Form.Control
+                                id="search"
+                                name="search"
+                                type="search"
+                                placeholder="Buscar rubros..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
+                            <Button variant="light">
+                                <Search />
+                            </Button>
+                        </InputGroup>
+                    </Col>
+                </Row>
             </Container>
 
             <Container className="table-scrollable">
@@ -54,12 +85,20 @@ function TableRubro(): JSX.Element {
                     </thead>
                     <tbody>
                         {
-                            rubros?.map((item: Rubro, index: number) =>
-                                <ItemRubro 
-                                    key={index} 
-                                    rubro={item} 
-                                    handleReset={handleReset} 
-                                />
+                            rubros.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6}>
+                                        No se encontraron rubros para la búsqueda '{search}'.
+                                    </td>
+                                </tr>
+                            ) : (
+                                rubros.map((item: Rubro) =>
+                                    <ItemRubro
+                                        key={item.id}
+                                        rubro={item}
+                                        handleReload={handleReload}
+                                    />
+                                )
                             )
                         }
                     </tbody>
@@ -70,7 +109,7 @@ function TableRubro(): JSX.Element {
                 <ModalRubro
                     showModal={showModal}
                     handleClose={handleClose}
-                    handleReset={handleReset} 
+                    handleReload={handleReload}
                 />
             </Suspense>
         </>

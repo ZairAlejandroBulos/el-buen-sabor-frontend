@@ -11,7 +11,16 @@ import { findById } from "../services/BaseService";
  * @returns Un objeto que contiene el estado del Artículo Insumo.
  */
 export const useArticuloInsumo = (id: number) => {
-    const [articuloInsumo, setArticuloInsumo] = useState<ArticuloInsumo>({ 'id': 0, 'denominacion': ''});
+    const [articuloInsumo, setArticuloInsumo] = useState<ArticuloInsumo>({
+        id: 0,
+        denominacion: '',
+        esInsumo: true,
+        precioCompra: 0,
+        stockMinimo: 0,
+        stockActual: 0,
+        unidadMedida: { id: 0, denominacion: '' },
+        rubro: { id: 0, denominacion: '', bloqueado: false, esInsumo: true }
+    });
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {

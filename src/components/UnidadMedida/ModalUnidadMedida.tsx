@@ -14,7 +14,7 @@ import { toastError, toastExito } from "../../util/ToastUtil";
 interface Props {
     showModal: boolean;
     handleClose: () => void;
-    handleReset : () => void;
+    handleReload : () => void;
     unidadMedida?: UnidadMedida;
 }
 
@@ -22,8 +22,8 @@ interface Props {
  * Componente para crear/actualizar una UnidadMedida.
  * @author Castillo
  */
-function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }: Props): JSX.Element {
-    const  { unidadMedida: values } = useUnidadMedida(unidadMedida ? unidadMedida.id : -1);
+function ModalUnidadMedida({ showModal, handleClose, handleReload, unidadMedida }: Props): JSX.Element {
+    const { unidadMedida: values } = useUnidadMedida(unidadMedida ? unidadMedida.id : -1);
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
@@ -31,9 +31,7 @@ function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }
     }, [values]);
 
     const formik = useFormik({
-        initialValues: {
-            ...values
-        },
+        initialValues: values,
         validationSchema: validationSchemaUnidadMedida(),
         validateOnChange: true,
         validateOnBlur: true,
@@ -59,7 +57,7 @@ function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }
     };
 
     const handleResetModal = () => {
-        handleReset();
+        handleReload();
         handleClose();
     };
 
@@ -97,7 +95,7 @@ function ModalUnidadMedida({ showModal, handleClose, handleReset, unidadMedida }
                             Cerrar
                         </Button>
 
-                        <Button type="submit" variant="dark" className="btn-ok">
+                        <Button type="submit" disabled={!formik.isValid} variant="dark" className="btn-ok">
                             Guardar
                         </Button>
                     </Modal.Footer>

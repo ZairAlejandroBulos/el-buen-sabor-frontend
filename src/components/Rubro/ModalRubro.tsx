@@ -4,10 +4,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Form, Modal } from "react-bootstrap";
 
 import { Endpoint } from "../../types/Endpoint";
-import { validationSchemaRubro } from "./SchemaRubro";
 import { Rubro, FiltroRubro, TipoRubro } from "../../types/Rubro";
 import { useRubro } from "../../hooks/useRubro";
 import { useRubros } from "../../hooks/useRubros";
+import { validationSchemaRubro } from "./SchemaRubro";
 import { save, update } from "../../services/BaseService";
 import { toastError, toastExito } from "../../util/ToastUtil";
 import { existsByDenominacion } from "../../services/RubroService";
@@ -15,7 +15,7 @@ import { existsByDenominacion } from "../../services/RubroService";
 interface Props {
     showModal: boolean;
     handleClose: () => void;
-    handleReset : () => void;
+    handleReload : () => void;
     rubro?: Rubro;
 }
 
@@ -23,7 +23,7 @@ interface Props {
  * Componente para crear/actualizar un Rubro.
  * @author Bulos
  */
-function ModalRubro({ showModal, handleClose, handleReset, rubro }: Props): JSX.Element {
+function ModalRubro({ showModal, handleClose, handleReload, rubro }: Props): JSX.Element {
     const { rubro: values } = useRubro(rubro ? rubro.id : -1);
     const [tipoRubro, setTipoRubro] = useState<TipoRubro>(TipoRubro.INSUMO);
     const { rubros: rubrosPadres } = useRubros(FiltroRubro.TIPO, tipoRubro);
@@ -42,9 +42,7 @@ function ModalRubro({ showModal, handleClose, handleReset, rubro }: Props): JSX.
     }, [rubro]);
     
     const formik = useFormik({
-        initialValues: {
-            ...values
-        },
+        initialValues: values,
         validationSchema: validationSchemaRubro(),
         validateOnChange: true,
         validateOnBlur: true,
@@ -90,7 +88,7 @@ function ModalRubro({ showModal, handleClose, handleReset, rubro }: Props): JSX.
     };
 
     const handleResetModal = () => {
-        handleReset();
+        handleReload();
         handleClose();
     };
 
@@ -168,7 +166,7 @@ function ModalRubro({ showModal, handleClose, handleReset, rubro }: Props): JSX.
                             Cerrar
                         </Button>
 
-                        <Button type="submit" variant="dark" className="btn-ok">
+                        <Button type="submit" disabled={!formik.isValid} variant="dark" className="btn-ok">
                             Guardar
                         </Button>
                     </Modal.Footer>

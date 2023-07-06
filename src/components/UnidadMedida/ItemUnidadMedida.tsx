@@ -8,19 +8,19 @@ import { UnidadMedida } from "../../types/UnidadMedida";
 import { useModal } from "../../hooks/useModal";
 import { remove } from "../../services/BaseService";
 import { toastError, toastExito } from "../../util/ToastUtil";
+const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"));
 const ModalConfirmacion = lazy(() => import("../Modal/ModalConfirmacion"));
-const ModalUnidadMedida = lazy(() => import("./ModalUnidadMedida"))
 
 interface Props {
     unidadMedida: UnidadMedida;
-    handleReset: () => void;
+    handleReload: () => void;
 }
 
 /**
  * Componente que representa un elemento de UnidadMedida en la tabla.
  * @author Castillo
  */
-function ItemUnidadMedida({ unidadMedida, handleReset }: Props): JSX.Element {
+function ItemUnidadMedida({ unidadMedida, handleReload }: Props): JSX.Element {
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
     const [tipoModal, setTipoModal] = useState<TipoModal>();
@@ -31,7 +31,7 @@ function ItemUnidadMedida({ unidadMedida, handleReset }: Props): JSX.Element {
         try {
             await remove(Endpoint.UnidadMedida, unidadMedida.id, token);
             toastExito('La Unidad de Medida se eliminó exitosamente.');
-            handleReset();
+            handleReload();
         } catch (error) {
             toastError(`No se pudo eliminar la Unidad de Medida "${unidadMedida.denominacion}". Está siendo utiliza en Artículos Insumos.`);
             handleClose();
@@ -47,7 +47,7 @@ function ItemUnidadMedida({ unidadMedida, handleReset }: Props): JSX.Element {
         <>
             <tr>
                 <td>
-                    {unidadMedida.denominacion}
+                    { unidadMedida.denominacion }
                 </td>
 
                 <td>
@@ -70,7 +70,7 @@ function ItemUnidadMedida({ unidadMedida, handleReset }: Props): JSX.Element {
                     <ModalUnidadMedida
                         showModal={showModal}
                         handleClose={handleClose}
-                        handleReset={handleReset}
+                        handleReload={handleReload}
                         unidadMedida={unidadMedida}
                     />
                 </Suspense>

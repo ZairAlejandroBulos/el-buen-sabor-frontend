@@ -3,22 +3,22 @@ import { Button } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import { Rubro } from "../../types/Rubro";
+import { TipoModal } from "../../types/TipoModal";
 import { useModal } from "../../hooks/useModal";
 import { bloquearDebloquearRubro } from "../../services/RubroService";
-import { TipoModal } from "../../types/TipoModal";
 const ModalRubro = lazy(() => import("./ModalRubro"));
 const ModalConfirmacion = lazy(() => import("../Modal/ModalConfirmacion"));
 
 interface Props {
     rubro: Rubro;
-    handleReset: () => void;
+    handleReload: () => void;
 }
 
 /**
  * Componente que representa un elemento de Rubro en la tabla.
  * @author Bulos
  */
-function ItemRubro({ rubro, handleReset }: Props): JSX.Element {
+function ItemRubro({ rubro, handleReload }: Props): JSX.Element {
     const { showModal, handleClose } = useModal();
     const { getAccessTokenSilently } = useAuth0();
     const [tipoModal, setTipoModal] = useState<TipoModal>();
@@ -27,7 +27,7 @@ function ItemRubro({ rubro, handleReset }: Props): JSX.Element {
         const token = await getAccessTokenSilently();
 
         await bloquearDebloquearRubro(rubro.id, token);
-        handleReset();
+        handleReload();
         handleClose();
     };
 
@@ -75,7 +75,7 @@ function ItemRubro({ rubro, handleReset }: Props): JSX.Element {
                     <ModalRubro 
                         showModal={showModal} 
                         handleClose={handleClose}
-                        handleReset={handleReset} 
+                        handleReload={handleReload} 
                         rubro={rubro} 
                     />
                 </Suspense>

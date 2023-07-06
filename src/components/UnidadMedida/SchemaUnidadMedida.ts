@@ -8,5 +8,6 @@ export const validationSchemaUnidadMedida = () => {
         denominacion: Yup.string()
             .required('La denominación es requerida')
             .max(20, 'Máximo de 20 caracteres')
+            .trim()
     });
 };

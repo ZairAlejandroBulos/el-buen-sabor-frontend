@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { Endpoint } from "../types/Endpoint";
 import { Rubro } from "../types/Rubro";
+import { Endpoint } from "../types/Endpoint";
 import { findById } from "../services/BaseService";
 
 /**
@@ -11,7 +11,7 @@ import { findById } from "../services/BaseService";
  * @returns Un objeto que contiene el estado del Rubro.
  */
 export const useRubro = (id: number) => {
-    const [rubro, setRubro] = useState<Rubro>({ 'id': 0, 'denominacion': '', 'esInsumo': true, 'bloqueado': false });
+    const [rubro, setRubro] = useState<Rubro>({ id: 0, denominacion: '', esInsumo: true, bloqueado: false });
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
