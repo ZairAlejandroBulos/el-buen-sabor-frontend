@@ -5,6 +5,7 @@ import NavBar from "../components/Layout/NavBar/NavBar";
 import { CarritoProvider } from "../context/CarritoContext";
 import { DetalleCarrito } from "../components/Usuario/Cart/DetalleCarrito";
 const Home = lazy(() => import("../components/Layout/Home/Home"));
+const MiPerfil = lazy(() => import ("../components/Usuario/Perfil/MiPerfil"));
 const DetalleArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado"));
 const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 
@@ -27,6 +28,7 @@ function UserRouter(): JSX.Element {
                             <Route path=":id" element={<DetalleArticuloManufacturado />} />
                         </Route>
                         <Route path="/carrito-detalle" element={<DetalleCarrito />} />
+                        <Route path="/mi-perfil" element={<MiPerfil />} />
                     </Routes>
                 </Suspense>
             </CarritoProvider>
