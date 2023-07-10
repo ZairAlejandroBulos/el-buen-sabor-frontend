@@ -16,15 +16,12 @@ export const useArticuloManufacturado = (id: number, isSimple?: boolean) => {
         id: 0,
         denominacion: '',
         descripcion: '',
-        imagen: '',
         precioVenta: 0,
+        imagen: '',
+        receta: '',
         tiempoEstimadoCocina: '',
-        rubro: {
-            id: 0,
-            denominacion: '',
-            esInsumo: false,
-            bloqueado: false
-        }
+        rubro: { id: 0, denominacion: '', esInsumo: false, bloqueado: false },
+        detalles: []
     });
     const { getAccessTokenSilently } = useAuth0();
 
@@ -40,7 +37,6 @@ export const useArticuloManufacturado = (id: number, isSimple?: boolean) => {
                 const newArticuloManufacturado = await findArticuloManufacturadoSimpleById(id, token);
                 setArticuloManufacturado(newArticuloManufacturado);
             } else {
-                
                 const newArticuloManufacturado = await findById<ArticuloManufacturado>(Endpoint.ArticuloManufacturado, id, token);
                 setArticuloManufacturado(newArticuloManufacturado);
             }

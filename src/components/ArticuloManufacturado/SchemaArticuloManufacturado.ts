@@ -1,7 +1,6 @@
 import * as Yup from "yup";
-import { validationSchemaRubro } from "../Rubro/SchemaRubro";
 
-export const validationSchemaArticuloManufacturado = () => {
+export const validationSchemaArticuloManufacturado = (id: number) => {
     return Yup.object().shape({
         id: Yup.number()
             .integer()
@@ -12,19 +11,52 @@ export const validationSchemaArticuloManufacturado = () => {
         descripcion: Yup.string()
             .required('La Descripción es requerida')
             .trim(),
+        imagen: id === 0
+            ? Yup.string()
+                .required('La Imagen es requerida')
+                .trim()
+            : Yup.string()
+                .nullable(),
+        precioVenta: Yup.number()
+            .required('El Precio de Venta es requerido')
+            .positive('El Precio de Venta debe ser un valor positivo'),
+        rubro: Yup.object().shape({
+            id: Yup.number()
+                .integer()
+                .min(0),
+            denominacion: Yup.string()
+                .required('La denominación es requerida')
+                .max(20, 'Máximo de 20 catacteres')
+                .trim(),
+            bloqueado: Yup.boolean()
+                .nullable(),
+            esInsumo: Yup.boolean()
+                .nullable()
+        }),
+        receta: Yup.string()
+            .required('La Receta es requerida')
+            .trim(),
         tiempoEstimadoCocina: Yup.string()
             .required('El Tiempo Estimado en Cocina es requerido')
             .matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, 'Formato inválido. Debe ser HH:mm:ss')
             .trim(),
-        precioVenta: Yup.number()
-            .required('El Precio de Venta es requerido')
-            .positive('El Precio de Venta debe ser un valor positivo'),
-        imagen: Yup.string()
-            .required('La Imagen es requerida')
-            .trim(),
-        receta: Yup.string()
-            .required('La Receta es requerida')
-            .trim(),
-        rubro: validationSchemaRubro()
+        detalles: Yup.array()
+            .min(1, 'Debe agregar al menos un Ingrediente')
+            .of(Yup.object({
+                id: Yup.number()
+                    .integer()
+                    .min(0),
+                cantidad: Yup.number()
+                    .positive('La Cantidad debe ser un valor positivo')
+                    .required('La Cantidad es requerida'),
+                articuloInsumo: Yup.object().shape({
+                    id: Yup.number()
+                        .integer()
+                        .min(0),
+                    denominacion: Yup.string()
+                        .required('La Denominación es requerida')
+                        .trim(),
+                })
+            }))
     });
 };

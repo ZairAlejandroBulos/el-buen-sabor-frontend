@@ -19,7 +19,7 @@ export const validationSchemaArticuloInsumo = () => {
                 .required('La Denominación es requerida')
                 .max(20, 'Máximo de 20 catacteres')
                 .trim() 
-        }).required('Debe seleccionar una Unidad de Medida'),
+        }),
         rubro: Yup.object().shape({
             id: Yup.number()
                 .integer()
@@ -32,7 +32,7 @@ export const validationSchemaArticuloInsumo = () => {
                 .nullable(),
             esInsumo: Yup.boolean()
                 .nullable()
-        }).required('Debe seleccionar un Rubro'),
+        }),
         precioCompra: Yup.number()
             .min(0)
             .required('El Precio de Compra es requerido'),

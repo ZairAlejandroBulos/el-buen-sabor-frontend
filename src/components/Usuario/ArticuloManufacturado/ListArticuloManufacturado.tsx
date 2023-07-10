@@ -4,7 +4,7 @@ import { Container, Row } from "react-bootstrap";
 import Home from "../../Layout/Home/Home";
 import { ArticuloManufacturado } from "../../../types/ArticuloManufacturado";
 import ItemArticuloManufacturado from "./ItemArticuloManufacturado";
-import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosManufacturadosSimple";
+import { useArticulosManufacturadosSearch } from "../../../hooks/useArticulosManufacturadosSearch";
 
 /**
  * Componente que muestra una lista de Artículos Manufacturados.
@@ -12,7 +12,7 @@ import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosMan
  */
 function ListArticuloManufacturado(): JSX.Element {
     const { termino } = useParams<string>();
-    const { articulosManufacturados } = useArticulosManufacturadosSimple(termino);
+    const { articulosManufacturados } = useArticulosManufacturadosSearch(termino);
 
     return (
         <>
@@ -24,8 +24,9 @@ function ListArticuloManufacturado(): JSX.Element {
                         articulosManufacturados.length !== 0
                             ?
                             (
-                                articulosManufacturados.map((item: ArticuloManufacturado, index: number) =>
-                                    <ItemArticuloManufacturado key={index}
+                                articulosManufacturados.map((item: ArticuloManufacturado) =>
+                                    <ItemArticuloManufacturado 
+                                        key={item.id}
                                         {...item}
                                     />
                                 )

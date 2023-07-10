@@ -4,10 +4,18 @@ export function generateImageName(nombre: string): string {
     return `${currentDateTime}.${extension}`;
 }
 
-export function isImagen(file: File): boolean {
+export function isValidImagen(file: File): boolean {
+    return isImage(file) && isSizeAcceptable(file);
+}
+
+function isImage(file: File): boolean {
     const allowedExtensions = ["jpg", "jpeg", "png"];
     const fileName = file.name.toLowerCase();
     const fileExtension = fileName.split(".").pop();
   
     return fileExtension !== undefined && allowedExtensions.includes(fileExtension);
+}
+
+function isSizeAcceptable(file: File): boolean {
+    return file.size <= 10 * 1024 * 1024;
 }

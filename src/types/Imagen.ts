@@ -1,5 +1,5 @@
-export interface Imagen {
-    id: number;
+import { Base } from "./Base";
+
+export interface Imagen extends Base {
     nombre: string;
-    imagenUrl?: string;
 }

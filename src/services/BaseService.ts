@@ -30,6 +30,34 @@ export async function findAll<T extends Base>(endpoint: string, token: string): 
 }
 
 /**
+ * Obtiene todos los elementos de una entidad (simple) especifica.
+ * 
+ * @param endpoint Endpoint de la API para la entidad deseada.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve en una lista de elementos de la entidad especificada.
+ */
+export async function findAllSimple<T extends Base>(endpoint: string, token: string): Promise<T[]> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${endpoint}/simple`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as T[];
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
  * Obtiene un elemento de una entidad específica por su ID.
  * 
  * @param endpoint Endpoint de la API para la entidad deseada.
@@ -40,6 +68,35 @@ export async function findAll<T extends Base>(endpoint: string, token: string): 
 export async function findById<T extends Base>(endpoint: string, id: number, token: string): Promise<T> {
     try {
         const response = await fetch(`${API_BASE_URL}/${endpoint}/${id}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json() as T;
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Error! ${error}`);
+    }
+}
+
+/**
+ * Obtiene un elemento de una entidad (simple) específica por su ID.
+ * 
+ * @param endpoint Endpoint de la API para la entidad deseada.
+ * @param id ID de la entidad a buscar.
+ * @param token Token de autenticación.
+ * @returns Una promesa que se resuelve con un elemento de la entidad especificada.
+ */
+export async function findSimpleById<T extends Base>(endpoint: string, id: number, token: string): Promise<T> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${endpoint}/simple/${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -153,8 +153,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="rubro"
                                         name="rubro"
                                         value={JSON.stringify(formik.values.rubro)}
-                                        onChange={e => formik.setFieldValue('rubro', JSON.parse(e.target.value))}
+                                        onChange={e => {
+                                            try {
+                                                formik.setFieldValue('rubro', JSON.parse(e.target.value))
+                                            } catch (error) {
+                                            }
+                                        }}
                                     >
+                                        <option value=""></option>
                                         {
                                             rubros.map((item: Rubro) =>
                                                 <option value={JSON.stringify(item)} key={item.id}>
@@ -172,8 +178,14 @@ function AMArticuloInsumo(): JSX.Element {
                                         id="unidadMedida"
                                         name="unidadMedida"
                                         value={JSON.stringify(formik.values.unidadMedida)}
-                                        onChange={e => formik.setFieldValue('unidadMedida', JSON.parse(e.target.value))}
+                                        onChange={e => {
+                                            try {
+                                                formik.setFieldValue('unidadMedida', JSON.parse(e.target.value))
+                                            } catch (error) {
+                                            }
+                                        }}
                                     >
+                                        <option value=""></option>
                                         {
                                             unidadesMedidas.map((item: UnidadMedida) =>
                                                 <option value={JSON.stringify(item)} key={item.id}>

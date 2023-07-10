@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
 import { useFormik } from "formik";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { PlusSquare, Trash3 } from "react-bootstrap-icons";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
@@ -8,17 +9,15 @@ import { Endpoint } from "../../types/Endpoint";
 import { ArticuloInsumo } from "../../types/ArticuloInsumo";
 import { FiltroRubro, Rubro, TipoRubro } from "../../types/Rubro";
 import { ArticuloManufacturado } from "../../types/ArticuloManufacturado";
-import { ArticuloManufacturadoInsumo } from "../../types/ArticuloManufacturadoInsumo";
+import { DetalleArticuloManufacturado } from "../../types/DetalleArticuloManufacturado";
 import { validationSchemaArticuloManufacturado } from "./SchemaArticuloManufacturado";
 import { useModal } from "../../hooks/useModal";
 import { useRubros } from "../../hooks/useRubros";
 import { useEntities } from "../../hooks/useEntities";
 import { useArticuloManufacturado } from "../../hooks/useArticuloManufacturado";
-import { useArticulosManufacturadosInsumos } from "../../hooks/useArticulosManufacturadosInsumos";
-import { generateImageName, isImagen } from "../../util/ImagenUtil";
-import { findById, remove } from "../../services/BaseService";
-import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
 import { toastAdvertencia, toastExito } from "../../util/ToastUtil";
+import { generateImageName, isValidImagen } from "../../util/ImagenUtil";
+import { saveArticuloManufacturado, updateArticuloManufacturado } from "../../services/ArticuloManufacturadoService";
 
 /**
  * Componente para crear/actualizar un Artículo Manufacturado.
@@ -32,11 +31,8 @@ function AMArticuloManufacturado(): JSX.Element {
     const { rubros } = useRubros(FiltroRubro.TIPO, TipoRubro.PRODUCTO);
     const [file, setFile] = useState<File | null>(null);
 
-    const { articulosManufacturadosInsumos, setArticulosManufacturadosInsumos } = useArticulosManufacturadosInsumos(Number(id));
-
     const [cantidad, setCantidad] = useState<number>(0);
-    const [unidadMedida, setUnidadMedida] = useState<string>('');
-    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo);
+    const { entities: articulosInsumos } = useEntities<ArticuloInsumo>(Endpoint.ArticuloInsumo, undefined, true);
     const [articuloInsumoSelected, setArticuloInsumoSelected] = useState<ArticuloInsumo | undefined>(undefined);
 
     const { showModal, handleClose } = useModal();
@@ -47,29 +43,12 @@ function AMArticuloManufacturado(): JSX.Element {
     }, [articuloManufacturado]);
 
     const formik = useFormik({
-        initialValues: {
-            ...articuloManufacturado
-        },
-        validationSchema: validationSchemaArticuloManufacturado(),
+        initialValues: articuloManufacturado,
+        validationSchema: validationSchemaArticuloManufacturado(Number(id)),
         validateOnChange: true,
         validateOnBlur: true,
         onSubmit: (entity: ArticuloManufacturado) => handleSubmit(entity)
     });
-
-    // TODO: Validación de Rubro con Yup
-    const handleChangeRubro = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const rubroId = Number(event.currentTarget.value);
-        if (rubroId !== -1) {
-            const newRubro = await getRubroById(rubroId);
-            formik.setFieldValue('rubro', newRubro);
-        }
-    };
-
-    const getRubroById = async (id: number) => {
-        const token = await getAccessTokenSilently();
-
-        return await findById<Rubro>(Endpoint.Rubro, id, token);
-    };
 
     const handleChangeImagen = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -78,89 +57,74 @@ function AMArticuloManufacturado(): JSX.Element {
             const imagen = generateImageName(file.name);
 
             setFile(file);
-            formik.setFieldValue('imagen',imagen);
+            formik.setFieldValue('imagen', imagen);
         }
     };
 
-    const handleChangeArticuloInsumo = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const articuloInsumoId = Number(event.currentTarget.value);
-
-        if (articuloInsumoId !== -1) {
-            const token = await getAccessTokenSilently();
-
-            const newArticuloInsumo = await findById<ArticuloInsumo>(Endpoint.ArticuloInsumo, articuloInsumoId, token);
-            setArticuloInsumoSelected(newArticuloInsumo);
-            setUnidadMedida(newArticuloInsumo.unidadMedida?.denominacion ?? '');
-        }
-    };
-
-    const handleChangeCantidad = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newCantidad = Number(event.target.value);
-        setCantidad(newCantidad);
-    };
-
-    const articuloManufacturadoInsumoExists = (articuloInsumo: ArticuloInsumo): boolean => {
-        return articulosManufacturadosInsumos.some((item) => item.articuloInsumo.id === articuloInsumo.id);
-    };
-
-    const handleAddArticuloManufacturadoInsumo = () => {
+    const handleAddDetalle = async () => {
         if (articuloInsumoSelected && cantidad !== 0) {
-            if (articuloManufacturadoInsumoExists(articuloInsumoSelected)) {
-                const updatedArticulosManufacturadosInsumos = articulosManufacturadosInsumos.map((item) => {
-                    if (item.articuloInsumo.id === articuloInsumoSelected.id) {
-                        return {
-                            ...item,
-                            cantidad: cantidad
-                        };
+            let updatedDetalles = [...formik.values.detalles];
+
+            const existingDetalleIndex = updatedDetalles.findIndex(
+                (item) => item.articuloInsumo.id === articuloInsumoSelected.id
+            );
+
+            if (existingDetalleIndex !== -1) {
+                updatedDetalles = updatedDetalles.map((item, index) => {
+                    if (index === existingDetalleIndex) {
+                        return { ...item, cantidad: cantidad };
                     }
                     return item;
                 });
-                setArticulosManufacturadosInsumos(updatedArticulosManufacturadosInsumos);
             } else {
-                const newArticuloManufacturadoInsumo = {
-                    id: 0,
-                    cantidad: cantidad,
-                    articuloInsumo: articuloInsumoSelected,
-                    articuloManufacturado: formik.values
-                };
-                setArticulosManufacturadosInsumos((prevState) => [...prevState, newArticuloManufacturadoInsumo]);
+                const newDetalle = { id: 0, cantidad: cantidad, articuloInsumo: articuloInsumoSelected };
+                updatedDetalles.push(newDetalle);
             }
 
-            handleResetArticuloManufacturadoInsumo();
+            formik.setFieldValue('detalles', updatedDetalles);
+            handleResetDetalle();
         }
     };
 
-    const handleDeleteArticuloManufacturadoInsumo = async (item: ArticuloManufacturadoInsumo) => {
-        const index = articulosManufacturadosInsumos.indexOf(item, 0);
-        articulosManufacturadosInsumos.splice(index, 1);
-        setArticulosManufacturadosInsumos([...articulosManufacturadosInsumos]);
-
-        const token = await getAccessTokenSilently();
-        await remove(Endpoint.ArticuloManufacturadoInsumo, item.id, token);
+    const handleResetDetalle = () => {
+        setArticuloInsumoSelected(undefined);
+        setCantidad(0);
     };
 
-    const handleResetArticuloManufacturadoInsumo = () => {
-        setCantidad(0);
-        setUnidadMedida('');
-        setArticuloInsumoSelected(undefined);
+    const handleDeleteDetalle = async (item: DetalleArticuloManufacturado) => {
+        const updatedDetalles = formik.values.detalles.filter((detalle) => detalle.articuloInsumo.id !== item.articuloInsumo.id);
+        formik.setFieldValue('detalles', [...updatedDetalles]);
     };
 
     const handleSubmit = async (entity: ArticuloManufacturado) => {
+        const isNew = entity.id === 0;
         const token = await getAccessTokenSilently();
 
-        if (file && isImagen(file)) {
-            if (entity.id === 0) {
-                await saveArticuloManufacturado(entity, file, articulosManufacturadosInsumos, token);
-                toastExito(`El Artículo Manufacturado "${entity.denominacion}" se guardó exitosamente.`);
+        if (file !== null && !isValidImagen(file)) {
+            toastAdvertencia('La Imagen ingresada no es válida, por favor inténtelo nuevamente.');
+            return;
+        }
+
+        // POST
+        if (isNew && file !== null) {
+            await saveArticuloManufacturado(entity, file, token);
+            toastExito(`El Artículo Manufacturado "${entity.denominacion}" se guardó exitosamente.`);
+            
+        // PUT
+        } else {
+            // Con Imagen
+            if (file !== null) {
+                await updateArticuloManufacturado(entity.id, entity, token, file);
+                
+            // Sin Imagen
             } else {
-                await updateArticuloManufacturado(entity.id, entity, file, articulosManufacturadosInsumos, token);
-                toastExito(`El Artículo Manufacturado "${entity.denominacion}" se actualizó exitosamente.`);
+                await updateArticuloManufacturado(entity.id, entity, token);
             }
 
-            handleNavigate();
-        } else {
-            toastAdvertencia('Debe seleccionar una Imagen');
+            toastExito(`El Artículo Manufacturado "${entity.denominacion}" se actualizó exitosamente.`);
         }
+
+        handleNavigate();
     };
 
     const handleNavigate = () => {
@@ -223,7 +187,7 @@ function AMArticuloManufacturado(): JSX.Element {
                                         type="text"
                                         id="tiempoEstimadoCocina"
                                         name="tiempoEstimadoCocina"
-                                        placeholder="Tiempo Estimado Cocina (00:35:00)"
+                                        placeholder="Tiempo Estimado Cocina (HH:mm:ss)"
                                         defaultValue={formik.values.tiempoEstimadoCocina}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
@@ -264,6 +228,7 @@ function AMArticuloManufacturado(): JSX.Element {
                                         name="imagen"
                                         accept=".jpg, .jpeg, .png"
                                         onChange={handleChangeImagen}
+                                        required={formik.values.imagen === ''}
                                         isInvalid={Boolean(formik.errors.imagen && formik.touched.imagen)}
                                     />
                                     <Form.Control.Feedback type="invalid">
@@ -277,13 +242,18 @@ function AMArticuloManufacturado(): JSX.Element {
                                     <Form.Select
                                         id="rubro"
                                         name="rubro"
-                                        value={formik.values.rubro?.id || -1}
-                                        onChange={handleChangeRubro}
+                                        value={JSON.stringify(formik.values.rubro)}
+                                        onChange={e => {
+                                            try {
+                                                formik.setFieldValue('rubro', JSON.parse(e.target.value))
+                                            } catch (error) {
+                                            }
+                                        }}
                                     >
-                                        <option value="-1">--Seleccione--</option>
+                                        <option value=""></option>
                                         {
-                                            rubros.map((item: Rubro, index: number) =>
-                                                <option key={index} value={item.id}>
+                                            rubros.map((item: Rubro) =>
+                                                <option value={JSON.stringify(item)} key={item.id}>
                                                     { item.denominacion }
                                                 </option>
                                             )
@@ -296,20 +266,11 @@ function AMArticuloManufacturado(): JSX.Element {
                         <Row>
                             <Col>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Ingredientes</Form.Label>
-                                    <Row>
-                                        <Button onClick={handleClose} variant="dark" className="btn-add">
-                                            Añadir Ingredientes
-                                        </Button>
-                                    </Row>
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group className="mb-3">
                                     <Form.Label htmlFor="receta">Receta</Form.Label>
                                     <Form.Control
-                                        id="receta"
                                         as="textarea"
+                                        id="receta"
+                                        name="receta"
                                         rows={3}
                                         placeholder="Procedimiento..."
                                         value={formik.values.receta}
@@ -322,6 +283,16 @@ function AMArticuloManufacturado(): JSX.Element {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Ingredientes</Form.Label>
+                                    <Row>
+                                        <Button onClick={handleClose} variant="dark" className="btn-add">
+                                            Añadir Ingredientes
+                                        </Button>
+                                    </Row>
+                                </Form.Group>
+                            </Col>
                         </Row>
 
                         <div className="d-flex justify-content-end mt-4">
@@ -329,111 +300,109 @@ function AMArticuloManufacturado(): JSX.Element {
                                 Cancelar
                             </Button>
 
-                            <Button type="submit" variant="dark" className="btn-ok">
+                            <Button type="submit" disabled={!formik.isValid} variant="dark" className="btn-ok">
                                 Guardar
                             </Button>
                         </div>
-                    </Form>
 
-                    { /* Modal Articulos Insumos */}
-                    <Modal show={showModal} onHide={handleClose} centered backdrop="static" size="xl">
-                        <Modal.Header closeButton>
-                            <Modal.Title>Artículos Insumos</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Row>
-                                    <Col>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label htmlFor="articuloInsumo">Artículo Insumo</Form.Label>
-                                            <Form.Select id="articuloInsumo" onChange={handleChangeArticuloInsumo}>
-                                                <option value="-1">--Seleccione--</option>
-                                                {
-                                                    articulosInsumos.map((item: ArticuloInsumo, index: number) =>
-                                                        <option key={index} value={item.id}>
-                                                            { item.denominacion }
-                                                        </option>
-                                                    )
-                                                }
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label htmlFor="cantidad">Cantidad</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                id="cantidad"
-                                                name="cantidad"
-                                                placeholder="Cantidad"
-                                                value={cantidad}
-                                                required
-                                                onChange={handleChangeCantidad}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label htmlFor="unidadMedida">Unidad de Medida</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                id="unidadMedida"
-                                                name="unidadMedida"
-                                                placeholder="Unidad de Medida"
-                                                value={unidadMedida}
-                                                readOnly
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        <Row>
-                                            <Form.Label htmlFor="unidadMedida">Acciones</Form.Label>
-                                        </Row>
-                                        <Button onClick={handleAddArticuloManufacturadoInsumo} variant="dark" className="btn-add">
-                                            <i className="bi bi-plus-square"></i>
-                                        </Button>
-                                    </Col>
-                                </Row>
-                                <hr />
-                                <Container className="text-center">
+                        { /* Modal Detalles */}
+                        <Modal show={showModal} onHide={handleClose} centered backdrop="static" size="xl">
+                            <Modal.Header closeButton>
+                                <Modal.Title>Artículos Insumos</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Form>
                                     <Row>
-                                        <Row>
-                                            <Col>Artículo Insumo</Col>
-                                            <Col>Cantidad</Col>
-                                            <Col>Unidad de Medida</Col>
-                                            <Col>Eliminar</Col>
-                                        </Row>
-                                        {
-                                            articulosManufacturadosInsumos.map((item: ArticuloManufacturadoInsumo, index: number) =>
+                                        <Col>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label htmlFor="articuloInsumo">Artículo Insumo</Form.Label>
+                                                <Form.Select
+                                                    id="articuloInsumo"
+                                                    name="articuloInsumo"
+                                                    value={JSON.stringify(articuloInsumoSelected) || ""}
+                                                    onChange={e => {
+                                                        try {
+                                                            setArticuloInsumoSelected(JSON.parse(e.target.value));
+                                                        } catch (error) {
+                                                        }
+                                                    }}
+                                                >
+                                                    <option value=""></option>
+                                                    {
+                                                        articulosInsumos.map((item: ArticuloInsumo) => 
+                                                            <option value={JSON.stringify(item)} key={item.id}>
+                                                                { item.denominacion }
+                                                            </option>
+                                                        )
+                                                    }
+                                                </Form.Select>
+                                            </Form.Group>
+                                        </Col>
 
-                                                <Row key={index} className="mb-1">
-                                                    <Col>
-                                                        {item.articuloInsumo.denominacion}
-                                                    </Col>
-                                                    <Col>
-                                                        {item.cantidad}
-                                                    </Col>
-                                                    <Col>
-                                                        {item.articuloInsumo.unidadMedida?.denominacion}
-                                                    </Col>
-                                                    <Col>
-                                                        <Button onClick={() => handleDeleteArticuloManufacturadoInsumo(item)} variant="danger">
-                                                            <i className="bi bi-trash3"></i>
-                                                        </Button>
-                                                    </Col>
-                                                </Row>
-                                            )
-                                        }
+                                        <Col>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label htmlFor="cantidad">Cantidad</Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    id="cantidad"
+                                                    name="cantidad"
+                                                    placeholder="Cantidad"
+                                                    value={cantidad}
+                                                    onChange={e => setCantidad(Number(e.target.value))}
+                                                />
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label htmlFor="unidadMedida">Unidad de Medida</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    id="unidadMedida"
+                                                    name="unidadMedida"
+                                                    placeholder="Unidad de Medida"
+                                                    defaultValue={articuloInsumoSelected?.unidadMedida.denominacion ?? ''}
+                                                    readOnly
+                                                />
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col>
+                                            <Row>
+                                                <Form.Label>Acciones</Form.Label>
+                                            </Row>
+                                            <Button onClick={handleAddDetalle} variant="dark" className="btn-add">
+                                                <PlusSquare />
+                                            </Button>
+                                        </Col>
                                     </Row>
-                                </Container>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button onClick={handleClose} variant="dark" className="btn-ok">
-                                Guardar
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+
+                                    <hr />
+
+                                    {
+                                        formik.values.detalles.map((item: DetalleArticuloManufacturado, index: number) =>
+                                            <Row key={index} className="mb-1">
+                                                <Col>
+                                                    { item.articuloInsumo.denominacion }
+                                                </Col>
+                                                <Col>
+                                                    { item.cantidad }
+                                                </Col>
+                                                <Col>
+                                                    { item.articuloInsumo.unidadMedida.denominacion }
+                                                </Col>
+                                                <Col>
+                                                    <Button onClick={() => handleDeleteDetalle(item)} variant="danger">
+                                                        <Trash3 />
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        )
+                                    }
+                                </Form>
+                            </Modal.Body>
+                        </Modal>
+                    </Form>
                 </Container>
             </Container>
         </>

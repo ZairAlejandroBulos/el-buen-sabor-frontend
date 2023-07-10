@@ -18,7 +18,7 @@ function ItemArticuloManufacturado(props: ArticuloManufacturado): JSX.Element {
             <Card style={{ backgroundColor: "#DEE2E6" }}>
                 <Link to={`/detalle-manufacturado/${props.id}`}>
                     <Card.Img
-                        src={props.imagen}
+                        src={props.imagenURL}
                         alt={props.denominacion}
                         className="card-imagen"
                         variant="top"

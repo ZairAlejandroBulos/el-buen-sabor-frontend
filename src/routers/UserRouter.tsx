@@ -3,9 +3,9 @@ import { Route, Routes } from "react-router-dom";
 
 import NavBar from "../components/Layout/NavBar/NavBar";
 import { CarritoProvider } from "../context/CarritoContext";
-import { DetalleCarrito } from "../components/Usuario/Cart/DetalleCarrito";
 const Home = lazy(() => import("../components/Layout/Home/Home"));
 const MiPerfil = lazy(() => import ("../components/Usuario/Perfil/MiPerfil"));
+const DetalleCarrito = lazy(() => import("../components/Usuario/Cart/DetalleCarrito"));
 const DetalleArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/DetalleArticuloManufacturado"));
 const ListArticuloManufacturado = lazy(() => import("../components/Usuario/ArticuloManufacturado/ListArticuloManufacturado"));
 

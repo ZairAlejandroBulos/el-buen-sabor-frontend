@@ -9,7 +9,7 @@ import { findAllSimpleArticuloManufacturados, findAllArticuloManufacturadosByTer
  * @param termino Término de búsqueda opcional.
  * @returns Un objeto que contiene la lista de Artículos Manufacturados.
  */
-export const useArticulosManufacturadosSimple = (termino: string = "all") => {
+export const useArticulosManufacturadosSearch = (termino: string = "all") => {
     const [articulosManufacturados, setArticulosManufacturados] = useState<ArticuloManufacturado[]>([]);
     const { getAccessTokenSilently } = useAuth0();
 

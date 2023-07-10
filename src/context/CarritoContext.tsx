@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
+
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { CarritoCompras } from "../components/Usuario/Cart/CarritoCompras";
+import CarritoCompras from "../components/Usuario/Cart/CarritoCompras";
 
 /**
  * @author Castillo

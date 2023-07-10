@@ -4,10 +4,10 @@ import { UnidadMedida } from "./UnidadMedida";
 
 export interface ArticuloInsumo extends Base {
     denominacion: string;
-    esInsumo: boolean;
     unidadMedida: UnidadMedida;
-    rubro: Rubro;
-    precioCompra?: number;
+    esInsumo?: boolean;
+    rubro?: Rubro;
     stockMinimo?: number;
     stockActual?: number;
+    precioCompra?: number;
 }

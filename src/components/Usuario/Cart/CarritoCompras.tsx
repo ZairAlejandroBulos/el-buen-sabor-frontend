@@ -1,12 +1,12 @@
-import { Button, Offcanvas, Stack } from "react-bootstrap";
+import "./CarritoCompras.css"
 import { Link } from "react-router-dom";
+import { Offcanvas, Stack } from "react-bootstrap";
 
 import { useCarrito } from "../../../context/CarritoContext";
-import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosManufacturadosSimple";
 import CarritoMenuDesplegable from "./CarritoMenuDesplegable";
-import "./CarritoCompras.css"
+import { useArticulosManufacturadosSearch } from "../../../hooks/useArticulosManufacturadosSearch";
 
-interface CarritoProps {
+interface Props {
     isOpen: boolean;
 }
 
@@ -14,24 +14,26 @@ interface CarritoProps {
  * Componente que muestra los Artículos Manufacturados en el Carrito de Compras.
  * @author Castillo
  */
-export function CarritoCompras({ isOpen }: CarritoProps) {
-    const { closeCart, cartItems } = useCarrito()
-    const { articulosManufacturados } = useArticulosManufacturadosSimple()
+function CarritoCompras({ isOpen }: Props): JSX.Element {
+    const { closeCart, cartItems } = useCarrito();
+    const { articulosManufacturados } = useArticulosManufacturadosSearch();
 
     return (
-        <Offcanvas show={isOpen} style={{ backgroundColor: '#E9ECEF' }} onHide={closeCart} placement="end">
+        <Offcanvas show={isOpen} onHide={closeCart} style={{ backgroundColor: '#E9ECEF' }} placement="end">
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Carrito de Compras</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Stack gap={3}>
-                    {cartItems.map(item => (
-                        <CarritoMenuDesplegable key={item.id} {...item} />
-                    ))}
+                    {
+                        cartItems.map(item => (
+                            <CarritoMenuDesplegable key={item.id} {...item} />
+                        ))
+                    }
                     <div className="d-flex justify-content-between fs-5 fw-bold mt-3">
                         <div className="button-cart">
-                            <Link to="/carrito-detalle">
-                                <Button variant="dark">Ver carrito</Button>
+                            <Link to="/carrito-detalle" className="btn btn-dark">
+                                Ver carrito
                             </Link>
                         </div>
                         <div>
@@ -47,5 +49,7 @@ export function CarritoCompras({ isOpen }: CarritoProps) {
                 </Stack>
             </Offcanvas.Body>
         </Offcanvas>
-    )
+    );
 }
+
+export default CarritoCompras;

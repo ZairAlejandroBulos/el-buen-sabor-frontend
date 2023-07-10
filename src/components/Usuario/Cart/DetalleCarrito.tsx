@@ -1,23 +1,24 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
 
+import CarritoItemDetalle from "./CarritoItemDetalle";
 import { useCarrito } from "../../../context/CarritoContext";
-import { CarritoItemDetalle } from "./CarritoItemDetalle";
-import { useArticulosManufacturadosSimple } from "../../../hooks/useArticulosManufacturadosSimple";
+import { useArticulosManufacturadosSearch } from "../../../hooks/useArticulosManufacturadosSearch";
 
 /**
  * Componente que muestra los detalles de un Artículo Manufacturado en el Carrito de Compras.
  * @author Castillo
  */
-export function DetalleCarrito() {
+function DetalleCarrito(): JSX.Element {
     const { cartItems } = useCarrito()
-    const { articulosManufacturados } = useArticulosManufacturadosSimple()
+    const { articulosManufacturados } = useArticulosManufacturadosSearch();
 
     const calcularSubtotal = () => {
         return cartItems.reduce((total, cartItem) => total +
             (articulosManufacturados.find(i => i.id === cartItem.id)?.precioVenta || 0) *
-            cartItem.quantity, 0);
-    }
+            cartItem.quantity, 0
+        );
+    };
 
     return (
         <>
@@ -39,24 +40,26 @@ export function DetalleCarrito() {
                     </thead>
 
                     <tbody>
-                        {cartItems.map((item) => (
-                            <CarritoItemDetalle key={item.id} {...item} />
-                        ))}
+                        {
+                            cartItems.map((item) => (
+                                <CarritoItemDetalle key={item.id} {...item} />
+                            ))
+                        }
                     </tbody>
                 </Table>
 
                 <Row className="mt-3">
                     <Col className="d-flex justify-content-start mt-5">
-                        <Link to="/productos/all">
-                            <Button variant="dark" className="btn-add botones-carrito">
-                                Seguir Comprando
-                            </Button>
+                        <Link to="/productos/all" className="btn btn-dark btn-add botones-carrito">
+                            Seguir Comprando
                         </Link>
                     </Col>
+                    
                     <Col className="d-flex justify-content-start flex-column col-10 col-md-2 mt-3">
                         <h5>
-                            <strong>Total: </strong>$ {calcularSubtotal()}
+                            <strong>Total: </strong> ${ calcularSubtotal() }
                         </h5>
+                        
                         <Button className="btn-ok" variant="dark">
                             Finalizar Compra
                         </Button>
@@ -66,3 +69,5 @@ export function DetalleCarrito() {
         </>
     );
 }
+
+export default DetalleCarrito;
